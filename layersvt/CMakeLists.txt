@@ -7,6 +7,7 @@ if(WIN32)
     add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
 elseif(ANDROID)
     add_compile_definitions(VK_USE_PLATFORM_ANDROID_KHR)
+    option(BUILD_CPUTIMING "Build CPUTiming layer" ON)
 elseif(APPLE)
     if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         add_compile_definitions(VK_USE_PLATFORM_MACOS_MVK)
@@ -17,6 +18,7 @@ elseif(APPLE)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|DragonFly|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build WAYLAND WSI support" ON)
+    option(BUILD_CPUTIMING "Build CPUTiming layer" ON)
 
     find_package(PkgConfig REQUIRED)
 
@@ -116,11 +118,22 @@ if(BUILD_SCREENSHOT)
     )
 endif()
 
+if(BUILD_CPUTIMING)
+    add_library(VkLayer_CPUTiming MODULE)
+    set_target_properties(VkLayer_CPUTiming PROPERTIES FOLDER "layers/cputiming")
+    target_sources(VkLayer_CPUTiming PRIVATE
+        cputiming.cpp
+        vk_layer_table.cpp
+        vk_layer_table.h
+        json/VkLayer_CPUTiming.json.in
+    )
+endif()
+
 if (BUILD_TESTS AND NOT RUN_ON_GITHUB)
     add_subdirectory(test)
 endif()
 
-list(APPEND TOOL_LAYERS "VkLayer_api_dump" "VkLayer_screenshot" "VkLayer_monitor")
+list(APPEND TOOL_LAYERS "VkLayer_api_dump" "VkLayer_screenshot" "VkLayer_monitor" "VkLayer_CPUTiming")
 foreach(layer ${TOOL_LAYERS})
     if (NOT TARGET "${layer}")
         continue()
