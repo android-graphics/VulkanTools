@@ -22,25 +22,20 @@
  */
 
 #include "api_dump_handwritten_functions.h"
+#include "timer.h"
 
 // Autogen instance functions
 
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyInstance\n";
-    }
+    Timer timer("vkDestroyInstance");
     auto dispatch_key = get_dispatch_key(instance);
     instance_dispatch_table(instance)->DestroyInstance(instance, pAllocator);
     destroy_instance_dispatch_table(dispatch_key);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEnumeratePhysicalDevices\n";
-    }
+    Timer timer("vkEnumeratePhysicalDevices");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
 
     if (pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
@@ -52,292 +47,190 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, u
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFeatures\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFeatures");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures(physicalDevice, pFeatures);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFormatProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFormatProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceImageFormatProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceImageFormatProperties");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties(physicalDevice, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceMemoryProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceMemoryProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSparseImageFormatProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEnumeratePhysicalDeviceGroups\n";
-    }
+    Timer timer("vkEnumeratePhysicalDeviceGroups");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFeatures2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFeatures2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties2(physicalDevice, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFormatProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFormatProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceImageFormatProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceImageFormatProperties2");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceMemoryProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceMemoryProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSparseImageFormatProperties2\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalBufferProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalBufferProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalFenceProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalFenceProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalSemaphoreProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalSemaphoreProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceToolProperties\n";
-    }
+    Timer timer("vkGetPhysicalDeviceToolProperties");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySurfaceKHR\n";
-    }
+    Timer timer("vkDestroySurfaceKHR");
     instance_dispatch_table(instance)->DestroySurfaceKHR(instance, surface, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceSupportKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceSupportKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceCapabilitiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceFormatsKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceFormatsKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfacePresentModesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfacePresentModesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDevicePresentRectanglesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDevicePresentRectanglesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDisplayPropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDisplayPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPlanePropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDisplayPlanePropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDisplayPlanePropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDisplayPlaneSupportedDisplaysKHR\n";
-    }
+    Timer timer("vkGetDisplayPlaneSupportedDisplaysKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, pDisplayCount, pDisplays);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayModePropertiesKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDisplayModePropertiesKHR\n";
-    }
+    Timer timer("vkGetDisplayModePropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayModePropertiesKHR(physicalDevice, display, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayModeKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDisplayModeKHR\n";
-    }
+    Timer timer("vkCreateDisplayModeKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->CreateDisplayModeKHR(physicalDevice, display, pCreateInfo, pAllocator, pMode);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDisplayPlaneCapabilitiesKHR\n";
-    }
+    Timer timer("vkGetDisplayPlaneCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, pCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayPlaneSurfaceKHR(VkInstance instance, const VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDisplayPlaneSurfaceKHR\n";
-    }
+    Timer timer("vkCreateDisplayPlaneSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateXlibSurfaceKHR\n";
-    }
+    Timer timer("vkCreateXlibSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceXlibPresentationSupportKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceXlibPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
     return result;
 }
@@ -345,19 +238,13 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXlibPresentationSupportKHR(VkP
 #if defined(VK_USE_PLATFORM_XCB_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateXcbSurfaceKHR\n";
-    }
+    Timer timer("vkCreateXcbSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceXcbPresentationSupportKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceXcbPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice, queueFamilyIndex, connection, visual_id);
     return result;
 }
@@ -365,19 +252,13 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXcbPresentationSupportKHR(VkPh
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateWaylandSurfaceKHR\n";
-    }
+    Timer timer("vkCreateWaylandSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWaylandPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceWaylandPresentationSupportKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceWaylandPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice, queueFamilyIndex, display);
     return result;
 }
@@ -385,10 +266,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWaylandPresentationSupportKHR(
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(VkInstance instance, const VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateAndroidSurfaceKHR\n";
-    }
+    Timer timer("vkCreateAndroidSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
@@ -396,339 +274,225 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(VkInstance instance, co
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateWin32SurfaceKHR\n";
-    }
+    Timer timer("vkCreateWin32SurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWin32PresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceWin32PresentationSupportKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceWin32PresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoCapabilitiesKHR(VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, VkVideoCapabilitiesKHR* pCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceVideoCapabilitiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceVideoCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoCapabilitiesKHR(physicalDevice, pVideoProfile, pCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoFormatPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo, uint32_t* pVideoFormatPropertyCount, VkVideoFormatPropertiesKHR* pVideoFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceVideoFormatPropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceVideoFormatPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, pVideoFormatProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFeatures2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFeatures2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties2KHR(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFormatProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFormatProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceImageFormatProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceImageFormatProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceMemoryProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceMemoryProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSparseImageFormatProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroupsKHR(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEnumeratePhysicalDeviceGroupsKHR\n";
-    }
+    Timer timer("vkEnumeratePhysicalDeviceGroupsKHR");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroupsKHR(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalBufferPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalBufferPropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalBufferPropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalSemaphorePropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalFencePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalFencePropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalFencePropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR\n";
-    }
+    Timer timer("vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice, pPerformanceQueryCreateInfo, pNumPasses);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceCapabilities2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceCapabilities2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceFormats2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceFormats2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDisplayProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDisplayProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayProperties2KHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPlaneProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDisplayPlaneProperties2KHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDisplayPlaneProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayModeProperties2KHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDisplayModeProperties2KHR\n";
-    }
+    Timer timer("vkGetDisplayModeProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, VkDisplayPlaneCapabilities2KHR* pCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDisplayPlaneCapabilities2KHR\n";
-    }
+    Timer timer("vkGetDisplayPlaneCapabilities2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneCapabilities2KHR(physicalDevice, pDisplayPlaneInfo, pCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceFragmentShadingRatesKHR(VkPhysicalDevice physicalDevice, uint32_t* pFragmentShadingRateCount, VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceFragmentShadingRatesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceFragmentShadingRatesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, pFragmentShadingRateCount, pFragmentShadingRates);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo, VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(physicalDevice, pQualityLevelInfo, pQualityLevelProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, pTimeDomainCount, pTimeDomains);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDebugReportCallbackEXT\n";
-    }
+    Timer timer("vkCreateDebugReportCallbackEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDebugReportCallbackEXT(instance, pCreateInfo, pAllocator, pCallback);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDebugReportCallbackEXT\n";
-    }
+    Timer timer("vkDestroyDebugReportCallbackEXT");
     instance_dispatch_table(instance)->DestroyDebugReportCallbackEXT(instance, callback, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDebugReportMessageEXT(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDebugReportMessageEXT\n";
-    }
+    Timer timer("vkDebugReportMessageEXT");
     instance_dispatch_table(instance)->DebugReportMessageEXT(instance, flags, objectType, object, location, messageCode, pLayerPrefix, pMessage);
 }
 #if defined(VK_USE_PLATFORM_GGP)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateStreamDescriptorSurfaceGGP(VkInstance instance, const VkStreamDescriptorSurfaceCreateInfoGGP* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateStreamDescriptorSurfaceGGP\n";
-    }
+    Timer timer("vkCreateStreamDescriptorSurfaceGGP");
     VkResult result = instance_dispatch_table(instance)->CreateStreamDescriptorSurfaceGGP(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_GGP
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalImageFormatPropertiesNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties);
     return result;
 }
 #if defined(VK_USE_PLATFORM_VI_NN)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(VkInstance instance, const VkViSurfaceCreateInfoNN* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateViSurfaceNN\n";
-    }
+    Timer timer("vkCreateViSurfaceNN");
     VkResult result = instance_dispatch_table(instance)->CreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_VI_NN
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseDisplayEXT(VkPhysicalDevice physicalDevice, VkDisplayKHR display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseDisplayEXT\n";
-    }
+    Timer timer("vkReleaseDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->ReleaseDisplayEXT(physicalDevice, display);
     return result;
 }
 #if defined(VK_USE_PLATFORM_XLIB_XRANDR_EXT)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireXlibDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireXlibDisplayEXT\n";
-    }
+    Timer timer("vkAcquireXlibDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireXlibDisplayEXT(physicalDevice, dpy, display);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRandROutputDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRandROutputDisplayEXT\n";
-    }
+    Timer timer("vkGetRandROutputDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetRandROutputDisplayEXT(physicalDevice, dpy, rrOutput, pDisplay);
     return result;
 }
 #endif  // VK_USE_PLATFORM_XLIB_XRANDR_EXT
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfaceCapabilities2EXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfaceCapabilities2EXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
     return result;
 }
 #if defined(VK_USE_PLATFORM_IOS_MVK)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateIOSSurfaceMVK\n";
-    }
+    Timer timer("vkCreateIOSSurfaceMVK");
     VkResult result = instance_dispatch_table(instance)->CreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
@@ -736,72 +500,48 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(VkInstance instance, const 
 #if defined(VK_USE_PLATFORM_MACOS_MVK)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateMacOSSurfaceMVK\n";
-    }
+    Timer timer("vkCreateMacOSSurfaceMVK");
     VkResult result = instance_dispatch_table(instance)->CreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_MACOS_MVK
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDebugUtilsMessengerEXT\n";
-    }
+    Timer timer("vkCreateDebugUtilsMessengerEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDebugUtilsMessengerEXT\n";
-    }
+    Timer timer("vkDestroyDebugUtilsMessengerEXT");
     instance_dispatch_table(instance)->DestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkSubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSubmitDebugUtilsMessageEXT\n";
-    }
+    Timer timer("vkSubmitDebugUtilsMessageEXT");
     instance_dispatch_table(instance)->SubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceSize VKAPI_CALL vkGetPhysicalDeviceDescriptorSizeEXT(VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDescriptorSizeEXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDescriptorSizeEXT");
     VkDeviceSize result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDescriptorSizeEXT(physicalDevice, descriptorType);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceMultisamplePropertiesEXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceMultisamplePropertiesEXT");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples, pMultisampleProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCalibrateableTimeDomainsEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, pTimeDomainCount, pTimeDomains);
     return result;
 }
 #if defined(VK_USE_PLATFORM_FUCHSIA)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImagePipeSurfaceFUCHSIA(VkInstance instance, const VkImagePipeSurfaceCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateImagePipeSurfaceFUCHSIA\n";
-    }
+    Timer timer("vkCreateImagePipeSurfaceFUCHSIA");
     VkResult result = instance_dispatch_table(instance)->CreateImagePipeSurfaceFUCHSIA(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
@@ -809,20 +549,14 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateImagePipeSurfaceFUCHSIA(VkInstance instan
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMetalSurfaceEXT(VkInstance instance, const VkMetalSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateMetalSurfaceEXT\n";
-    }
+    Timer timer("vkCreateMetalSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateMetalSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceToolPropertiesEXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceToolPropertiesEXT");
 
     static const VkPhysicalDeviceToolPropertiesEXT api_dump_layer_tool_props = {
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
@@ -849,76 +583,52 @@ VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDe
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesNV* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCooperativeMatrixPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkPhysicalDevice physicalDevice, uint32_t* pCombinationCount, VkFramebufferMixedSamplesCombinationNV* pCombinations) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, pCombinationCount, pCombinations);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModes2EXT(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceSurfacePresentModes2EXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceSurfacePresentModes2EXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, pSurfaceInfo, pPresentModeCount, pPresentModes);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateHeadlessSurfaceEXT(VkInstance instance, const VkHeadlessSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateHeadlessSurfaceEXT\n";
-    }
+    Timer timer("vkCreateHeadlessSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateHeadlessSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireDrmDisplayEXT\n";
-    }
+    Timer timer("vkAcquireDrmDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireDrmDisplayEXT(physicalDevice, drmFd, display);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDrmDisplayEXT\n";
-    }
+    Timer timer("vkGetDrmDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDrmDisplayEXT(physicalDevice, drmFd, connectorId, display);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireWinrtDisplayNV\n";
-    }
+    Timer timer("vkAcquireWinrtDisplayNV");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireWinrtDisplayNV(physicalDevice, display);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetWinrtDisplayNV\n";
-    }
+    Timer timer("vkGetWinrtDisplayNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay);
     return result;
 }
@@ -926,19 +636,13 @@ VKAPI_ATTR VkResult VKAPI_CALL vkGetWinrtDisplayNV(VkPhysicalDevice physicalDevi
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDirectFBSurfaceEXT(VkInstance instance, const VkDirectFBSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDirectFBSurfaceEXT\n";
-    }
+    Timer timer("vkCreateDirectFBSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDirectFBSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceDirectFBPresentationSupportEXT(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceDirectFBPresentationSupportEXT\n";
-    }
+    Timer timer("vkGetPhysicalDeviceDirectFBPresentationSupportEXT");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDirectFBPresentationSupportEXT(physicalDevice, queueFamilyIndex, dfb);
     return result;
 }
@@ -946,92 +650,62 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceDirectFBPresentationSupportEXT
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateScreenSurfaceQNX(VkInstance instance, const VkScreenSurfaceCreateInfoQNX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateScreenSurfaceQNX\n";
-    }
+    Timer timer("vkCreateScreenSurfaceQNX");
     VkResult result = instance_dispatch_table(instance)->CreateScreenSurfaceQNX(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceScreenPresentationSupportQNX(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct _screen_window* window) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceScreenPresentationSupportQNX\n";
-    }
+    Timer timer("vkGetPhysicalDeviceScreenPresentationSupportQNX");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceScreenPresentationSupportQNX(physicalDevice, queueFamilyIndex, window);
     return result;
 }
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalTensorPropertiesARM(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo, VkExternalTensorPropertiesARM* pExternalTensorProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceExternalTensorPropertiesARM\n";
-    }
+    Timer timer("vkGetPhysicalDeviceExternalTensorPropertiesARM");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice physicalDevice, const VkOpticalFlowImageFormatInfoNV* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount, VkOpticalFlowImageFormatPropertiesNV* pImageFormatProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceOpticalFlowImageFormatsNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, pOpticalFlowImageFormatInfo, pFormatCount, pImageFormatProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCooperativeVectorPropertiesNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pQueueFamilyDataGraphPropertyCount, VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo, VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM\n";
-    }
+    Timer timer("vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
 }
 #if defined(VK_USE_PLATFORM_OHOS)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSurfaceOHOS\n";
-    }
+    Timer timer("vkCreateSurfaceOHOS");
     VkResult result = instance_dispatch_table(instance)->CreateSurfaceOHOS(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_OHOS
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV\n";
-    }
+    Timer timer("vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterARM* pCounters, VkPerformanceCounterDescriptionARM* pCounterDescriptions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM\n";
-    }
+    Timer timer("vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM");
     VkResult result = instance_dispatch_table(physicalDevice)->EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
     return result;
 }
@@ -1040,373 +714,221 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceCo
 
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDevice\n";
-    }
+    Timer timer("vkDestroyDevice");
     device_dispatch_table(device)->DestroyDevice(device, pAllocator);
     destroy_device_dispatch_table(get_dispatch_key(device));
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceQueue\n";
-    }
+    Timer timer("vkGetDeviceQueue");
     device_dispatch_table(device)->GetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueSubmit\n";
-    }
+    Timer timer("vkQueueSubmit");
     VkResult result = device_dispatch_table(queue)->QueueSubmit(queue, submitCount, pSubmits, fence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue) {
+    Timer timer("vkQueueWaitIdle");
     VkResult result = device_dispatch_table(queue)->QueueWaitIdle(queue);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueWaitIdle\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device) {
+    Timer timer("vkDeviceWaitIdle");
     VkResult result = device_dispatch_table(device)->DeviceWaitIdle(device);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDeviceWaitIdle\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAllocateMemory\n";
-    }
+    Timer timer("vkAllocateMemory");
     VkResult result = device_dispatch_table(device)->AllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkFreeMemory\n";
-    }
+    Timer timer("vkFreeMemory");
     device_dispatch_table(device)->FreeMemory(device, memory, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkMapMemory\n";
-    }
+    Timer timer("vkMapMemory");
     VkResult result = device_dispatch_table(device)->MapMemory(device, memory, offset, size, flags, ppData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(VkDevice device, VkDeviceMemory memory) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUnmapMemory\n";
-    }
+    Timer timer("vkUnmapMemory");
     device_dispatch_table(device)->UnmapMemory(device, memory);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkFlushMappedMemoryRanges\n";
-    }
+    Timer timer("vkFlushMappedMemoryRanges");
     VkResult result = device_dispatch_table(device)->FlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkInvalidateMappedMemoryRanges\n";
-    }
+    Timer timer("vkInvalidateMappedMemoryRanges");
     VkResult result = device_dispatch_table(device)->InvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceMemoryCommitment\n";
-    }
+    Timer timer("vkGetDeviceMemoryCommitment");
     device_dispatch_table(device)->GetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindBufferMemory\n";
-    }
+    Timer timer("vkBindBufferMemory");
     VkResult result = device_dispatch_table(device)->BindBufferMemory(device, buffer, memory, memoryOffset);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindImageMemory\n";
-    }
+    Timer timer("vkBindImageMemory");
     VkResult result = device_dispatch_table(device)->BindImageMemory(device, image, memory, memoryOffset);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferMemoryRequirements\n";
-    }
+    Timer timer("vkGetBufferMemoryRequirements");
     device_dispatch_table(device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageMemoryRequirements\n";
-    }
+    Timer timer("vkGetImageMemoryRequirements");
     device_dispatch_table(device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSparseMemoryRequirements\n";
-    }
+    Timer timer("vkGetImageSparseMemoryRequirements");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueBindSparse\n";
-    }
+    Timer timer("vkQueueBindSparse");
     VkResult result = device_dispatch_table(queue)->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateFence\n";
-    }
+    Timer timer("vkCreateFence");
     VkResult result = device_dispatch_table(device)->CreateFence(device, pCreateInfo, pAllocator, pFence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyFence\n";
-    }
+    Timer timer("vkDestroyFence");
     device_dispatch_table(device)->DestroyFence(device, fence, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetFences\n";
-    }
+    Timer timer("vkResetFences");
     VkResult result = device_dispatch_table(device)->ResetFences(device, fenceCount, pFences);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device, VkFence fence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetFenceStatus\n";
-    }
+    Timer timer("vkGetFenceStatus");
     VkResult result = device_dispatch_table(device)->GetFenceStatus(device, fence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout) {
+    Timer timer("vkWaitForFences");
     VkResult result = device_dispatch_table(device)->WaitForFences(device, fenceCount, pFences, waitAll, timeout);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWaitForFences\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSemaphore\n";
-    }
+    Timer timer("vkCreateSemaphore");
     VkResult result = device_dispatch_table(device)->CreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySemaphore\n";
-    }
+    Timer timer("vkDestroySemaphore");
     device_dispatch_table(device)->DestroySemaphore(device, semaphore, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateQueryPool\n";
-    }
+    Timer timer("vkCreateQueryPool");
     VkResult result = device_dispatch_table(device)->CreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyQueryPool\n";
-    }
+    Timer timer("vkDestroyQueryPool");
     device_dispatch_table(device)->DestroyQueryPool(device, queryPool, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags) {
+    Timer timer("vkGetQueryPoolResults");
     VkResult result = device_dispatch_table(device)->GetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetQueryPoolResults\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateBuffer\n";
-    }
+    Timer timer("vkCreateBuffer");
     VkResult result = device_dispatch_table(device)->CreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyBuffer\n";
-    }
+    Timer timer("vkDestroyBuffer");
     device_dispatch_table(device)->DestroyBuffer(device, buffer, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateImage\n";
-    }
+    Timer timer("vkCreateImage");
     VkResult result = device_dispatch_table(device)->CreateImage(device, pCreateInfo, pAllocator, pImage);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyImage\n";
-    }
+    Timer timer("vkDestroyImage");
     device_dispatch_table(device)->DestroyImage(device, image, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSubresourceLayout\n";
-    }
+    Timer timer("vkGetImageSubresourceLayout");
     device_dispatch_table(device)->GetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateImageView\n";
-    }
+    Timer timer("vkCreateImageView");
     VkResult result = device_dispatch_table(device)->CreateImageView(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyImageView\n";
-    }
+    Timer timer("vkDestroyImageView");
     device_dispatch_table(device)->DestroyImageView(device, imageView, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateCommandPool\n";
-    }
+    Timer timer("vkCreateCommandPool");
     VkResult result = device_dispatch_table(device)->CreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyCommandPool\n";
-    }
+    Timer timer("vkDestroyCommandPool");
     device_dispatch_table(device)->DestroyCommandPool(device, commandPool, pAllocator);
     ApiDumpInstance::current().eraseCmdBufferPool(device, commandPool);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetCommandPool\n";
-    }
+    Timer timer("vkResetCommandPool");
     VkResult result = device_dispatch_table(device)->ResetCommandPool(device, commandPool, flags);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAllocateCommandBuffers\n";
-    }
+    Timer timer("vkAllocateCommandBuffers");
     VkResult result = device_dispatch_table(device)->AllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
     if (result == VK_SUCCESS)
         ApiDumpInstance::current().addCmdBuffers(
@@ -1418,3118 +940,1792 @@ VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice device, const V
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkFreeCommandBuffers\n";
-    }
+    Timer timer("vkFreeCommandBuffers");
     device_dispatch_table(device)->FreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
     ApiDumpInstance::current().eraseCmdBuffers(device, commandPool, std::vector<VkCommandBuffer>(pCommandBuffers, pCommandBuffers + commandBufferCount));
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBeginCommandBuffer\n";
-    }
+    Timer timer("vkBeginCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->BeginCommandBuffer(commandBuffer, pBeginInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkEndCommandBuffer\n";
-    }
+    Timer timer("vkEndCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->EndCommandBuffer(commandBuffer);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetCommandBuffer\n";
-    }
+    Timer timer("vkResetCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->ResetCommandBuffer(commandBuffer, flags);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBuffer\n";
-    }
+    Timer timer("vkCmdCopyBuffer");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImage\n";
-    }
+    Timer timer("vkCmdCopyImage");
     device_dispatch_table(commandBuffer)->CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBufferToImage\n";
-    }
+    Timer timer("vkCmdCopyBufferToImage");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImageToBuffer\n";
-    }
+    Timer timer("vkCmdCopyImageToBuffer");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdUpdateBuffer\n";
-    }
+    Timer timer("vkCmdUpdateBuffer");
     device_dispatch_table(commandBuffer)->CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdFillBuffer\n";
-    }
+    Timer timer("vkCmdFillBuffer");
     device_dispatch_table(commandBuffer)->CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPipelineBarrier\n";
-    }
+    Timer timer("vkCmdPipelineBarrier");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginQuery\n";
-    }
+    Timer timer("vkCmdBeginQuery");
     device_dispatch_table(commandBuffer)->CmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndQuery\n";
-    }
+    Timer timer("vkCmdEndQuery");
     device_dispatch_table(commandBuffer)->CmdEndQuery(commandBuffer, queryPool, query);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResetQueryPool\n";
-    }
+    Timer timer("vkCmdResetQueryPool");
     device_dispatch_table(commandBuffer)->CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteTimestamp\n";
-    }
+    Timer timer("vkCmdWriteTimestamp");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyQueryPoolResults\n";
-    }
+    Timer timer("vkCmdCopyQueryPoolResults");
     device_dispatch_table(commandBuffer)->CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdExecuteCommands\n";
-    }
+    Timer timer("vkCmdExecuteCommands");
     device_dispatch_table(commandBuffer)->CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateEvent\n";
-    }
+    Timer timer("vkCreateEvent");
     VkResult result = device_dispatch_table(device)->CreateEvent(device, pCreateInfo, pAllocator, pEvent);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyEvent\n";
-    }
+    Timer timer("vkDestroyEvent");
     device_dispatch_table(device)->DestroyEvent(device, event, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device, VkEvent event) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetEventStatus\n";
-    }
+    Timer timer("vkGetEventStatus");
     VkResult result = device_dispatch_table(device)->GetEventStatus(device, event);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEvent event) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetEvent\n";
-    }
+    Timer timer("vkSetEvent");
     VkResult result = device_dispatch_table(device)->SetEvent(device, event);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkEvent event) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetEvent\n";
-    }
+    Timer timer("vkResetEvent");
     VkResult result = device_dispatch_table(device)->ResetEvent(device, event);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateBufferView\n";
-    }
+    Timer timer("vkCreateBufferView");
     VkResult result = device_dispatch_table(device)->CreateBufferView(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyBufferView\n";
-    }
+    Timer timer("vkDestroyBufferView");
     device_dispatch_table(device)->DestroyBufferView(device, bufferView, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateShaderModule\n";
-    }
+    Timer timer("vkCreateShaderModule");
     VkResult result = device_dispatch_table(device)->CreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyShaderModule\n";
-    }
+    Timer timer("vkDestroyShaderModule");
     device_dispatch_table(device)->DestroyShaderModule(device, shaderModule, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreatePipelineCache\n";
-    }
+    Timer timer("vkCreatePipelineCache");
     VkResult result = device_dispatch_table(device)->CreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPipelineCache\n";
-    }
+    Timer timer("vkDestroyPipelineCache");
     device_dispatch_table(device)->DestroyPipelineCache(device, pipelineCache, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineCacheData\n";
-    }
+    Timer timer("vkGetPipelineCacheData");
     VkResult result = device_dispatch_table(device)->GetPipelineCacheData(device, pipelineCache, pDataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkMergePipelineCaches\n";
-    }
+    Timer timer("vkMergePipelineCaches");
     VkResult result = device_dispatch_table(device)->MergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateComputePipelines\n";
-    }
+    Timer timer("vkCreateComputePipelines");
     VkResult result = device_dispatch_table(device)->CreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPipeline\n";
-    }
+    Timer timer("vkDestroyPipeline");
     device_dispatch_table(device)->DestroyPipeline(device, pipeline, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreatePipelineLayout\n";
-    }
+    Timer timer("vkCreatePipelineLayout");
     VkResult result = device_dispatch_table(device)->CreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPipelineLayout\n";
-    }
+    Timer timer("vkDestroyPipelineLayout");
     device_dispatch_table(device)->DestroyPipelineLayout(device, pipelineLayout, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSampler\n";
-    }
+    Timer timer("vkCreateSampler");
     VkResult result = device_dispatch_table(device)->CreateSampler(device, pCreateInfo, pAllocator, pSampler);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySampler\n";
-    }
+    Timer timer("vkDestroySampler");
     device_dispatch_table(device)->DestroySampler(device, sampler, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDescriptorSetLayout\n";
-    }
+    Timer timer("vkCreateDescriptorSetLayout");
     VkResult result = device_dispatch_table(device)->CreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDescriptorSetLayout\n";
-    }
+    Timer timer("vkDestroyDescriptorSetLayout");
     device_dispatch_table(device)->DestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDescriptorPool\n";
-    }
+    Timer timer("vkCreateDescriptorPool");
     VkResult result = device_dispatch_table(device)->CreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDescriptorPool\n";
-    }
+    Timer timer("vkDestroyDescriptorPool");
     device_dispatch_table(device)->DestroyDescriptorPool(device, descriptorPool, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetDescriptorPool\n";
-    }
+    Timer timer("vkResetDescriptorPool");
     VkResult result = device_dispatch_table(device)->ResetDescriptorPool(device, descriptorPool, flags);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAllocateDescriptorSets\n";
-    }
+    Timer timer("vkAllocateDescriptorSets");
     VkResult result = device_dispatch_table(device)->AllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkFreeDescriptorSets\n";
-    }
+    Timer timer("vkFreeDescriptorSets");
     VkResult result = device_dispatch_table(device)->FreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateDescriptorSets\n";
-    }
+    Timer timer("vkUpdateDescriptorSets");
     device_dispatch_table(device)->UpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindPipeline\n";
-    }
+    Timer timer("vkCmdBindPipeline");
     device_dispatch_table(commandBuffer)->CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorSets\n";
-    }
+    Timer timer("vkCmdBindDescriptorSets");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdClearColorImage\n";
-    }
+    Timer timer("vkCmdClearColorImage");
     device_dispatch_table(commandBuffer)->CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatch\n";
-    }
+    Timer timer("vkCmdDispatch");
     device_dispatch_table(commandBuffer)->CmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchIndirect\n";
-    }
+    Timer timer("vkCmdDispatchIndirect");
     device_dispatch_table(commandBuffer)->CmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetEvent\n";
-    }
+    Timer timer("vkCmdSetEvent");
     device_dispatch_table(commandBuffer)->CmdSetEvent(commandBuffer, event, stageMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResetEvent\n";
-    }
+    Timer timer("vkCmdResetEvent");
     device_dispatch_table(commandBuffer)->CmdResetEvent(commandBuffer, event, stageMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWaitEvents\n";
-    }
+    Timer timer("vkCmdWaitEvents");
     device_dispatch_table(commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushConstants\n";
-    }
+    Timer timer("vkCmdPushConstants");
     device_dispatch_table(commandBuffer)->CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateGraphicsPipelines\n";
-    }
+    Timer timer("vkCreateGraphicsPipelines");
     VkResult result = device_dispatch_table(device)->CreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateFramebuffer\n";
-    }
+    Timer timer("vkCreateFramebuffer");
     VkResult result = device_dispatch_table(device)->CreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyFramebuffer\n";
-    }
+    Timer timer("vkDestroyFramebuffer");
     device_dispatch_table(device)->DestroyFramebuffer(device, framebuffer, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateRenderPass\n";
-    }
+    Timer timer("vkCreateRenderPass");
     VkResult result = device_dispatch_table(device)->CreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyRenderPass\n";
-    }
+    Timer timer("vkDestroyRenderPass");
     device_dispatch_table(device)->DestroyRenderPass(device, renderPass, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRenderAreaGranularity\n";
-    }
+    Timer timer("vkGetRenderAreaGranularity");
     device_dispatch_table(device)->GetRenderAreaGranularity(device, renderPass, pGranularity);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewport\n";
-    }
+    Timer timer("vkCmdSetViewport");
     device_dispatch_table(commandBuffer)->CmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetScissor\n";
-    }
+    Timer timer("vkCmdSetScissor");
     device_dispatch_table(commandBuffer)->CmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineWidth\n";
-    }
+    Timer timer("vkCmdSetLineWidth");
     device_dispatch_table(commandBuffer)->CmdSetLineWidth(commandBuffer, lineWidth);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBias\n";
-    }
+    Timer timer("vkCmdSetDepthBias");
     device_dispatch_table(commandBuffer)->CmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetBlendConstants\n";
-    }
+    Timer timer("vkCmdSetBlendConstants");
     device_dispatch_table(commandBuffer)->CmdSetBlendConstants(commandBuffer, blendConstants);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBounds\n";
-    }
+    Timer timer("vkCmdSetDepthBounds");
     device_dispatch_table(commandBuffer)->CmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilCompareMask\n";
-    }
+    Timer timer("vkCmdSetStencilCompareMask");
     device_dispatch_table(commandBuffer)->CmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilWriteMask\n";
-    }
+    Timer timer("vkCmdSetStencilWriteMask");
     device_dispatch_table(commandBuffer)->CmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilReference\n";
-    }
+    Timer timer("vkCmdSetStencilReference");
     device_dispatch_table(commandBuffer)->CmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindIndexBuffer\n";
-    }
+    Timer timer("vkCmdBindIndexBuffer");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindVertexBuffers\n";
-    }
+    Timer timer("vkCmdBindVertexBuffers");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDraw\n";
-    }
+    Timer timer("vkCmdDraw");
     device_dispatch_table(commandBuffer)->CmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndexed\n";
-    }
+    Timer timer("vkCmdDrawIndexed");
     device_dispatch_table(commandBuffer)->CmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndirect\n";
-    }
+    Timer timer("vkCmdDrawIndirect");
     device_dispatch_table(commandBuffer)->CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndexedIndirect\n";
-    }
+    Timer timer("vkCmdDrawIndexedIndirect");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBlitImage\n";
-    }
+    Timer timer("vkCmdBlitImage");
     device_dispatch_table(commandBuffer)->CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdClearDepthStencilImage\n";
-    }
+    Timer timer("vkCmdClearDepthStencilImage");
     device_dispatch_table(commandBuffer)->CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdClearAttachments\n";
-    }
+    Timer timer("vkCmdClearAttachments");
     device_dispatch_table(commandBuffer)->CmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResolveImage\n";
-    }
+    Timer timer("vkCmdResolveImage");
     device_dispatch_table(commandBuffer)->CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginRenderPass\n";
-    }
+    Timer timer("vkCmdBeginRenderPass");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdNextSubpass\n";
-    }
+    Timer timer("vkCmdNextSubpass");
     device_dispatch_table(commandBuffer)->CmdNextSubpass(commandBuffer, contents);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRenderPass\n";
-    }
+    Timer timer("vkCmdEndRenderPass");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindBufferMemory2\n";
-    }
+    Timer timer("vkBindBufferMemory2");
     VkResult result = device_dispatch_table(device)->BindBufferMemory2(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindImageMemory2\n";
-    }
+    Timer timer("vkBindImageMemory2");
     VkResult result = device_dispatch_table(device)->BindImageMemory2(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceGroupPeerMemoryFeatures\n";
-    }
+    Timer timer("vkGetDeviceGroupPeerMemoryFeatures");
     device_dispatch_table(device)->GetDeviceGroupPeerMemoryFeatures(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDeviceMask\n";
-    }
+    Timer timer("vkCmdSetDeviceMask");
     device_dispatch_table(commandBuffer)->CmdSetDeviceMask(commandBuffer, deviceMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageMemoryRequirements2\n";
-    }
+    Timer timer("vkGetImageMemoryRequirements2");
     device_dispatch_table(device)->GetImageMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferMemoryRequirements2\n";
-    }
+    Timer timer("vkGetBufferMemoryRequirements2");
     device_dispatch_table(device)->GetBufferMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements2(VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSparseMemoryRequirements2\n";
-    }
+    Timer timer("vkGetImageSparseMemoryRequirements2");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements2(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkTrimCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkTrimCommandPool\n";
-    }
+    Timer timer("vkTrimCommandPool");
     device_dispatch_table(device)->TrimCommandPool(device, commandPool, flags);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceQueue2\n";
-    }
+    Timer timer("vkGetDeviceQueue2");
     device_dispatch_table(device)->GetDeviceQueue2(device, pQueueInfo, pQueue);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchBase\n";
-    }
+    Timer timer("vkCmdDispatchBase");
     device_dispatch_table(commandBuffer)->CmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorUpdateTemplate(VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDescriptorUpdateTemplate\n";
-    }
+    Timer timer("vkCreateDescriptorUpdateTemplate");
     VkResult result = device_dispatch_table(device)->CreateDescriptorUpdateTemplate(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDescriptorUpdateTemplate\n";
-    }
+    Timer timer("vkDestroyDescriptorUpdateTemplate");
     device_dispatch_table(device)->DestroyDescriptorUpdateTemplate(device, descriptorUpdateTemplate, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateDescriptorSetWithTemplate\n";
-    }
+    Timer timer("vkUpdateDescriptorSetWithTemplate");
     device_dispatch_table(device)->UpdateDescriptorSetWithTemplate(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSupport(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetLayoutSupport\n";
-    }
+    Timer timer("vkGetDescriptorSetLayoutSupport");
     device_dispatch_table(device)->GetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSamplerYcbcrConversion(VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSamplerYcbcrConversion\n";
-    }
+    Timer timer("vkCreateSamplerYcbcrConversion");
     VkResult result = device_dispatch_table(device)->CreateSamplerYcbcrConversion(device, pCreateInfo, pAllocator, pYcbcrConversion);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySamplerYcbcrConversion\n";
-    }
+    Timer timer("vkDestroySamplerYcbcrConversion");
     device_dispatch_table(device)->DestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetQueryPool\n";
-    }
+    Timer timer("vkResetQueryPool");
     device_dispatch_table(device)->ResetQueryPool(device, queryPool, firstQuery, queryCount);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSemaphoreCounterValue\n";
-    }
+    Timer timer("vkGetSemaphoreCounterValue");
     VkResult result = device_dispatch_table(device)->GetSemaphoreCounterValue(device, semaphore, pValue);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
+    Timer timer("vkWaitSemaphores");
     VkResult result = device_dispatch_table(device)->WaitSemaphores(device, pWaitInfo, timeout);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWaitSemaphores\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSignalSemaphore\n";
-    }
+    Timer timer("vkSignalSemaphore");
     VkResult result = device_dispatch_table(device)->SignalSemaphore(device, pSignalInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferDeviceAddress\n";
-    }
+    Timer timer("vkGetBufferDeviceAddress");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddress(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferOpaqueCaptureAddress\n";
-    }
+    Timer timer("vkGetBufferOpaqueCaptureAddress");
     uint64_t result = device_dispatch_table(device)->GetBufferOpaqueCaptureAddress(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceMemoryOpaqueCaptureAddress\n";
-    }
+    Timer timer("vkGetDeviceMemoryOpaqueCaptureAddress");
     uint64_t result = device_dispatch_table(device)->GetDeviceMemoryOpaqueCaptureAddress(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndirectCount\n";
-    }
+    Timer timer("vkCmdDrawIndirectCount");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndexedIndirectCount\n";
-    }
+    Timer timer("vkCmdDrawIndexedIndirectCount");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateRenderPass2\n";
-    }
+    Timer timer("vkCreateRenderPass2");
     VkResult result = device_dispatch_table(device)->CreateRenderPass2(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass2(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginRenderPass2\n";
-    }
+    Timer timer("vkCmdBeginRenderPass2");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdNextSubpass2\n";
-    }
+    Timer timer("vkCmdNextSubpass2");
     device_dispatch_table(commandBuffer)->CmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRenderPass2\n";
-    }
+    Timer timer("vkCmdEndRenderPass2");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePrivateDataSlot(VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreatePrivateDataSlot\n";
-    }
+    Timer timer("vkCreatePrivateDataSlot");
     VkResult result = device_dispatch_table(device)->CreatePrivateDataSlot(device, pCreateInfo, pAllocator, pPrivateDataSlot);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPrivateDataSlot(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPrivateDataSlot\n";
-    }
+    Timer timer("vkDestroyPrivateDataSlot");
     device_dispatch_table(device)->DestroyPrivateDataSlot(device, privateDataSlot, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetPrivateData\n";
-    }
+    Timer timer("vkSetPrivateData");
     VkResult result = device_dispatch_table(device)->SetPrivateData(device, objectType, objectHandle, privateDataSlot, data);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPrivateData\n";
-    }
+    Timer timer("vkGetPrivateData");
     device_dispatch_table(device)->GetPrivateData(device, objectType, objectHandle, privateDataSlot, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPipelineBarrier2\n";
-    }
+    Timer timer("vkCmdPipelineBarrier2");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteTimestamp2\n";
-    }
+    Timer timer("vkCmdWriteTimestamp2");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueSubmit2\n";
-    }
+    Timer timer("vkQueueSubmit2");
     VkResult result = device_dispatch_table(queue)->QueueSubmit2(queue, submitCount, pSubmits, fence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBuffer2\n";
-    }
+    Timer timer("vkCmdCopyBuffer2");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImage2\n";
-    }
+    Timer timer("vkCmdCopyImage2");
     device_dispatch_table(commandBuffer)->CmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage2(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBufferToImage2\n";
-    }
+    Timer timer("vkCmdCopyBufferToImage2");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImageToBuffer2\n";
-    }
+    Timer timer("vkCmdCopyImageToBuffer2");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceBufferMemoryRequirements(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceBufferMemoryRequirements\n";
-    }
+    Timer timer("vkGetDeviceBufferMemoryRequirements");
     device_dispatch_table(device)->GetDeviceBufferMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageMemoryRequirements\n";
-    }
+    Timer timer("vkGetDeviceImageMemoryRequirements");
     device_dispatch_table(device)->GetDeviceImageMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSparseMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageSparseMemoryRequirements\n";
-    }
+    Timer timer("vkGetDeviceImageSparseMemoryRequirements");
     device_dispatch_table(device)->GetDeviceImageSparseMemoryRequirements(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetEvent2\n";
-    }
+    Timer timer("vkCmdSetEvent2");
     device_dispatch_table(commandBuffer)->CmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResetEvent2\n";
-    }
+    Timer timer("vkCmdResetEvent2");
     device_dispatch_table(commandBuffer)->CmdResetEvent2(commandBuffer, event, stageMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWaitEvents2\n";
-    }
+    Timer timer("vkCmdWaitEvents2");
     device_dispatch_table(commandBuffer)->CmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBlitImage2\n";
-    }
+    Timer timer("vkCmdBlitImage2");
     device_dispatch_table(commandBuffer)->CmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResolveImage2\n";
-    }
+    Timer timer("vkCmdResolveImage2");
     device_dispatch_table(commandBuffer)->CmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginRendering\n";
-    }
+    Timer timer("vkCmdBeginRendering");
     device_dispatch_table(commandBuffer)->CmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRendering\n";
-    }
+    Timer timer("vkCmdEndRendering");
     device_dispatch_table(commandBuffer)->CmdEndRendering(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCullMode\n";
-    }
+    Timer timer("vkCmdSetCullMode");
     device_dispatch_table(commandBuffer)->CmdSetCullMode(commandBuffer, cullMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetFrontFace\n";
-    }
+    Timer timer("vkCmdSetFrontFace");
     device_dispatch_table(commandBuffer)->CmdSetFrontFace(commandBuffer, frontFace);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPrimitiveTopology\n";
-    }
+    Timer timer("vkCmdSetPrimitiveTopology");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportWithCount\n";
-    }
+    Timer timer("vkCmdSetViewportWithCount");
     device_dispatch_table(commandBuffer)->CmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetScissorWithCount\n";
-    }
+    Timer timer("vkCmdSetScissorWithCount");
     device_dispatch_table(commandBuffer)->CmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindVertexBuffers2\n";
-    }
+    Timer timer("vkCmdBindVertexBuffers2");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthTestEnable\n";
-    }
+    Timer timer("vkCmdSetDepthTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthWriteEnable\n";
-    }
+    Timer timer("vkCmdSetDepthWriteEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthCompareOp\n";
-    }
+    Timer timer("vkCmdSetDepthCompareOp");
     device_dispatch_table(commandBuffer)->CmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBoundsTestEnable\n";
-    }
+    Timer timer("vkCmdSetDepthBoundsTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilTestEnable\n";
-    }
+    Timer timer("vkCmdSetStencilTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilOp\n";
-    }
+    Timer timer("vkCmdSetStencilOp");
     device_dispatch_table(commandBuffer)->CmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRasterizerDiscardEnable\n";
-    }
+    Timer timer("vkCmdSetRasterizerDiscardEnable");
     device_dispatch_table(commandBuffer)->CmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBiasEnable\n";
-    }
+    Timer timer("vkCmdSetDepthBiasEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPrimitiveRestartEnable\n";
-    }
+    Timer timer("vkCmdSetPrimitiveRestartEnable");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory2(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkMapMemory2\n";
-    }
+    Timer timer("vkMapMemory2");
     VkResult result = device_dispatch_table(device)->MapMemory2(device, pMemoryMapInfo, ppData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkUnmapMemory2(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUnmapMemory2\n";
-    }
+    Timer timer("vkUnmapMemory2");
     VkResult result = device_dispatch_table(device)->UnmapMemory2(device, pMemoryUnmapInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSubresourceLayout(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageSubresourceLayout\n";
-    }
+    Timer timer("vkGetDeviceImageSubresourceLayout");
     device_dispatch_table(device)->GetDeviceImageSubresourceLayout(device, pInfo, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSubresourceLayout2\n";
-    }
+    Timer timer("vkGetImageSubresourceLayout2");
     device_dispatch_table(device)->GetImageSubresourceLayout2(device, image, pSubresource, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToImage(VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMemoryToImage\n";
-    }
+    Timer timer("vkCopyMemoryToImage");
     VkResult result = device_dispatch_table(device)->CopyMemoryToImage(device, pCopyMemoryToImageInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToMemory(VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyImageToMemory\n";
-    }
+    Timer timer("vkCopyImageToMemory");
     VkResult result = device_dispatch_table(device)->CopyImageToMemory(device, pCopyImageToMemoryInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToImage(VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyImageToImage\n";
-    }
+    Timer timer("vkCopyImageToImage");
     VkResult result = device_dispatch_table(device)->CopyImageToImage(device, pCopyImageToImageInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkTransitionImageLayout(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkTransitionImageLayout\n";
-    }
+    Timer timer("vkTransitionImageLayout");
     VkResult result = device_dispatch_table(device)->TransitionImageLayout(device, transitionCount, pTransitions);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSet\n";
-    }
+    Timer timer("vkCmdPushDescriptorSet");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSetWithTemplate\n";
-    }
+    Timer timer("vkCmdPushDescriptorSetWithTemplate");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorSets2\n";
-    }
+    Timer timer("vkCmdBindDescriptorSets2");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushConstants2\n";
-    }
+    Timer timer("vkCmdPushConstants2");
     device_dispatch_table(commandBuffer)->CmdPushConstants2(commandBuffer, pPushConstantsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSet2\n";
-    }
+    Timer timer("vkCmdPushDescriptorSet2");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSetWithTemplate2\n";
-    }
+    Timer timer("vkCmdPushDescriptorSetWithTemplate2");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineStipple\n";
-    }
+    Timer timer("vkCmdSetLineStipple");
     device_dispatch_table(commandBuffer)->CmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindIndexBuffer2\n";
-    }
+    Timer timer("vkCmdBindIndexBuffer2");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetRenderingAreaGranularity(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRenderingAreaGranularity\n";
-    }
+    Timer timer("vkGetRenderingAreaGranularity");
     device_dispatch_table(device)->GetRenderingAreaGranularity(device, pRenderingAreaInfo, pGranularity);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRenderingAttachmentLocations\n";
-    }
+    Timer timer("vkCmdSetRenderingAttachmentLocations");
     device_dispatch_table(commandBuffer)->CmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRenderingInputAttachmentIndices\n";
-    }
+    Timer timer("vkCmdSetRenderingInputAttachmentIndices");
     device_dispatch_table(commandBuffer)->CmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSwapchainKHR\n";
-    }
+    Timer timer("vkCreateSwapchainKHR");
     VkResult result = device_dispatch_table(device)->CreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySwapchainKHR\n";
-    }
+    Timer timer("vkDestroySwapchainKHR");
     device_dispatch_table(device)->DestroySwapchainKHR(device, swapchain, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSwapchainImagesKHR\n";
-    }
+    Timer timer("vkGetSwapchainImagesKHR");
     VkResult result = device_dispatch_table(device)->GetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
+    Timer timer("vkAcquireNextImageKHR");
     VkResult result = device_dispatch_table(device)->AcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireNextImageKHR\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) {
+    Timer timer("vkQueuePresentKHR");
     VkResult result = device_dispatch_table(queue)->QueuePresentKHR(queue, pPresentInfo);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueuePresentKHR\n";
-    }
     ApiDumpInstance::current().nextFrame();
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupPresentCapabilitiesKHR(VkDevice device, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceGroupPresentCapabilitiesKHR\n";
-    }
+    Timer timer("vkGetDeviceGroupPresentCapabilitiesKHR");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupPresentCapabilitiesKHR(device, pDeviceGroupPresentCapabilities);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModesKHR(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceGroupSurfacePresentModesKHR\n";
-    }
+    Timer timer("vkGetDeviceGroupSurfacePresentModesKHR");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImage2KHR(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireNextImage2KHR\n";
-    }
+    Timer timer("vkAcquireNextImage2KHR");
     VkResult result = device_dispatch_table(device)->AcquireNextImage2KHR(device, pAcquireInfo, pImageIndex);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSharedSwapchainsKHR(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSharedSwapchainsKHR\n";
-    }
+    Timer timer("vkCreateSharedSwapchainsKHR");
     VkResult result = device_dispatch_table(device)->CreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionKHR* pVideoSession) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateVideoSessionKHR\n";
-    }
+    Timer timer("vkCreateVideoSessionKHR");
     VkResult result = device_dispatch_table(device)->CreateVideoSessionKHR(device, pCreateInfo, pAllocator, pVideoSession);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyVideoSessionKHR(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyVideoSessionKHR\n";
-    }
+    Timer timer("vkDestroyVideoSessionKHR");
     device_dispatch_table(device)->DestroyVideoSessionKHR(device, videoSession, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetVideoSessionMemoryRequirementsKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t* pMemoryRequirementsCount, VkVideoSessionMemoryRequirementsKHR* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetVideoSessionMemoryRequirementsKHR\n";
-    }
+    Timer timer("vkGetVideoSessionMemoryRequirementsKHR");
     VkResult result = device_dispatch_table(device)->GetVideoSessionMemoryRequirementsKHR(device, videoSession, pMemoryRequirementsCount, pMemoryRequirements);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindVideoSessionMemoryKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t bindSessionMemoryInfoCount, const VkBindVideoSessionMemoryInfoKHR* pBindSessionMemoryInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindVideoSessionMemoryKHR\n";
-    }
+    Timer timer("vkBindVideoSessionMemoryKHR");
     VkResult result = device_dispatch_table(device)->BindVideoSessionMemoryKHR(device, videoSession, bindSessionMemoryInfoCount, pBindSessionMemoryInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateVideoSessionParametersKHR(VkDevice device, const VkVideoSessionParametersCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionParametersKHR* pVideoSessionParameters) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateVideoSessionParametersKHR\n";
-    }
+    Timer timer("vkCreateVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->CreateVideoSessionParametersKHR(device, pCreateInfo, pAllocator, pVideoSessionParameters);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkUpdateVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkVideoSessionParametersUpdateInfoKHR* pUpdateInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateVideoSessionParametersKHR\n";
-    }
+    Timer timer("vkUpdateVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->UpdateVideoSessionParametersKHR(device, videoSessionParameters, pUpdateInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyVideoSessionParametersKHR\n";
-    }
+    Timer timer("vkDestroyVideoSessionParametersKHR");
     device_dispatch_table(device)->DestroyVideoSessionParametersKHR(device, videoSessionParameters, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginVideoCodingKHR\n";
-    }
+    Timer timer("vkCmdBeginVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoEndCodingInfoKHR* pEndCodingInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndVideoCodingKHR\n";
-    }
+    Timer timer("vkCmdEndVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdControlVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoCodingControlInfoKHR* pCodingControlInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdControlVideoCodingKHR\n";
-    }
+    Timer timer("vkCmdControlVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR* pDecodeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDecodeVideoKHR\n";
-    }
+    Timer timer("vkCmdDecodeVideoKHR");
     device_dispatch_table(commandBuffer)->CmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginRenderingKHR\n";
-    }
+    Timer timer("vkCmdBeginRenderingKHR");
     device_dispatch_table(commandBuffer)->CmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRenderingKHR\n";
-    }
+    Timer timer("vkCmdEndRenderingKHR");
     device_dispatch_table(commandBuffer)->CmdEndRenderingKHR(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceGroupPeerMemoryFeaturesKHR(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceGroupPeerMemoryFeaturesKHR\n";
-    }
+    Timer timer("vkGetDeviceGroupPeerMemoryFeaturesKHR");
     device_dispatch_table(device)->GetDeviceGroupPeerMemoryFeaturesKHR(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDeviceMaskKHR\n";
-    }
+    Timer timer("vkCmdSetDeviceMaskKHR");
     device_dispatch_table(commandBuffer)->CmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchBaseKHR\n";
-    }
+    Timer timer("vkCmdDispatchBaseKHR");
     device_dispatch_table(commandBuffer)->CmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkTrimCommandPoolKHR(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkTrimCommandPoolKHR\n";
-    }
+    Timer timer("vkTrimCommandPoolKHR");
     device_dispatch_table(device)->TrimCommandPoolKHR(device, commandPool, flags);
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandleKHR(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryWin32HandleKHR\n";
-    }
+    Timer timer("vkGetMemoryWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandlePropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryWin32HandlePropertiesKHR\n";
-    }
+    Timer timer("vkGetMemoryWin32HandlePropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandlePropertiesKHR(device, handleType, handle, pMemoryWin32HandleProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryFdKHR\n";
-    }
+    Timer timer("vkGetMemoryFdKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryFdPropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryFdPropertiesKHR\n";
-    }
+    Timer timer("vkGetMemoryFdPropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryFdPropertiesKHR(device, handleType, fd, pMemoryFdProperties);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreWin32HandleKHR(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkImportSemaphoreWin32HandleKHR\n";
-    }
+    Timer timer("vkImportSemaphoreWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreWin32HandleKHR(device, pImportSemaphoreWin32HandleInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreWin32HandleKHR(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSemaphoreWin32HandleKHR\n";
-    }
+    Timer timer("vkGetSemaphoreWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreFdKHR(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkImportSemaphoreFdKHR\n";
-    }
+    Timer timer("vkImportSemaphoreFdKHR");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreFdKHR(device, pImportSemaphoreFdInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreFdKHR(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSemaphoreFdKHR\n";
-    }
+    Timer timer("vkGetSemaphoreFdKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSetKHR\n";
-    }
+    Timer timer("vkCmdPushDescriptorSetKHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSetWithTemplateKHR\n";
-    }
+    Timer timer("vkCmdPushDescriptorSetWithTemplateKHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorUpdateTemplateKHR(VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDescriptorUpdateTemplateKHR\n";
-    }
+    Timer timer("vkCreateDescriptorUpdateTemplateKHR");
     VkResult result = device_dispatch_table(device)->CreateDescriptorUpdateTemplateKHR(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorUpdateTemplateKHR(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDescriptorUpdateTemplateKHR\n";
-    }
+    Timer timer("vkDestroyDescriptorUpdateTemplateKHR");
     device_dispatch_table(device)->DestroyDescriptorUpdateTemplateKHR(device, descriptorUpdateTemplate, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSetWithTemplateKHR(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateDescriptorSetWithTemplateKHR\n";
-    }
+    Timer timer("vkUpdateDescriptorSetWithTemplateKHR");
     device_dispatch_table(device)->UpdateDescriptorSetWithTemplateKHR(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass2KHR(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateRenderPass2KHR\n";
-    }
+    Timer timer("vkCreateRenderPass2KHR");
     VkResult result = device_dispatch_table(device)->CreateRenderPass2KHR(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginRenderPass2KHR\n";
-    }
+    Timer timer("vkCmdBeginRenderPass2KHR");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdNextSubpass2KHR\n";
-    }
+    Timer timer("vkCmdNextSubpass2KHR");
     device_dispatch_table(commandBuffer)->CmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRenderPass2KHR\n";
-    }
+    Timer timer("vkCmdEndRenderPass2KHR");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainStatusKHR(VkDevice device, VkSwapchainKHR swapchain) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSwapchainStatusKHR\n";
-    }
+    Timer timer("vkGetSwapchainStatusKHR");
     VkResult result = device_dispatch_table(device)->GetSwapchainStatusKHR(device, swapchain);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkImportFenceWin32HandleKHR(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkImportFenceWin32HandleKHR\n";
-    }
+    Timer timer("vkImportFenceWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->ImportFenceWin32HandleKHR(device, pImportFenceWin32HandleInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceWin32HandleKHR(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetFenceWin32HandleKHR\n";
-    }
+    Timer timer("vkGetFenceWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetFenceWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkImportFenceFdKHR(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkImportFenceFdKHR\n";
-    }
+    Timer timer("vkImportFenceFdKHR");
     VkResult result = device_dispatch_table(device)->ImportFenceFdKHR(device, pImportFenceFdInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceFdKHR(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetFenceFdKHR\n";
-    }
+    Timer timer("vkGetFenceFdKHR");
     VkResult result = device_dispatch_table(device)->GetFenceFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireProfilingLockKHR(VkDevice device, const VkAcquireProfilingLockInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireProfilingLockKHR\n";
-    }
+    Timer timer("vkAcquireProfilingLockKHR");
     VkResult result = device_dispatch_table(device)->AcquireProfilingLockKHR(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkReleaseProfilingLockKHR(VkDevice device) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseProfilingLockKHR\n";
-    }
+    Timer timer("vkReleaseProfilingLockKHR");
     device_dispatch_table(device)->ReleaseProfilingLockKHR(device);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2KHR(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageMemoryRequirements2KHR\n";
-    }
+    Timer timer("vkGetImageMemoryRequirements2KHR");
     device_dispatch_table(device)->GetImageMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2KHR(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferMemoryRequirements2KHR\n";
-    }
+    Timer timer("vkGetBufferMemoryRequirements2KHR");
     device_dispatch_table(device)->GetBufferMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements2KHR(VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSparseMemoryRequirements2KHR\n";
-    }
+    Timer timer("vkGetImageSparseMemoryRequirements2KHR");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements2KHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSamplerYcbcrConversionKHR(VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateSamplerYcbcrConversionKHR\n";
-    }
+    Timer timer("vkCreateSamplerYcbcrConversionKHR");
     VkResult result = device_dispatch_table(device)->CreateSamplerYcbcrConversionKHR(device, pCreateInfo, pAllocator, pYcbcrConversion);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroySamplerYcbcrConversionKHR(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroySamplerYcbcrConversionKHR\n";
-    }
+    Timer timer("vkDestroySamplerYcbcrConversionKHR");
     device_dispatch_table(device)->DestroySamplerYcbcrConversionKHR(device, ycbcrConversion, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindBufferMemory2KHR\n";
-    }
+    Timer timer("vkBindBufferMemory2KHR");
     VkResult result = device_dispatch_table(device)->BindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindImageMemory2KHR\n";
-    }
+    Timer timer("vkBindImageMemory2KHR");
     VkResult result = device_dispatch_table(device)->BindImageMemory2KHR(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSupportKHR(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetLayoutSupportKHR\n";
-    }
+    Timer timer("vkGetDescriptorSetLayoutSupportKHR");
     device_dispatch_table(device)->GetDescriptorSetLayoutSupportKHR(device, pCreateInfo, pSupport);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndirectCountKHR\n";
-    }
+    Timer timer("vkCmdDrawIndirectCountKHR");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndexedIndirectCountKHR\n";
-    }
+    Timer timer("vkCmdDrawIndexedIndirectCountKHR");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSemaphoreCounterValueKHR\n";
-    }
+    Timer timer("vkGetSemaphoreCounterValueKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreCounterValueKHR(device, semaphore, pValue);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
+    Timer timer("vkWaitSemaphoresKHR");
     VkResult result = device_dispatch_table(device)->WaitSemaphoresKHR(device, pWaitInfo, timeout);
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWaitSemaphoresKHR\n";
-    }
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSignalSemaphoreKHR\n";
-    }
+    Timer timer("vkSignalSemaphoreKHR");
     VkResult result = device_dispatch_table(device)->SignalSemaphoreKHR(device, pSignalInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetFragmentShadingRateKHR\n";
-    }
+    Timer timer("vkCmdSetFragmentShadingRateKHR");
     device_dispatch_table(commandBuffer)->CmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRenderingAttachmentLocationsKHR\n";
-    }
+    Timer timer("vkCmdSetRenderingAttachmentLocationsKHR");
     device_dispatch_table(commandBuffer)->CmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRenderingInputAttachmentIndicesKHR\n";
-    }
+    Timer timer("vkCmdSetRenderingInputAttachmentIndicesKHR");
     device_dispatch_table(commandBuffer)->CmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWaitForPresentKHR\n";
-    }
+    Timer timer("vkWaitForPresentKHR");
     VkResult result = device_dispatch_table(device)->WaitForPresentKHR(device, swapchain, presentId, timeout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddressKHR(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferDeviceAddressKHR\n";
-    }
+    Timer timer("vkGetBufferDeviceAddressKHR");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddressKHR(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetBufferOpaqueCaptureAddressKHR(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferOpaqueCaptureAddressKHR\n";
-    }
+    Timer timer("vkGetBufferOpaqueCaptureAddressKHR");
     uint64_t result = device_dispatch_table(device)->GetBufferOpaqueCaptureAddressKHR(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceMemoryOpaqueCaptureAddressKHR(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceMemoryOpaqueCaptureAddressKHR\n";
-    }
+    Timer timer("vkGetDeviceMemoryOpaqueCaptureAddressKHR");
     uint64_t result = device_dispatch_table(device)->GetDeviceMemoryOpaqueCaptureAddressKHR(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDeferredOperationKHR(VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDeferredOperationKHR\n";
-    }
+    Timer timer("vkCreateDeferredOperationKHR");
     VkResult result = device_dispatch_table(device)->CreateDeferredOperationKHR(device, pAllocator, pDeferredOperation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDeferredOperationKHR(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDeferredOperationKHR\n";
-    }
+    Timer timer("vkDestroyDeferredOperationKHR");
     device_dispatch_table(device)->DestroyDeferredOperationKHR(device, operation, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint32_t VKAPI_CALL vkGetDeferredOperationMaxConcurrencyKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeferredOperationMaxConcurrencyKHR\n";
-    }
+    Timer timer("vkGetDeferredOperationMaxConcurrencyKHR");
     uint32_t result = device_dispatch_table(device)->GetDeferredOperationMaxConcurrencyKHR(device, operation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeferredOperationResultKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeferredOperationResultKHR\n";
-    }
+    Timer timer("vkGetDeferredOperationResultKHR");
     VkResult result = device_dispatch_table(device)->GetDeferredOperationResultKHR(device, operation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkDeferredOperationJoinKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDeferredOperationJoinKHR\n";
-    }
+    Timer timer("vkDeferredOperationJoinKHR");
     VkResult result = device_dispatch_table(device)->DeferredOperationJoinKHR(device, operation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutablePropertiesKHR(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineExecutablePropertiesKHR\n";
-    }
+    Timer timer("vkGetPipelineExecutablePropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutablePropertiesKHR(device, pPipelineInfo, pExecutableCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutableStatisticsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pStatisticCount, VkPipelineExecutableStatisticKHR* pStatistics) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineExecutableStatisticsKHR\n";
-    }
+    Timer timer("vkGetPipelineExecutableStatisticsKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutableStatisticsKHR(device, pExecutableInfo, pStatisticCount, pStatistics);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutableInternalRepresentationsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pInternalRepresentationCount, VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineExecutableInternalRepresentationsKHR\n";
-    }
+    Timer timer("vkGetPipelineExecutableInternalRepresentationsKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, pInternalRepresentationCount, pInternalRepresentations);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory2KHR(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkMapMemory2KHR\n";
-    }
+    Timer timer("vkMapMemory2KHR");
     VkResult result = device_dispatch_table(device)->MapMemory2KHR(device, pMemoryMapInfo, ppData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkUnmapMemory2KHR(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUnmapMemory2KHR\n";
-    }
+    Timer timer("vkUnmapMemory2KHR");
     VkResult result = device_dispatch_table(device)->UnmapMemory2KHR(device, pMemoryUnmapInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetEncodedVideoSessionParametersKHR(VkDevice device, const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo, VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo, size_t* pDataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetEncodedVideoSessionParametersKHR\n";
-    }
+    Timer timer("vkGetEncodedVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->GetEncodedVideoSessionParametersKHR(device, pVideoSessionParametersInfo, pFeedbackInfo, pDataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEncodeVideoKHR\n";
-    }
+    Timer timer("vkCmdEncodeVideoKHR");
     device_dispatch_table(commandBuffer)->CmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetEvent2KHR\n";
-    }
+    Timer timer("vkCmdSetEvent2KHR");
     device_dispatch_table(commandBuffer)->CmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResetEvent2KHR\n";
-    }
+    Timer timer("vkCmdResetEvent2KHR");
     device_dispatch_table(commandBuffer)->CmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWaitEvents2KHR\n";
-    }
+    Timer timer("vkCmdWaitEvents2KHR");
     device_dispatch_table(commandBuffer)->CmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPipelineBarrier2KHR\n";
-    }
+    Timer timer("vkCmdPipelineBarrier2KHR");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteTimestamp2KHR\n";
-    }
+    Timer timer("vkCmdWriteTimestamp2KHR");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueSubmit2KHR\n";
-    }
+    Timer timer("vkQueueSubmit2KHR");
     VkResult result = device_dispatch_table(queue)->QueueSubmit2KHR(queue, submitCount, pSubmits, fence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBuffer2KHR\n";
-    }
+    Timer timer("vkCmdCopyBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImage2KHR\n";
-    }
+    Timer timer("vkCmdCopyImage2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyBufferToImage2KHR\n";
-    }
+    Timer timer("vkCmdCopyBufferToImage2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyImageToBuffer2KHR\n";
-    }
+    Timer timer("vkCmdCopyImageToBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBlitImage2KHR\n";
-    }
+    Timer timer("vkCmdBlitImage2KHR");
     device_dispatch_table(commandBuffer)->CmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage2KHR(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdResolveImage2KHR\n";
-    }
+    Timer timer("vkCmdResolveImage2KHR");
     device_dispatch_table(commandBuffer)->CmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdTraceRaysIndirect2KHR\n";
-    }
+    Timer timer("vkCmdTraceRaysIndirect2KHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceBufferMemoryRequirementsKHR(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceBufferMemoryRequirementsKHR\n";
-    }
+    Timer timer("vkGetDeviceBufferMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceBufferMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageMemoryRequirementsKHR\n";
-    }
+    Timer timer("vkGetDeviceImageMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceImageMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSparseMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageSparseMemoryRequirementsKHR\n";
-    }
+    Timer timer("vkGetDeviceImageSparseMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceImageSparseMemoryRequirementsKHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindIndexBuffer2KHR\n";
-    }
+    Timer timer("vkCmdBindIndexBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetRenderingAreaGranularityKHR(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRenderingAreaGranularityKHR\n";
-    }
+    Timer timer("vkGetRenderingAreaGranularityKHR");
     device_dispatch_table(device)->GetRenderingAreaGranularityKHR(device, pRenderingAreaInfo, pGranularity);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSubresourceLayoutKHR(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceImageSubresourceLayoutKHR\n";
-    }
+    Timer timer("vkGetDeviceImageSubresourceLayoutKHR");
     device_dispatch_table(device)->GetDeviceImageSubresourceLayoutKHR(device, pInfo, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2KHR(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSubresourceLayout2KHR\n";
-    }
+    Timer timer("vkGetImageSubresourceLayout2KHR");
     device_dispatch_table(device)->GetImageSubresourceLayout2KHR(device, image, pSubresource, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain, const VkPresentWait2InfoKHR* pPresentWait2Info) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWaitForPresent2KHR\n";
-    }
+    Timer timer("vkWaitForPresent2KHR");
     VkResult result = device_dispatch_table(device)->WaitForPresent2KHR(device, swapchain, pPresentWait2Info);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineBinaryHandlesInfoKHR* pBinaries) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreatePipelineBinariesKHR\n";
-    }
+    Timer timer("vkCreatePipelineBinariesKHR");
     VkResult result = device_dispatch_table(device)->CreatePipelineBinariesKHR(device, pCreateInfo, pAllocator, pBinaries);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineBinaryKHR(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPipelineBinaryKHR\n";
-    }
+    Timer timer("vkDestroyPipelineBinaryKHR");
     device_dispatch_table(device)->DestroyPipelineBinaryKHR(device, pipelineBinary, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineKeyKHR(VkDevice device, const VkPipelineCreateInfoKHR* pPipelineCreateInfo, VkPipelineBinaryKeyKHR* pPipelineKey) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineKeyKHR\n";
-    }
+    Timer timer("vkGetPipelineKeyKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineKeyKHR(device, pPipelineCreateInfo, pPipelineKey);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineBinaryDataKHR(VkDevice device, const VkPipelineBinaryDataInfoKHR* pInfo, VkPipelineBinaryKeyKHR* pPipelineBinaryKey, size_t* pPipelineBinaryDataSize, void* pPipelineBinaryData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineBinaryDataKHR\n";
-    }
+    Timer timer("vkGetPipelineBinaryDataKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineBinaryDataKHR(device, pInfo, pPipelineBinaryKey, pPipelineBinaryDataSize, pPipelineBinaryData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseCapturedPipelineDataKHR(VkDevice device, const VkReleaseCapturedPipelineDataInfoKHR* pInfo, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseCapturedPipelineDataKHR\n";
-    }
+    Timer timer("vkReleaseCapturedPipelineDataKHR");
     VkResult result = device_dispatch_table(device)->ReleaseCapturedPipelineDataKHR(device, pInfo, pAllocator);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseSwapchainImagesKHR(VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseSwapchainImagesKHR\n";
-    }
+    Timer timer("vkReleaseSwapchainImagesKHR");
     VkResult result = device_dispatch_table(device)->ReleaseSwapchainImagesKHR(device, pReleaseInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineStippleKHR\n";
-    }
+    Timer timer("vkCmdSetLineStippleKHR");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsKHR(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetCalibratedTimestampsKHR\n";
-    }
+    Timer timer("vkGetCalibratedTimestampsKHR");
     VkResult result = device_dispatch_table(device)->GetCalibratedTimestampsKHR(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorSets2KHR\n";
-    }
+    Timer timer("vkCmdBindDescriptorSets2KHR");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushConstants2KHR\n";
-    }
+    Timer timer("vkCmdPushConstants2KHR");
     device_dispatch_table(commandBuffer)->CmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSet2KHR\n";
-    }
+    Timer timer("vkCmdPushDescriptorSet2KHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDescriptorSetWithTemplate2KHR\n";
-    }
+    Timer timer("vkCmdPushDescriptorSetWithTemplate2KHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDescriptorBufferOffsets2EXT(VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDescriptorBufferOffsets2EXT\n";
-    }
+    Timer timer("vkCmdSetDescriptorBufferOffsets2EXT");
     device_dispatch_table(commandBuffer)->CmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBufferEmbeddedSamplers2EXT(VkCommandBuffer commandBuffer, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT\n";
-    }
+    Timer timer("vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryIndirectKHR\n";
-    }
+    Timer timer("vkCmdCopyMemoryIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryToImageIndirectKHR\n";
-    }
+    Timer timer("vkCmdCopyMemoryToImageIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRendering2KHR\n";
-    }
+    Timer timer("vkCmdEndRendering2KHR");
     device_dispatch_table(commandBuffer)->CmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDebugMarkerSetObjectTagEXT\n";
-    }
+    Timer timer("vkDebugMarkerSetObjectTagEXT");
     VkResult result = device_dispatch_table(device)->DebugMarkerSetObjectTagEXT(device, pTagInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    ApiDumpInstance::current().update_object_name_map(pNameInfo);
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDebugMarkerSetObjectNameEXT\n";
-    }
+    Timer timer("vkDebugMarkerSetObjectNameEXT");
     VkResult result = device_dispatch_table(device)->DebugMarkerSetObjectNameEXT(device, pNameInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDebugMarkerBeginEXT\n";
-    }
+    Timer timer("vkCmdDebugMarkerBeginEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDebugMarkerEndEXT\n";
-    }
+    Timer timer("vkCmdDebugMarkerEndEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerEndEXT(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDebugMarkerInsertEXT\n";
-    }
+    Timer timer("vkCmdDebugMarkerInsertEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindTransformFeedbackBuffersEXT\n";
-    }
+    Timer timer("vkCmdBindTransformFeedbackBuffersEXT");
     device_dispatch_table(commandBuffer)->CmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginTransformFeedbackEXT\n";
-    }
+    Timer timer("vkCmdBeginTransformFeedbackEXT");
     device_dispatch_table(commandBuffer)->CmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndTransformFeedbackEXT\n";
-    }
+    Timer timer("vkCmdEndTransformFeedbackEXT");
     device_dispatch_table(commandBuffer)->CmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginQueryIndexedEXT\n";
-    }
+    Timer timer("vkCmdBeginQueryIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndQueryIndexedEXT\n";
-    }
+    Timer timer("vkCmdEndQueryIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset, uint32_t vertexStride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndirectByteCountEXT\n";
-    }
+    Timer timer("vkCmdDrawIndirectByteCountEXT");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuModuleNVX* pModule) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateCuModuleNVX\n";
-    }
+    Timer timer("vkCreateCuModuleNVX");
     VkResult result = device_dispatch_table(device)->CreateCuModuleNVX(device, pCreateInfo, pAllocator, pModule);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCuFunctionNVX(VkDevice device, const VkCuFunctionCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateCuFunctionNVX\n";
-    }
+    Timer timer("vkCreateCuFunctionNVX");
     VkResult result = device_dispatch_table(device)->CreateCuFunctionNVX(device, pCreateInfo, pAllocator, pFunction);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyCuModuleNVX\n";
-    }
+    Timer timer("vkDestroyCuModuleNVX");
     device_dispatch_table(device)->DestroyCuModuleNVX(device, module, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyCuFunctionNVX\n";
-    }
+    Timer timer("vkDestroyCuFunctionNVX");
     device_dispatch_table(device)->DestroyCuFunctionNVX(device, function, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const VkCuLaunchInfoNVX* pLaunchInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCuLaunchKernelNVX\n";
-    }
+    Timer timer("vkCmdCuLaunchKernelNVX");
     device_dispatch_table(commandBuffer)->CmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint32_t VKAPI_CALL vkGetImageViewHandleNVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageViewHandleNVX\n";
-    }
+    Timer timer("vkGetImageViewHandleNVX");
     uint32_t result = device_dispatch_table(device)->GetImageViewHandleNVX(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetImageViewHandle64NVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageViewHandle64NVX\n";
-    }
+    Timer timer("vkGetImageViewHandle64NVX");
     uint64_t result = device_dispatch_table(device)->GetImageViewHandle64NVX(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageViewAddressNVX(VkDevice device, VkImageView imageView, VkImageViewAddressPropertiesNVX* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageViewAddressNVX\n";
-    }
+    Timer timer("vkGetImageViewAddressNVX");
     VkResult result = device_dispatch_table(device)->GetImageViewAddressNVX(device, imageView, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceCombinedImageSamplerIndexNVX(VkDevice device, uint64_t imageViewIndex, uint64_t samplerIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceCombinedImageSamplerIndexNVX\n";
-    }
+    Timer timer("vkGetDeviceCombinedImageSamplerIndexNVX");
     uint64_t result = device_dispatch_table(device)->GetDeviceCombinedImageSamplerIndexNVX(device, imageViewIndex, samplerIndex);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndirectCountAMD\n";
-    }
+    Timer timer("vkCmdDrawIndirectCountAMD");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawIndexedIndirectCountAMD\n";
-    }
+    Timer timer("vkCmdDrawIndexedIndirectCountAMD");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetShaderInfoAMD\n";
-    }
+    Timer timer("vkGetShaderInfoAMD");
     VkResult result = device_dispatch_table(device)->GetShaderInfoAMD(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryWin32HandleNV\n";
-    }
+    Timer timer("vkGetMemoryWin32HandleNV");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandleNV(device, memory, handleType, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginConditionalRenderingEXT(VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginConditionalRenderingEXT\n";
-    }
+    Timer timer("vkCmdBeginConditionalRenderingEXT");
     device_dispatch_table(commandBuffer)->CmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndConditionalRenderingEXT\n";
-    }
+    Timer timer("vkCmdEndConditionalRenderingEXT");
     device_dispatch_table(commandBuffer)->CmdEndConditionalRenderingEXT(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportWScalingNV\n";
-    }
+    Timer timer("vkCmdSetViewportWScalingNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkDisplayPowerControlEXT(VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDisplayPowerControlEXT\n";
-    }
+    Timer timer("vkDisplayPowerControlEXT");
     VkResult result = device_dispatch_table(device)->DisplayPowerControlEXT(device, display, pDisplayPowerInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterDeviceEventEXT(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkRegisterDeviceEventEXT\n";
-    }
+    Timer timer("vkRegisterDeviceEventEXT");
     VkResult result = device_dispatch_table(device)->RegisterDeviceEventEXT(device, pDeviceEventInfo, pAllocator, pFence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterDisplayEventEXT(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkRegisterDisplayEventEXT\n";
-    }
+    Timer timer("vkRegisterDisplayEventEXT");
     VkResult result = device_dispatch_table(device)->RegisterDisplayEventEXT(device, display, pDisplayEventInfo, pAllocator, pFence);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainCounterEXT(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSwapchainCounterEXT\n";
-    }
+    Timer timer("vkGetSwapchainCounterEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainCounterEXT(device, swapchain, counter, pCounterValue);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRefreshCycleDurationGOOGLE\n";
-    }
+    Timer timer("vkGetRefreshCycleDurationGOOGLE");
     VkResult result = device_dispatch_table(device)->GetRefreshCycleDurationGOOGLE(device, swapchain, pDisplayTimingProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPastPresentationTimingGOOGLE\n";
-    }
+    Timer timer("vkGetPastPresentationTimingGOOGLE");
     VkResult result = device_dispatch_table(device)->GetPastPresentationTimingGOOGLE(device, swapchain, pPresentationTimingCount, pPresentationTimings);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDiscardRectangleEXT\n";
-    }
+    Timer timer("vkCmdSetDiscardRectangleEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDiscardRectangleEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDiscardRectangleEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDiscardRectangleModeEXT\n";
-    }
+    Timer timer("vkCmdSetDiscardRectangleModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkSetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetHdrMetadataEXT\n";
-    }
+    Timer timer("vkSetHdrMetadataEXT");
     device_dispatch_table(device)->SetHdrMetadataEXT(device, swapchainCount, pSwapchains, pMetadata);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    ApiDumpInstance::current().update_object_name_map(pNameInfo);
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetDebugUtilsObjectNameEXT\n";
-    }
+    Timer timer("vkSetDebugUtilsObjectNameEXT");
     VkResult result = device_dispatch_table(device)->SetDebugUtilsObjectNameEXT(device, pNameInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetDebugUtilsObjectTagEXT\n";
-    }
+    Timer timer("vkSetDebugUtilsObjectTagEXT");
     VkResult result = device_dispatch_table(device)->SetDebugUtilsObjectTagEXT(device, pTagInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkQueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueBeginDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkQueueBeginDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkQueueEndDebugUtilsLabelEXT(VkQueue queue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueEndDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkQueueEndDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueEndDebugUtilsLabelEXT(queue);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkQueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueInsertDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkQueueInsertDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkCmdBeginDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkCmdEndDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdInsertDebugUtilsLabelEXT\n";
-    }
+    Timer timer("vkCmdInsertDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, VkAndroidHardwareBufferPropertiesANDROID* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAndroidHardwareBufferPropertiesANDROID\n";
-    }
+    Timer timer("vkGetAndroidHardwareBufferPropertiesANDROID");
     VkResult result = device_dispatch_table(device)->GetAndroidHardwareBufferPropertiesANDROID(device, buffer, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryAndroidHardwareBufferANDROID(VkDevice device, const VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo, struct AHardwareBuffer** pBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryAndroidHardwareBufferANDROID\n";
-    }
+    Timer timer("vkGetMemoryAndroidHardwareBufferANDROID");
     VkResult result = device_dispatch_table(device)->GetMemoryAndroidHardwareBufferANDROID(device, pInfo, pBuffer);
     return result;
 }
@@ -4537,2782 +2733,1602 @@ VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryAndroidHardwareBufferANDROID(VkDevice 
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateExecutionGraphPipelinesAMDX\n";
-    }
+    Timer timer("vkCreateExecutionGraphPipelinesAMDX");
     VkResult result = device_dispatch_table(device)->CreateExecutionGraphPipelinesAMDX(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline executionGraph, VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetExecutionGraphPipelineScratchSizeAMDX\n";
-    }
+    Timer timer("vkGetExecutionGraphPipelineScratchSizeAMDX");
     VkResult result = device_dispatch_table(device)->GetExecutionGraphPipelineScratchSizeAMDX(device, executionGraph, pSizeInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGraph, const VkPipelineShaderStageNodeCreateInfoAMDX* pNodeInfo, uint32_t* pNodeIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetExecutionGraphPipelineNodeIndexAMDX\n";
-    }
+    Timer timer("vkGetExecutionGraphPipelineNodeIndexAMDX");
     VkResult result = device_dispatch_table(device)->GetExecutionGraphPipelineNodeIndexAMDX(device, executionGraph, pNodeInfo, pNodeIndex);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph, VkDeviceAddress scratch, VkDeviceSize scratchSize) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdInitializeGraphScratchMemoryAMDX\n";
-    }
+    Timer timer("vkCmdInitializeGraphScratchMemoryAMDX");
     device_dispatch_table(commandBuffer)->CmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchGraphAMDX\n";
-    }
+    Timer timer("vkCmdDispatchGraphAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchGraphIndirectAMDX\n";
-    }
+    Timer timer("vkCmdDispatchGraphIndirectAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchGraphIndirectCountAMDX\n";
-    }
+    Timer timer("vkCmdDispatchGraphIndirectCountAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteSamplerDescriptorsEXT(VkDevice device, uint32_t samplerCount, const VkSamplerCreateInfo* pSamplers, const VkHostAddressRangeEXT* pDescriptors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWriteSamplerDescriptorsEXT\n";
-    }
+    Timer timer("vkWriteSamplerDescriptorsEXT");
     VkResult result = device_dispatch_table(device)->WriteSamplerDescriptorsEXT(device, samplerCount, pSamplers, pDescriptors);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteResourceDescriptorsEXT(VkDevice device, uint32_t resourceCount, const VkResourceDescriptorInfoEXT* pResources, const VkHostAddressRangeEXT* pDescriptors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWriteResourceDescriptorsEXT\n";
-    }
+    Timer timer("vkWriteResourceDescriptorsEXT");
     VkResult result = device_dispatch_table(device)->WriteResourceDescriptorsEXT(device, resourceCount, pResources, pDescriptors);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindSamplerHeapEXT\n";
-    }
+    Timer timer("vkCmdBindSamplerHeapEXT");
     device_dispatch_table(commandBuffer)->CmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindResourceHeapEXT\n";
-    }
+    Timer timer("vkCmdBindResourceHeapEXT");
     device_dispatch_table(commandBuffer)->CmdBindResourceHeapEXT(commandBuffer, pBindInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPushDataEXT\n";
-    }
+    Timer timer("vkCmdPushDataEXT");
     device_dispatch_table(commandBuffer)->CmdPushDataEXT(commandBuffer, pPushDataInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageOpaqueCaptureDataEXT(VkDevice device, uint32_t imageCount, const VkImage* pImages, VkHostAddressRangeEXT* pDatas) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageOpaqueCaptureDataEXT\n";
-    }
+    Timer timer("vkGetImageOpaqueCaptureDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageOpaqueCaptureDataEXT(device, imageCount, pImages, pDatas);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterCustomBorderColorEXT(VkDevice device, const VkSamplerCustomBorderColorCreateInfoEXT* pBorderColor, VkBool32 requestIndex, uint32_t* pIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkRegisterCustomBorderColorEXT\n";
-    }
+    Timer timer("vkRegisterCustomBorderColorEXT");
     VkResult result = device_dispatch_table(device)->RegisterCustomBorderColorEXT(device, pBorderColor, requestIndex, pIndex);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUnregisterCustomBorderColorEXT(VkDevice device, uint32_t index) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUnregisterCustomBorderColorEXT\n";
-    }
+    Timer timer("vkUnregisterCustomBorderColorEXT");
     device_dispatch_table(device)->UnregisterCustomBorderColorEXT(device, index);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorOpaqueCaptureDataARM(VkDevice device, uint32_t tensorCount, const VkTensorARM* pTensors, VkHostAddressRangeEXT* pDatas) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetTensorOpaqueCaptureDataARM\n";
-    }
+    Timer timer("vkGetTensorOpaqueCaptureDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorOpaqueCaptureDataARM(device, tensorCount, pTensors, pDatas);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetSampleLocationsEXT\n";
-    }
+    Timer timer("vkCmdSetSampleLocationsEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageDrmFormatModifierPropertiesEXT(VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageDrmFormatModifierPropertiesEXT\n";
-    }
+    Timer timer("vkGetImageDrmFormatModifierPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetImageDrmFormatModifierPropertiesEXT(device, image, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateValidationCacheEXT(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateValidationCacheEXT\n";
-    }
+    Timer timer("vkCreateValidationCacheEXT");
     VkResult result = device_dispatch_table(device)->CreateValidationCacheEXT(device, pCreateInfo, pAllocator, pValidationCache);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyValidationCacheEXT(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyValidationCacheEXT\n";
-    }
+    Timer timer("vkDestroyValidationCacheEXT");
     device_dispatch_table(device)->DestroyValidationCacheEXT(device, validationCache, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkMergeValidationCachesEXT(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkMergeValidationCachesEXT\n";
-    }
+    Timer timer("vkMergeValidationCachesEXT");
     VkResult result = device_dispatch_table(device)->MergeValidationCachesEXT(device, dstCache, srcCacheCount, pSrcCaches);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetValidationCacheDataEXT(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetValidationCacheDataEXT\n";
-    }
+    Timer timer("vkGetValidationCacheDataEXT");
     VkResult result = device_dispatch_table(device)->GetValidationCacheDataEXT(device, validationCache, pDataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindShadingRateImageNV\n";
-    }
+    Timer timer("vkCmdBindShadingRateImageNV");
     device_dispatch_table(commandBuffer)->CmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkShadingRatePaletteNV* pShadingRatePalettes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportShadingRatePaletteNV\n";
-    }
+    Timer timer("vkCmdSetViewportShadingRatePaletteNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType, uint32_t customSampleOrderCount, const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoarseSampleOrderNV\n";
-    }
+    Timer timer("vkCmdSetCoarseSampleOrderNV");
     device_dispatch_table(commandBuffer)->CmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAccelerationStructureNV(VkDevice device, const VkAccelerationStructureCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureNV* pAccelerationStructure) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateAccelerationStructureNV\n";
-    }
+    Timer timer("vkCreateAccelerationStructureNV");
     VkResult result = device_dispatch_table(device)->CreateAccelerationStructureNV(device, pCreateInfo, pAllocator, pAccelerationStructure);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyAccelerationStructureNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyAccelerationStructureNV\n";
-    }
+    Timer timer("vkDestroyAccelerationStructureNV");
     device_dispatch_table(device)->DestroyAccelerationStructureNV(device, accelerationStructure, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetAccelerationStructureMemoryRequirementsNV(VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAccelerationStructureMemoryRequirementsNV\n";
-    }
+    Timer timer("vkGetAccelerationStructureMemoryRequirementsNV");
     device_dispatch_table(device)->GetAccelerationStructureMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindAccelerationStructureMemoryNV(VkDevice device, uint32_t bindInfoCount, const VkBindAccelerationStructureMemoryInfoNV* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindAccelerationStructureMemoryNV\n";
-    }
+    Timer timer("vkBindAccelerationStructureMemoryNV");
     VkResult result = device_dispatch_table(device)->BindAccelerationStructureMemoryNV(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch, VkDeviceSize scratchOffset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildAccelerationStructureNV\n";
-    }
+    Timer timer("vkCmdBuildAccelerationStructureNV");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyAccelerationStructureNV\n";
-    }
+    Timer timer("vkCmdCopyAccelerationStructureNV");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride, VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdTraceRaysNV\n";
-    }
+    Timer timer("vkCmdTraceRaysNV");
     device_dispatch_table(commandBuffer)->CmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRayTracingPipelinesNV(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoNV* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateRayTracingPipelinesNV\n";
-    }
+    Timer timer("vkCreateRayTracingPipelinesNV");
     VkResult result = device_dispatch_table(device)->CreateRayTracingPipelinesNV(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRayTracingShaderGroupHandlesKHR\n";
-    }
+    Timer timer("vkGetRayTracingShaderGroupHandlesKHR");
     VkResult result = device_dispatch_table(device)->GetRayTracingShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesNV(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRayTracingShaderGroupHandlesNV\n";
-    }
+    Timer timer("vkGetRayTracingShaderGroupHandlesNV");
     VkResult result = device_dispatch_table(device)->GetRayTracingShaderGroupHandlesNV(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAccelerationStructureHandleNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAccelerationStructureHandleNV\n";
-    }
+    Timer timer("vkGetAccelerationStructureHandleNV");
     VkResult result = device_dispatch_table(device)->GetAccelerationStructureHandleNV(device, accelerationStructure, dataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureNV* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteAccelerationStructuresPropertiesNV\n";
-    }
+    Timer timer("vkCmdWriteAccelerationStructuresPropertiesNV");
     device_dispatch_table(commandBuffer)->CmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCompileDeferredNV(VkDevice device, VkPipeline pipeline, uint32_t shader) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCompileDeferredNV\n";
-    }
+    Timer timer("vkCompileDeferredNV");
     VkResult result = device_dispatch_table(device)->CompileDeferredNV(device, pipeline, shader);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryHostPointerPropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryHostPointerPropertiesEXT\n";
-    }
+    Timer timer("vkGetMemoryHostPointerPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryHostPointerPropertiesEXT(device, handleType, pHostPointer, pMemoryHostPointerProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteBufferMarkerAMD\n";
-    }
+    Timer timer("vkCmdWriteBufferMarkerAMD");
     device_dispatch_table(commandBuffer)->CmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteBufferMarker2AMD\n";
-    }
+    Timer timer("vkCmdWriteBufferMarker2AMD");
     device_dispatch_table(commandBuffer)->CmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsEXT(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetCalibratedTimestampsEXT\n";
-    }
+    Timer timer("vkGetCalibratedTimestampsEXT");
     VkResult result = device_dispatch_table(device)->GetCalibratedTimestampsEXT(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksNV\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksIndirectNV\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksIndirectNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksIndirectCountNV\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksIndirectCountNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkBool32* pExclusiveScissorEnables) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetExclusiveScissorEnableNV\n";
-    }
+    Timer timer("vkCmdSetExclusiveScissorEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkRect2D* pExclusiveScissors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetExclusiveScissorNV\n";
-    }
+    Timer timer("vkCmdSetExclusiveScissorNV");
     device_dispatch_table(commandBuffer)->CmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCheckpointNV\n";
-    }
+    Timer timer("vkCmdSetCheckpointNV");
     device_dispatch_table(commandBuffer)->CmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointDataNV* pCheckpointData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetQueueCheckpointDataNV\n";
-    }
+    Timer timer("vkGetQueueCheckpointDataNV");
     device_dispatch_table(queue)->GetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointData2NV* pCheckpointData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetQueueCheckpointData2NV\n";
-    }
+    Timer timer("vkGetQueueCheckpointData2NV");
     device_dispatch_table(queue)->GetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetSwapchainPresentTimingQueueSizeEXT(VkDevice device, VkSwapchainKHR swapchain, uint32_t size) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetSwapchainPresentTimingQueueSizeEXT\n";
-    }
+    Timer timer("vkSetSwapchainPresentTimingQueueSizeEXT");
     VkResult result = device_dispatch_table(device)->SetSwapchainPresentTimingQueueSizeEXT(device, swapchain, size);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainTimingPropertiesEXT(VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimingPropertiesEXT* pSwapchainTimingProperties, uint64_t* pSwapchainTimingPropertiesCounter) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSwapchainTimingPropertiesEXT\n";
-    }
+    Timer timer("vkGetSwapchainTimingPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainTimingPropertiesEXT(device, swapchain, pSwapchainTimingProperties, pSwapchainTimingPropertiesCounter);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainTimeDomainPropertiesEXT(VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSwapchainTimeDomainPropertiesEXT\n";
-    }
+    Timer timer("vkGetSwapchainTimeDomainPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainTimeDomainPropertiesEXT(device, swapchain, pSwapchainTimeDomainProperties, pTimeDomainsCounter);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPastPresentationTimingEXT(VkDevice device, const VkPastPresentationTimingInfoEXT* pPastPresentationTimingInfo, VkPastPresentationTimingPropertiesEXT* pPastPresentationTimingProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPastPresentationTimingEXT\n";
-    }
+    Timer timer("vkGetPastPresentationTimingEXT");
     VkResult result = device_dispatch_table(device)->GetPastPresentationTimingEXT(device, pPastPresentationTimingInfo, pPastPresentationTimingProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkInitializePerformanceApiINTEL(VkDevice device, const VkInitializePerformanceApiInfoINTEL* pInitializeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkInitializePerformanceApiINTEL\n";
-    }
+    Timer timer("vkInitializePerformanceApiINTEL");
     VkResult result = device_dispatch_table(device)->InitializePerformanceApiINTEL(device, pInitializeInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUninitializePerformanceApiINTEL(VkDevice device) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUninitializePerformanceApiINTEL\n";
-    }
+    Timer timer("vkUninitializePerformanceApiINTEL");
     device_dispatch_table(device)->UninitializePerformanceApiINTEL(device);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceMarkerInfoINTEL* pMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPerformanceMarkerINTEL\n";
-    }
+    Timer timer("vkCmdSetPerformanceMarkerINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceStreamMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPerformanceStreamMarkerINTEL\n";
-    }
+    Timer timer("vkCmdSetPerformanceStreamMarkerINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL* pOverrideInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPerformanceOverrideINTEL\n";
-    }
+    Timer timer("vkCmdSetPerformanceOverrideINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquirePerformanceConfigurationINTEL(VkDevice device, const VkPerformanceConfigurationAcquireInfoINTEL* pAcquireInfo, VkPerformanceConfigurationINTEL* pConfiguration) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquirePerformanceConfigurationINTEL\n";
-    }
+    Timer timer("vkAcquirePerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(device)->AcquirePerformanceConfigurationINTEL(device, pAcquireInfo, pConfiguration);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleasePerformanceConfigurationINTEL(VkDevice device, VkPerformanceConfigurationINTEL configuration) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleasePerformanceConfigurationINTEL\n";
-    }
+    Timer timer("vkReleasePerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(device)->ReleasePerformanceConfigurationINTEL(device, configuration);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSetPerformanceConfigurationINTEL(VkQueue queue, VkPerformanceConfigurationINTEL configuration) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueSetPerformanceConfigurationINTEL\n";
-    }
+    Timer timer("vkQueueSetPerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(queue)->QueueSetPerformanceConfigurationINTEL(queue, configuration);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPerformanceParameterINTEL\n";
-    }
+    Timer timer("vkGetPerformanceParameterINTEL");
     VkResult result = device_dispatch_table(device)->GetPerformanceParameterINTEL(device, parameter, pValue);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkSetLocalDimmingAMD(VkDevice device, VkSwapchainKHR swapChain, VkBool32 localDimmingEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetLocalDimmingAMD\n";
-    }
+    Timer timer("vkSetLocalDimmingAMD");
     device_dispatch_table(device)->SetLocalDimmingAMD(device, swapChain, localDimmingEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddressEXT(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferDeviceAddressEXT\n";
-    }
+    Timer timer("vkGetBufferDeviceAddressEXT");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddressEXT(device, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAcquireFullScreenExclusiveModeEXT\n";
-    }
+    Timer timer("vkAcquireFullScreenExclusiveModeEXT");
     VkResult result = device_dispatch_table(device)->AcquireFullScreenExclusiveModeEXT(device, swapchain);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseFullScreenExclusiveModeEXT\n";
-    }
+    Timer timer("vkReleaseFullScreenExclusiveModeEXT");
     VkResult result = device_dispatch_table(device)->ReleaseFullScreenExclusiveModeEXT(device, swapchain);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModes2EXT(VkDevice device, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkDeviceGroupPresentModeFlagsKHR* pModes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceGroupSurfacePresentModes2EXT\n";
-    }
+    Timer timer("vkGetDeviceGroupSurfacePresentModes2EXT");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupSurfacePresentModes2EXT(device, pSurfaceInfo, pModes);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineStippleEXT\n";
-    }
+    Timer timer("vkCmdSetLineStippleEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkResetQueryPoolEXT\n";
-    }
+    Timer timer("vkResetQueryPoolEXT");
     device_dispatch_table(device)->ResetQueryPoolEXT(device, queryPool, firstQuery, queryCount);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCullModeEXT\n";
-    }
+    Timer timer("vkCmdSetCullModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetCullModeEXT(commandBuffer, cullMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetFrontFaceEXT\n";
-    }
+    Timer timer("vkCmdSetFrontFaceEXT");
     device_dispatch_table(commandBuffer)->CmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPrimitiveTopologyEXT\n";
-    }
+    Timer timer("vkCmdSetPrimitiveTopologyEXT");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportWithCountEXT\n";
-    }
+    Timer timer("vkCmdSetViewportWithCountEXT");
     device_dispatch_table(commandBuffer)->CmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetScissorWithCountEXT\n";
-    }
+    Timer timer("vkCmdSetScissorWithCountEXT");
     device_dispatch_table(commandBuffer)->CmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindVertexBuffers2EXT\n";
-    }
+    Timer timer("vkCmdBindVertexBuffers2EXT");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthTestEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthWriteEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthWriteEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthCompareOpEXT\n";
-    }
+    Timer timer("vkCmdSetDepthCompareOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBoundsTestEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthBoundsTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilTestEnableEXT\n";
-    }
+    Timer timer("vkCmdSetStencilTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetStencilOpEXT\n";
-    }
+    Timer timer("vkCmdSetStencilOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToImageEXT(VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMemoryToImageEXT\n";
-    }
+    Timer timer("vkCopyMemoryToImageEXT");
     VkResult result = device_dispatch_table(device)->CopyMemoryToImageEXT(device, pCopyMemoryToImageInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToMemoryEXT(VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyImageToMemoryEXT\n";
-    }
+    Timer timer("vkCopyImageToMemoryEXT");
     VkResult result = device_dispatch_table(device)->CopyImageToMemoryEXT(device, pCopyImageToMemoryInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToImageEXT(VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyImageToImageEXT\n";
-    }
+    Timer timer("vkCopyImageToImageEXT");
     VkResult result = device_dispatch_table(device)->CopyImageToImageEXT(device, pCopyImageToImageInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkTransitionImageLayoutEXT(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkTransitionImageLayoutEXT\n";
-    }
+    Timer timer("vkTransitionImageLayoutEXT");
     VkResult result = device_dispatch_table(device)->TransitionImageLayoutEXT(device, transitionCount, pTransitions);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageSubresourceLayout2EXT\n";
-    }
+    Timer timer("vkGetImageSubresourceLayout2EXT");
     device_dispatch_table(device)->GetImageSubresourceLayout2EXT(device, image, pSubresource, pLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkReleaseSwapchainImagesEXT\n";
-    }
+    Timer timer("vkReleaseSwapchainImagesEXT");
     VkResult result = device_dispatch_table(device)->ReleaseSwapchainImagesEXT(device, pReleaseInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetGeneratedCommandsMemoryRequirementsNV(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetGeneratedCommandsMemoryRequirementsNV\n";
-    }
+    Timer timer("vkGetGeneratedCommandsMemoryRequirementsNV");
     device_dispatch_table(device)->GetGeneratedCommandsMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPreprocessGeneratedCommandsNV\n";
-    }
+    Timer timer("vkCmdPreprocessGeneratedCommandsNV");
     device_dispatch_table(commandBuffer)->CmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdExecuteGeneratedCommandsNV\n";
-    }
+    Timer timer("vkCmdExecuteGeneratedCommandsNV");
     device_dispatch_table(commandBuffer)->CmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline, uint32_t groupIndex) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindPipelineShaderGroupNV\n";
-    }
+    Timer timer("vkCmdBindPipelineShaderGroupNV");
     device_dispatch_table(commandBuffer)->CmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectCommandsLayoutNV(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNV* pIndirectCommandsLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateIndirectCommandsLayoutNV\n";
-    }
+    Timer timer("vkCreateIndirectCommandsLayoutNV");
     VkResult result = device_dispatch_table(device)->CreateIndirectCommandsLayoutNV(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyIndirectCommandsLayoutNV\n";
-    }
+    Timer timer("vkDestroyIndirectCommandsLayoutNV");
     device_dispatch_table(device)->DestroyIndirectCommandsLayoutNV(device, indirectCommandsLayout, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBias2EXT\n";
-    }
+    Timer timer("vkCmdSetDepthBias2EXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePrivateDataSlotEXT(VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreatePrivateDataSlotEXT\n";
-    }
+    Timer timer("vkCreatePrivateDataSlotEXT");
     VkResult result = device_dispatch_table(device)->CreatePrivateDataSlotEXT(device, pCreateInfo, pAllocator, pPrivateDataSlot);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyPrivateDataSlotEXT(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyPrivateDataSlotEXT\n";
-    }
+    Timer timer("vkDestroyPrivateDataSlotEXT");
     device_dispatch_table(device)->DestroyPrivateDataSlotEXT(device, privateDataSlot, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetPrivateDataEXT\n";
-    }
+    Timer timer("vkSetPrivateDataEXT");
     VkResult result = device_dispatch_table(device)->SetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, data);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPrivateDataEXT\n";
-    }
+    Timer timer("vkGetPrivateDataEXT");
     device_dispatch_table(device)->GetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, pData);
 }
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCudaModuleNV(VkDevice device, const VkCudaModuleCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaModuleNV* pModule) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateCudaModuleNV\n";
-    }
+    Timer timer("vkCreateCudaModuleNV");
     VkResult result = device_dispatch_table(device)->CreateCudaModuleNV(device, pCreateInfo, pAllocator, pModule);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t* pCacheSize, void* pCacheData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetCudaModuleCacheNV\n";
-    }
+    Timer timer("vkGetCudaModuleCacheNV");
     VkResult result = device_dispatch_table(device)->GetCudaModuleCacheNV(device, module, pCacheSize, pCacheData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCudaFunctionNV(VkDevice device, const VkCudaFunctionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaFunctionNV* pFunction) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateCudaFunctionNV\n";
-    }
+    Timer timer("vkCreateCudaFunctionNV");
     VkResult result = device_dispatch_table(device)->CreateCudaFunctionNV(device, pCreateInfo, pAllocator, pFunction);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyCudaModuleNV\n";
-    }
+    Timer timer("vkDestroyCudaModuleNV");
     device_dispatch_table(device)->DestroyCudaModuleNV(device, module, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyCudaFunctionNV\n";
-    }
+    Timer timer("vkDestroyCudaFunctionNV");
     device_dispatch_table(device)->DestroyCudaFunctionNV(device, function, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCudaLaunchKernelNV\n";
-    }
+    Timer timer("vkCmdCudaLaunchKernelNV");
     device_dispatch_table(commandBuffer)->CmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchTileQCOM\n";
-    }
+    Timer timer("vkCmdDispatchTileQCOM");
     device_dispatch_table(commandBuffer)->CmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginPerTileExecutionQCOM\n";
-    }
+    Timer timer("vkCmdBeginPerTileExecutionQCOM");
     device_dispatch_table(commandBuffer)->CmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndPerTileExecutionQCOM\n";
-    }
+    Timer timer("vkCmdEndPerTileExecutionQCOM");
     device_dispatch_table(commandBuffer)->CmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
 }
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkExportMetalObjectsEXT\n";
-    }
+    Timer timer("vkExportMetalObjectsEXT");
     device_dispatch_table(device)->ExportMetalObjectsEXT(device, pMetalObjectsInfo);
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSizeEXT(VkDevice device, VkDescriptorSetLayout layout, VkDeviceSize* pLayoutSizeInBytes) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetLayoutSizeEXT\n";
-    }
+    Timer timer("vkGetDescriptorSetLayoutSizeEXT");
     device_dispatch_table(device)->GetDescriptorSetLayoutSizeEXT(device, layout, pLayoutSizeInBytes);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutBindingOffsetEXT(VkDevice device, VkDescriptorSetLayout layout, uint32_t binding, VkDeviceSize* pOffset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetLayoutBindingOffsetEXT\n";
-    }
+    Timer timer("vkGetDescriptorSetLayoutBindingOffsetEXT");
     device_dispatch_table(device)->GetDescriptorSetLayoutBindingOffsetEXT(device, layout, binding, pOffset);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorEXT(VkDevice device, const VkDescriptorGetInfoEXT* pDescriptorInfo, size_t dataSize, void* pDescriptor) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorEXT\n";
-    }
+    Timer timer("vkGetDescriptorEXT");
     device_dispatch_table(device)->GetDescriptorEXT(device, pDescriptorInfo, dataSize, pDescriptor);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorBuffersEXT\n";
-    }
+    Timer timer("vkCmdBindDescriptorBuffersEXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t setCount, const uint32_t* pBufferIndices, const VkDeviceSize* pOffsets) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDescriptorBufferOffsetsEXT\n";
-    }
+    Timer timer("vkCmdSetDescriptorBufferOffsetsEXT");
     device_dispatch_table(commandBuffer)->CmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindDescriptorBufferEmbeddedSamplersEXT\n";
-    }
+    Timer timer("vkCmdBindDescriptorBufferEmbeddedSamplersEXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetBufferOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkBufferCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferOpaqueCaptureDescriptorDataEXT\n";
-    }
+    Timer timer("vkGetBufferOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetBufferOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageOpaqueCaptureDescriptorDataEXT\n";
-    }
+    Timer timer("vkGetImageOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageViewOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageViewCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetImageViewOpaqueCaptureDescriptorDataEXT\n";
-    }
+    Timer timer("vkGetImageViewOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageViewOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSamplerOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkSamplerCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSamplerOpaqueCaptureDescriptorDataEXT\n";
-    }
+    Timer timer("vkGetSamplerOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetSamplerOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT\n";
-    }
+    Timer timer("vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetAccelerationStructureOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetFragmentShadingRateEnumNV\n";
-    }
+    Timer timer("vkCmdSetFragmentShadingRateEnumNV");
     device_dispatch_table(commandBuffer)->CmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceFaultInfoEXT\n";
-    }
+    Timer timer("vkGetDeviceFaultInfoEXT");
     VkResult result = device_dispatch_table(device)->GetDeviceFaultInfoEXT(device, pFaultCounts, pFaultInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetVertexInputEXT\n";
-    }
+    Timer timer("vkCmdSetVertexInputEXT");
     device_dispatch_table(commandBuffer)->CmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 #if defined(VK_USE_PLATFORM_FUCHSIA)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryZirconHandleFUCHSIA(VkDevice device, const VkMemoryGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryZirconHandleFUCHSIA\n";
-    }
+    Timer timer("vkGetMemoryZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetMemoryZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t zirconHandle, VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryZirconHandlePropertiesFUCHSIA\n";
-    }
+    Timer timer("vkGetMemoryZirconHandlePropertiesFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetMemoryZirconHandlePropertiesFUCHSIA(device, handleType, zirconHandle, pMemoryZirconHandleProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkImportSemaphoreZirconHandleInfoFUCHSIA* pImportSemaphoreZirconHandleInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkImportSemaphoreZirconHandleFUCHSIA\n";
-    }
+    Timer timer("vkImportSemaphoreZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreZirconHandleFUCHSIA(device, pImportSemaphoreZirconHandleInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkSemaphoreGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetSemaphoreZirconHandleFUCHSIA\n";
-    }
+    Timer timer("vkGetSemaphoreZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetSemaphoreZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferCollectionFUCHSIA(VkDevice device, const VkBufferCollectionCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferCollectionFUCHSIA* pCollection) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateBufferCollectionFUCHSIA\n";
-    }
+    Timer timer("vkCreateBufferCollectionFUCHSIA");
     VkResult result = device_dispatch_table(device)->CreateBufferCollectionFUCHSIA(device, pCreateInfo, pAllocator, pCollection);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkImageConstraintsInfoFUCHSIA* pImageConstraintsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetBufferCollectionImageConstraintsFUCHSIA\n";
-    }
+    Timer timer("vkSetBufferCollectionImageConstraintsFUCHSIA");
     VkResult result = device_dispatch_table(device)->SetBufferCollectionImageConstraintsFUCHSIA(device, collection, pImageConstraintsInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkBufferConstraintsInfoFUCHSIA* pBufferConstraintsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetBufferCollectionBufferConstraintsFUCHSIA\n";
-    }
+    Timer timer("vkSetBufferCollectionBufferConstraintsFUCHSIA");
     VkResult result = device_dispatch_table(device)->SetBufferCollectionBufferConstraintsFUCHSIA(device, collection, pBufferConstraintsInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyBufferCollectionFUCHSIA\n";
-    }
+    Timer timer("vkDestroyBufferCollectionFUCHSIA");
     device_dispatch_table(device)->DestroyBufferCollectionFUCHSIA(device, collection, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, VkBufferCollectionPropertiesFUCHSIA* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetBufferCollectionPropertiesFUCHSIA\n";
-    }
+    Timer timer("vkGetBufferCollectionPropertiesFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetBufferCollectionPropertiesFUCHSIA(device, collection, pProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_FUCHSIA
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI\n";
-    }
+    Timer timer("vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI");
     VkResult result = device_dispatch_table(device)->GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(device, renderpass, pMaxWorkgroupSize);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSubpassShadingHUAWEI\n";
-    }
+    Timer timer("vkCmdSubpassShadingHUAWEI");
     device_dispatch_table(commandBuffer)->CmdSubpassShadingHUAWEI(commandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindInvocationMaskHUAWEI\n";
-    }
+    Timer timer("vkCmdBindInvocationMaskHUAWEI");
     device_dispatch_table(commandBuffer)->CmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryRemoteAddressNV(VkDevice device, const VkMemoryGetRemoteAddressInfoNV* pMemoryGetRemoteAddressInfo, VkRemoteAddressNV* pAddress) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryRemoteAddressNV\n";
-    }
+    Timer timer("vkGetMemoryRemoteAddressNV");
     VkResult result = device_dispatch_table(device)->GetMemoryRemoteAddressNV(device, pMemoryGetRemoteAddressInfo, pAddress);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoEXT* pPipelineInfo, VkBaseOutStructure* pPipelineProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelinePropertiesEXT\n";
-    }
+    Timer timer("vkGetPipelinePropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetPipelinePropertiesEXT(device, pPipelineInfo, pPipelineProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer, uint32_t patchControlPoints) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPatchControlPointsEXT\n";
-    }
+    Timer timer("vkCmdSetPatchControlPointsEXT");
     device_dispatch_table(commandBuffer)->CmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRasterizerDiscardEnableEXT\n";
-    }
+    Timer timer("vkCmdSetRasterizerDiscardEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthBiasEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthBiasEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLogicOpEXT\n";
-    }
+    Timer timer("vkCmdSetLogicOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetLogicOpEXT(commandBuffer, logicOp);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPrimitiveRestartEnableEXT\n";
-    }
+    Timer timer("vkCmdSetPrimitiveRestartEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetColorWriteEnableEXT\n";
-    }
+    Timer timer("vkCmdSetColorWriteEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMultiEXT\n";
-    }
+    Timer timer("vkCmdDrawMultiEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawIndexedInfoEXT* pIndexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride, const int32_t* pVertexOffset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMultiIndexedEXT\n";
-    }
+    Timer timer("vkCmdDrawMultiIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMicromapEXT(VkDevice device, const VkMicromapCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkMicromapEXT* pMicromap) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateMicromapEXT\n";
-    }
+    Timer timer("vkCreateMicromapEXT");
     VkResult result = device_dispatch_table(device)->CreateMicromapEXT(device, pCreateInfo, pAllocator, pMicromap);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyMicromapEXT(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyMicromapEXT\n";
-    }
+    Timer timer("vkDestroyMicromapEXT");
     device_dispatch_table(device)->DestroyMicromapEXT(device, micromap, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildMicromapsEXT\n";
-    }
+    Timer timer("vkCmdBuildMicromapsEXT");
     device_dispatch_table(commandBuffer)->CmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBuildMicromapsEXT\n";
-    }
+    Timer timer("vkBuildMicromapsEXT");
     VkResult result = device_dispatch_table(device)->BuildMicromapsEXT(device, deferredOperation, infoCount, pInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMicromapEXT\n";
-    }
+    Timer timer("vkCopyMicromapEXT");
     VkResult result = device_dispatch_table(device)->CopyMicromapEXT(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMicromapToMemoryEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapToMemoryInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMicromapToMemoryEXT\n";
-    }
+    Timer timer("vkCopyMicromapToMemoryEXT");
     VkResult result = device_dispatch_table(device)->CopyMicromapToMemoryEXT(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToMicromapInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMemoryToMicromapEXT\n";
-    }
+    Timer timer("vkCopyMemoryToMicromapEXT");
     VkResult result = device_dispatch_table(device)->CopyMemoryToMicromapEXT(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteMicromapsPropertiesEXT(VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWriteMicromapsPropertiesEXT\n";
-    }
+    Timer timer("vkWriteMicromapsPropertiesEXT");
     VkResult result = device_dispatch_table(device)->WriteMicromapsPropertiesEXT(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMicromapEXT\n";
-    }
+    Timer timer("vkCmdCopyMicromapEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMicromapEXT(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapToMemoryInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMicromapToMemoryEXT\n";
-    }
+    Timer timer("vkCmdCopyMicromapToMemoryEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMemoryToMicromapInfoEXT* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryToMicromapEXT\n";
-    }
+    Timer timer("vkCmdCopyMemoryToMicromapEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteMicromapsPropertiesEXT\n";
-    }
+    Timer timer("vkCmdWriteMicromapsPropertiesEXT");
     device_dispatch_table(commandBuffer)->CmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMicromapVersionInfoEXT* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceMicromapCompatibilityEXT\n";
-    }
+    Timer timer("vkGetDeviceMicromapCompatibilityEXT");
     device_dispatch_table(device)->GetDeviceMicromapCompatibilityEXT(device, pVersionInfo, pCompatibility);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetMicromapBuildSizesEXT(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkMicromapBuildInfoEXT* pBuildInfo, VkMicromapBuildSizesInfoEXT* pSizeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMicromapBuildSizesEXT\n";
-    }
+    Timer timer("vkGetMicromapBuildSizesEXT");
     device_dispatch_table(device)->GetMicromapBuildSizesEXT(device, buildType, pBuildInfo, pSizeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawClusterHUAWEI\n";
-    }
+    Timer timer("vkCmdDrawClusterHUAWEI");
     device_dispatch_table(commandBuffer)->CmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawClusterIndirectHUAWEI\n";
-    }
+    Timer timer("vkCmdDrawClusterIndirectHUAWEI");
     device_dispatch_table(commandBuffer)->CmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkSetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetDeviceMemoryPriorityEXT\n";
-    }
+    Timer timer("vkSetDeviceMemoryPriorityEXT");
     device_dispatch_table(device)->SetDeviceMemoryPriorityEXT(device, memory, priority);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice device, const VkDescriptorSetBindingReferenceVALVE* pBindingReference, VkDescriptorSetLayoutHostMappingInfoVALVE* pHostMapping) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetLayoutHostMappingInfoVALVE\n";
-    }
+    Timer timer("vkGetDescriptorSetLayoutHostMappingInfoVALVE");
     device_dispatch_table(device)->GetDescriptorSetLayoutHostMappingInfoVALVE(device, pBindingReference, pHostMapping);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptorSet descriptorSet, void** ppData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDescriptorSetHostMappingVALVE\n";
-    }
+    Timer timer("vkGetDescriptorSetHostMappingVALVE");
     device_dispatch_table(device)->GetDescriptorSetHostMappingVALVE(device, descriptorSet, ppData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryIndirectNV\n";
-    }
+    Timer timer("vkCmdCopyMemoryIndirectNV");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride, VkImage dstImage, VkImageLayout dstImageLayout, const VkImageSubresourceLayers* pImageSubresources) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryToImageIndirectNV\n";
-    }
+    Timer timer("vkCmdCopyMemoryToImageIndirectNV");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount, const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDecompressMemoryNV\n";
-    }
+    Timer timer("vkCmdDecompressMemoryNV");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDecompressMemoryIndirectCountNV\n";
-    }
+    Timer timer("vkCmdDecompressMemoryIndirectCountNV");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPipelineIndirectMemoryRequirementsNV(VkDevice device, const VkComputePipelineCreateInfo* pCreateInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineIndirectMemoryRequirementsNV\n";
-    }
+    Timer timer("vkGetPipelineIndirectMemoryRequirementsNV");
     device_dispatch_table(device)->GetPipelineIndirectMemoryRequirementsNV(device, pCreateInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdUpdatePipelineIndirectBufferNV\n";
-    }
+    Timer timer("vkCmdUpdatePipelineIndirectBufferNV");
     device_dispatch_table(commandBuffer)->CmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetPipelineIndirectDeviceAddressNV(VkDevice device, const VkPipelineIndirectDeviceAddressInfoNV* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPipelineIndirectDeviceAddressNV\n";
-    }
+    Timer timer("vkGetPipelineIndirectDeviceAddressNV");
     VkDeviceAddress result = device_dispatch_table(device)->GetPipelineIndirectDeviceAddressNV(device, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_OHOS)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, VkNativeBufferPropertiesOHOS* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetNativeBufferPropertiesOHOS\n";
-    }
+    Timer timer("vkGetNativeBufferPropertiesOHOS");
     VkResult result = device_dispatch_table(device)->GetNativeBufferPropertiesOHOS(device, buffer, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryNativeBufferOHOS(VkDevice device, const VkMemoryGetNativeBufferInfoOHOS* pInfo, struct OH_NativeBuffer** pBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryNativeBufferOHOS\n";
-    }
+    Timer timer("vkGetMemoryNativeBufferOHOS");
     VkResult result = device_dispatch_table(device)->GetMemoryNativeBufferOHOS(device, pInfo, pBuffer);
     return result;
 }
 #endif  // VK_USE_PLATFORM_OHOS
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClampEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthClampEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthClampEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetPolygonModeEXT\n";
-    }
+    Timer timer("vkCmdSetPolygonModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits rasterizationSamples) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRasterizationSamplesEXT\n";
-    }
+    Timer timer("vkCmdSetRasterizationSamplesEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetSampleMaskEXT\n";
-    }
+    Timer timer("vkCmdSetSampleMaskEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToCoverageEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetAlphaToCoverageEnableEXT\n";
-    }
+    Timer timer("vkCmdSetAlphaToCoverageEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetAlphaToOneEnableEXT\n";
-    }
+    Timer timer("vkCmdSetAlphaToOneEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLogicOpEnableEXT\n";
-    }
+    Timer timer("vkCmdSetLogicOpEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkBool32* pColorBlendEnables) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetColorBlendEnableEXT\n";
-    }
+    Timer timer("vkCmdSetColorBlendEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendEquationEXT* pColorBlendEquations) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetColorBlendEquationEXT\n";
-    }
+    Timer timer("vkCmdSetColorBlendEquationEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorComponentFlags* pColorWriteMasks) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetColorWriteMaskEXT\n";
-    }
+    Timer timer("vkCmdSetColorWriteMaskEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetTessellationDomainOriginEXT\n";
-    }
+    Timer timer("vkCmdSetTessellationDomainOriginEXT");
     device_dispatch_table(commandBuffer)->CmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer, uint32_t rasterizationStream) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRasterizationStreamEXT\n";
-    }
+    Timer timer("vkCmdSetRasterizationStreamEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetConservativeRasterizationModeEXT(VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetConservativeRasterizationModeEXT\n";
-    }
+    Timer timer("vkCmdSetConservativeRasterizationModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetExtraPrimitiveOverestimationSizeEXT\n";
-    }
+    Timer timer("vkCmdSetExtraPrimitiveOverestimationSizeEXT");
     device_dispatch_table(commandBuffer)->CmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthClipEnableEXT\n";
-    }
+    Timer timer("vkCmdSetDepthClipEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetSampleLocationsEnableEXT\n";
-    }
+    Timer timer("vkCmdSetSampleLocationsEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetColorBlendAdvancedEXT\n";
-    }
+    Timer timer("vkCmdSetColorBlendAdvancedEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer, VkProvokingVertexModeEXT provokingVertexMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetProvokingVertexModeEXT\n";
-    }
+    Timer timer("vkCmdSetProvokingVertexModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineRasterizationModeEXT\n";
-    }
+    Timer timer("vkCmdSetLineRasterizationModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stippledLineEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetLineStippleEnableEXT\n";
-    }
+    Timer timer("vkCmdSetLineStippleEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer, VkBool32 negativeOneToOne) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthClipNegativeOneToOneEXT\n";
-    }
+    Timer timer("vkCmdSetDepthClipNegativeOneToOneEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportWScalingEnableNV\n";
-    }
+    Timer timer("vkCmdSetViewportWScalingEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetViewportSwizzleNV\n";
-    }
+    Timer timer("vkCmdSetViewportSwizzleNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageToColorEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageToColorEnableNV\n";
-    }
+    Timer timer("vkCmdSetCoverageToColorEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer, uint32_t coverageToColorLocation) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageToColorLocationNV\n";
-    }
+    Timer timer("vkCmdSetCoverageToColorLocationNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageModulationModeNV\n";
-    }
+    Timer timer("vkCmdSetCoverageModulationModeNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageModulationTableEnableNV\n";
-    }
+    Timer timer("vkCmdSetCoverageModulationTableEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount, const float* pCoverageModulationTable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageModulationTableNV\n";
-    }
+    Timer timer("vkCmdSetCoverageModulationTableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetShadingRateImageEnableNV\n";
-    }
+    Timer timer("vkCmdSetShadingRateImageEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRepresentativeFragmentTestEnableNV\n";
-    }
+    Timer timer("vkCmdSetRepresentativeFragmentTestEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetCoverageReductionModeNV\n";
-    }
+    Timer timer("vkCmdSetCoverageReductionModeNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorARM(VkDevice device, const VkTensorCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorARM* pTensor) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateTensorARM\n";
-    }
+    Timer timer("vkCreateTensorARM");
     VkResult result = device_dispatch_table(device)->CreateTensorARM(device, pCreateInfo, pAllocator, pTensor);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyTensorARM\n";
-    }
+    Timer timer("vkDestroyTensorARM");
     device_dispatch_table(device)->DestroyTensorARM(device, tensor, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorViewARM* pView) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateTensorViewARM\n";
-    }
+    Timer timer("vkCreateTensorViewARM");
     VkResult result = device_dispatch_table(device)->CreateTensorViewARM(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyTensorViewARM\n";
-    }
+    Timer timer("vkDestroyTensorViewARM");
     device_dispatch_table(device)->DestroyTensorViewARM(device, tensorView, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetTensorMemoryRequirementsARM\n";
-    }
+    Timer timer("vkGetTensorMemoryRequirementsARM");
     device_dispatch_table(device)->GetTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindTensorMemoryInfoARM* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindTensorMemoryARM\n";
-    }
+    Timer timer("vkBindTensorMemoryARM");
     VkResult result = device_dispatch_table(device)->BindTensorMemoryARM(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceTensorMemoryRequirementsARM(VkDevice device, const VkDeviceTensorMemoryRequirementsARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceTensorMemoryRequirementsARM\n";
-    }
+    Timer timer("vkGetDeviceTensorMemoryRequirementsARM");
     device_dispatch_table(device)->GetDeviceTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyTensorARM\n";
-    }
+    Timer timer("vkCmdCopyTensorARM");
     device_dispatch_table(commandBuffer)->CmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorOpaqueCaptureDescriptorDataARM(VkDevice device, const VkTensorCaptureDescriptorDataInfoARM* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetTensorOpaqueCaptureDescriptorDataARM\n";
-    }
+    Timer timer("vkGetTensorOpaqueCaptureDescriptorDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice device, const VkTensorViewCaptureDescriptorDataInfoARM* pInfo, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetTensorViewOpaqueCaptureDescriptorDataARM\n";
-    }
+    Timer timer("vkGetTensorViewOpaqueCaptureDescriptorDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorViewOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleIdentifierEXT(VkDevice device, VkShaderModule shaderModule, VkShaderModuleIdentifierEXT* pIdentifier) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetShaderModuleIdentifierEXT\n";
-    }
+    Timer timer("vkGetShaderModuleIdentifierEXT");
     device_dispatch_table(device)->GetShaderModuleIdentifierEXT(device, shaderModule, pIdentifier);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleCreateInfoIdentifierEXT(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModuleIdentifierEXT* pIdentifier) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetShaderModuleCreateInfoIdentifierEXT\n";
-    }
+    Timer timer("vkGetShaderModuleCreateInfoIdentifierEXT");
     device_dispatch_table(device)->GetShaderModuleCreateInfoIdentifierEXT(device, pCreateInfo, pIdentifier);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateOpticalFlowSessionNV(VkDevice device, const VkOpticalFlowSessionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkOpticalFlowSessionNV* pSession) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateOpticalFlowSessionNV\n";
-    }
+    Timer timer("vkCreateOpticalFlowSessionNV");
     VkResult result = device_dispatch_table(device)->CreateOpticalFlowSessionNV(device, pCreateInfo, pAllocator, pSession);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyOpticalFlowSessionNV\n";
-    }
+    Timer timer("vkDestroyOpticalFlowSessionNV");
     device_dispatch_table(device)->DestroyOpticalFlowSessionNV(device, session, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFlowSessionNV session, VkOpticalFlowSessionBindingPointNV bindingPoint, VkImageView view, VkImageLayout layout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindOpticalFlowSessionImageNV\n";
-    }
+    Timer timer("vkBindOpticalFlowSessionImageNV");
     VkResult result = device_dispatch_table(device)->BindOpticalFlowSessionImageNV(device, session, bindingPoint, view, layout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session, const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdOpticalFlowExecuteNV\n";
-    }
+    Timer timer("vkCmdOpticalFlowExecuteNV");
     device_dispatch_table(commandBuffer)->CmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkAntiLagUpdateAMD(VkDevice device, const VkAntiLagDataAMD* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkAntiLagUpdateAMD\n";
-    }
+    Timer timer("vkAntiLagUpdateAMD");
     device_dispatch_table(device)->AntiLagUpdateAMD(device, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateShadersEXT(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateShadersEXT\n";
-    }
+    Timer timer("vkCreateShadersEXT");
     VkResult result = device_dispatch_table(device)->CreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyShaderEXT(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyShaderEXT\n";
-    }
+    Timer timer("vkDestroyShaderEXT");
     device_dispatch_table(device)->DestroyShaderEXT(device, shader, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetShaderBinaryDataEXT\n";
-    }
+    Timer timer("vkGetShaderBinaryDataEXT");
     VkResult result = device_dispatch_table(device)->GetShaderBinaryDataEXT(device, shader, pDataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindShadersEXT\n";
-    }
+    Timer timer("vkCmdBindShadersEXT");
     device_dispatch_table(commandBuffer)->CmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetDepthClampRangeEXT\n";
-    }
+    Timer timer("vkCmdSetDepthClampRangeEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, uint32_t* pPropertiesCount, VkTilePropertiesQCOM* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetFramebufferTilePropertiesQCOM\n";
-    }
+    Timer timer("vkGetFramebufferTilePropertiesQCOM");
     VkResult result = device_dispatch_table(device)->GetFramebufferTilePropertiesQCOM(device, framebuffer, pPropertiesCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDynamicRenderingTilePropertiesQCOM(VkDevice device, const VkRenderingInfo* pRenderingInfo, VkTilePropertiesQCOM* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDynamicRenderingTilePropertiesQCOM\n";
-    }
+    Timer timer("vkGetDynamicRenderingTilePropertiesQCOM");
     VkResult result = device_dispatch_table(device)->GetDynamicRenderingTilePropertiesQCOM(device, pRenderingInfo, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkConvertCooperativeVectorMatrixNV(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkConvertCooperativeVectorMatrixNV\n";
-    }
+    Timer timer("vkConvertCooperativeVectorMatrixNV");
     VkResult result = device_dispatch_table(device)->ConvertCooperativeVectorMatrixNV(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdConvertCooperativeVectorMatrixNV\n";
-    }
+    Timer timer("vkCmdConvertCooperativeVectorMatrixNV");
     device_dispatch_table(commandBuffer)->CmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkSetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepModeInfoNV* pSleepModeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetLatencySleepModeNV\n";
-    }
+    Timer timer("vkSetLatencySleepModeNV");
     VkResult result = device_dispatch_table(device)->SetLatencySleepModeNV(device, swapchain, pSleepModeInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkLatencySleepNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepInfoNV* pSleepInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkLatencySleepNV\n";
-    }
+    Timer timer("vkLatencySleepNV");
     VkResult result = device_dispatch_table(device)->LatencySleepNV(device, swapchain, pSleepInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkSetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain, const VkSetLatencyMarkerInfoNV* pLatencyMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkSetLatencyMarkerNV\n";
-    }
+    Timer timer("vkSetLatencyMarkerNV");
     device_dispatch_table(device)->SetLatencyMarkerNV(device, swapchain, pLatencyMarkerInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain, VkGetLatencyMarkerInfoNV* pLatencyMarkerInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetLatencyTimingsNV\n";
-    }
+    Timer timer("vkGetLatencyTimingsNV");
     device_dispatch_table(device)->GetLatencyTimingsNV(device, swapchain, pLatencyMarkerInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkQueueNotifyOutOfBandNV(VkQueue queue, const VkOutOfBandQueueTypeInfoNV* pQueueTypeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkQueueNotifyOutOfBandNV\n";
-    }
+    Timer timer("vkQueueNotifyOutOfBandNV");
     device_dispatch_table(queue)->QueueNotifyOutOfBandNV(queue, pQueueTypeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDataGraphPipelinesARM(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkDataGraphPipelineCreateInfoARM* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDataGraphPipelinesARM\n";
-    }
+    Timer timer("vkCreateDataGraphPipelinesARM");
     VkResult result = device_dispatch_table(device)->CreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDataGraphPipelineSessionARM(VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDataGraphPipelineSessionARM* pSession) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateDataGraphPipelineSessionARM\n";
-    }
+    Timer timer("vkCreateDataGraphPipelineSessionARM");
     VkResult result = device_dispatch_table(device)->CreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo, uint32_t* pBindPointRequirementCount, VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDataGraphPipelineSessionBindPointRequirementsARM\n";
-    }
+    Timer timer("vkGetDataGraphPipelineSessionBindPointRequirementsARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDataGraphPipelineSessionMemoryRequirementsARM(VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDataGraphPipelineSessionMemoryRequirementsARM\n";
-    }
+    Timer timer("vkGetDataGraphPipelineSessionMemoryRequirementsARM");
     device_dispatch_table(device)->GetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBindDataGraphPipelineSessionMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBindDataGraphPipelineSessionMemoryARM\n";
-    }
+    Timer timer("vkBindDataGraphPipelineSessionMemoryARM");
     VkResult result = device_dispatch_table(device)->BindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyDataGraphPipelineSessionARM\n";
-    }
+    Timer timer("vkDestroyDataGraphPipelineSessionARM");
     device_dispatch_table(device)->DestroyDataGraphPipelineSessionARM(device, session, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const VkDataGraphPipelineDispatchInfoARM* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDispatchDataGraphARM\n";
-    }
+    Timer timer("vkCmdDispatchDataGraphARM");
     device_dispatch_table(commandBuffer)->CmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t* pPropertiesCount, VkDataGraphPipelinePropertyARM* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDataGraphPipelineAvailablePropertiesARM\n";
-    }
+    Timer timer("vkGetDataGraphPipelineAvailablePropertiesARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelinePropertiesARM(VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDataGraphPipelinePropertiesARM\n";
-    }
+    Timer timer("vkGetDataGraphPipelinePropertiesARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetAttachmentFeedbackLoopEnableEXT\n";
-    }
+    Timer timer("vkCmdSetAttachmentFeedbackLoopEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer, VkScreenBufferPropertiesQNX* pProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetScreenBufferPropertiesQNX\n";
-    }
+    Timer timer("vkGetScreenBufferPropertiesQNX");
     VkResult result = device_dispatch_table(device)->GetScreenBufferPropertiesQNX(device, buffer, pProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer, const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBindTileMemoryQCOM\n";
-    }
+    Timer timer("vkCmdBindTileMemoryQCOM");
     device_dispatch_table(commandBuffer)->CmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer, const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDecompressMemoryEXT\n";
-    }
+    Timer timer("vkCmdDecompressMemoryEXT");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer, VkMemoryDecompressionMethodFlagsEXT decompressionMethod, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t maxDecompressionCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDecompressMemoryIndirectCountEXT\n";
-    }
+    Timer timer("vkCmdDecompressMemoryIndirectCountEXT");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateExternalComputeQueueNV(VkDevice device, const VkExternalComputeQueueCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkExternalComputeQueueNV* pExternalQueue) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateExternalComputeQueueNV\n";
-    }
+    Timer timer("vkCreateExternalComputeQueueNV");
     VkResult result = device_dispatch_table(device)->CreateExternalComputeQueueNV(device, pCreateInfo, pAllocator, pExternalQueue);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyExternalComputeQueueNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyExternalComputeQueueNV\n";
-    }
+    Timer timer("vkDestroyExternalComputeQueueNV");
     device_dispatch_table(device)->DestroyExternalComputeQueueNV(device, externalQueue, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue, VkExternalComputeQueueDataParamsNV* params, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetExternalComputeQueueDataNV\n";
-    }
+    Timer timer("vkGetExternalComputeQueueDataNV");
     device_dispatch_table(externalQueue)->GetExternalComputeQueueDataNV(externalQueue, params, pData);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetClusterAccelerationStructureBuildSizesNV(VkDevice device, const VkClusterAccelerationStructureInputInfoNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetClusterAccelerationStructureBuildSizesNV\n";
-    }
+    Timer timer("vkGetClusterAccelerationStructureBuildSizesNV");
     device_dispatch_table(device)->GetClusterAccelerationStructureBuildSizesNV(device, pInfo, pSizeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildClusterAccelerationStructureIndirectNV(VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildClusterAccelerationStructureIndirectNV\n";
-    }
+    Timer timer("vkCmdBuildClusterAccelerationStructureIndirectNV");
     device_dispatch_table(commandBuffer)->CmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetPartitionedAccelerationStructuresBuildSizesNV(VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetPartitionedAccelerationStructuresBuildSizesNV\n";
-    }
+    Timer timer("vkGetPartitionedAccelerationStructuresBuildSizesNV");
     device_dispatch_table(device)->GetPartitionedAccelerationStructuresBuildSizesNV(device, pInfo, pSizeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildPartitionedAccelerationStructuresNV(VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildPartitionedAccelerationStructuresNV\n";
-    }
+    Timer timer("vkCmdBuildPartitionedAccelerationStructuresNV");
     device_dispatch_table(commandBuffer)->CmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetGeneratedCommandsMemoryRequirementsEXT(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetGeneratedCommandsMemoryRequirementsEXT\n";
-    }
+    Timer timer("vkGetGeneratedCommandsMemoryRequirementsEXT");
     device_dispatch_table(device)->GetGeneratedCommandsMemoryRequirementsEXT(device, pInfo, pMemoryRequirements);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo, VkCommandBuffer stateCommandBuffer) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdPreprocessGeneratedCommandsEXT\n";
-    }
+    Timer timer("vkCmdPreprocessGeneratedCommandsEXT");
     device_dispatch_table(commandBuffer)->CmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdExecuteGeneratedCommandsEXT\n";
-    }
+    Timer timer("vkCmdExecuteGeneratedCommandsEXT");
     device_dispatch_table(commandBuffer)->CmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectCommandsLayoutEXT(VkDevice device, const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateIndirectCommandsLayoutEXT\n";
-    }
+    Timer timer("vkCreateIndirectCommandsLayoutEXT");
     VkResult result = device_dispatch_table(device)->CreateIndirectCommandsLayoutEXT(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectCommandsLayoutEXT(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyIndirectCommandsLayoutEXT\n";
-    }
+    Timer timer("vkDestroyIndirectCommandsLayoutEXT");
     device_dispatch_table(device)->DestroyIndirectCommandsLayoutEXT(device, indirectCommandsLayout, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectExecutionSetEXT(VkDevice device, const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectExecutionSetEXT* pIndirectExecutionSet) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateIndirectExecutionSetEXT\n";
-    }
+    Timer timer("vkCreateIndirectExecutionSetEXT");
     VkResult result = device_dispatch_table(device)->CreateIndirectExecutionSetEXT(device, pCreateInfo, pAllocator, pIndirectExecutionSet);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectExecutionSetEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyIndirectExecutionSetEXT\n";
-    }
+    Timer timer("vkDestroyIndirectExecutionSetEXT");
     device_dispatch_table(device)->DestroyIndirectExecutionSetEXT(device, indirectExecutionSet, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUpdateIndirectExecutionSetPipelineEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateIndirectExecutionSetPipelineEXT\n";
-    }
+    Timer timer("vkUpdateIndirectExecutionSetPipelineEXT");
     device_dispatch_table(device)->UpdateIndirectExecutionSetPipelineEXT(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkUpdateIndirectExecutionSetShaderEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkUpdateIndirectExecutionSetShaderEXT\n";
-    }
+    Timer timer("vkUpdateIndirectExecutionSetShaderEXT");
     device_dispatch_table(device)->UpdateIndirectExecutionSetShaderEXT(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryMetalHandleEXT(VkDevice device, const VkMemoryGetMetalHandleInfoEXT* pGetMetalHandleInfo, void** pHandle) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryMetalHandleEXT\n";
-    }
+    Timer timer("vkGetMemoryMetalHandleEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryMetalHandleEXT(device, pGetMetalHandleInfo, pHandle);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryMetalHandlePropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHandle, VkMemoryMetalHandlePropertiesEXT* pMemoryMetalHandleProperties) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetMemoryMetalHandlePropertiesEXT\n";
-    }
+    Timer timer("vkGetMemoryMetalHandlePropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryMetalHandlePropertiesEXT(device, handleType, pHandle, pMemoryMetalHandleProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdEndRendering2EXT\n";
-    }
+    Timer timer("vkCmdEndRendering2EXT");
     device_dispatch_table(commandBuffer)->CmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer, const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBeginCustomResolveEXT\n";
-    }
+    Timer timer("vkCmdBeginCustomResolveEXT");
     device_dispatch_table(commandBuffer)->CmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetComputeOccupancyPriorityNV\n";
-    }
+    Timer timer("vkCmdSetComputeOccupancyPriorityNV");
     device_dispatch_table(commandBuffer)->CmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAccelerationStructureKHR(VkDevice device, const VkAccelerationStructureCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateAccelerationStructureKHR\n";
-    }
+    Timer timer("vkCreateAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CreateAccelerationStructureKHR(device, pCreateInfo, pAllocator, pAccelerationStructure);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkDestroyAccelerationStructureKHR(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkDestroyAccelerationStructureKHR\n";
-    }
+    Timer timer("vkDestroyAccelerationStructureKHR");
     device_dispatch_table(device)->DestroyAccelerationStructureKHR(device, accelerationStructure, pAllocator);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildAccelerationStructuresKHR\n";
-    }
+    Timer timer("vkCmdBuildAccelerationStructuresKHR");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructuresIndirectKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides, const uint32_t* const* ppMaxPrimitiveCounts) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdBuildAccelerationStructuresIndirectKHR\n";
-    }
+    Timer timer("vkCmdBuildAccelerationStructuresIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkBuildAccelerationStructuresKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkBuildAccelerationStructuresKHR\n";
-    }
+    Timer timer("vkBuildAccelerationStructuresKHR");
     VkResult result = device_dispatch_table(device)->BuildAccelerationStructuresKHR(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyAccelerationStructureKHR\n";
-    }
+    Timer timer("vkCopyAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CopyAccelerationStructureKHR(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyAccelerationStructureToMemoryKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyAccelerationStructureToMemoryKHR\n";
-    }
+    Timer timer("vkCopyAccelerationStructureToMemoryKHR");
     VkResult result = device_dispatch_table(device)->CopyAccelerationStructureToMemoryKHR(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCopyMemoryToAccelerationStructureKHR\n";
-    }
+    Timer timer("vkCopyMemoryToAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CopyMemoryToAccelerationStructureKHR(device, deferredOperation, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteAccelerationStructuresPropertiesKHR(VkDevice device, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkWriteAccelerationStructuresPropertiesKHR\n";
-    }
+    Timer timer("vkWriteAccelerationStructuresPropertiesKHR");
     VkResult result = device_dispatch_table(device)->WriteAccelerationStructuresPropertiesKHR(device, accelerationStructureCount, pAccelerationStructures, queryType, dataSize, pData, stride);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyAccelerationStructureKHR\n";
-    }
+    Timer timer("vkCmdCopyAccelerationStructureKHR");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureToMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyAccelerationStructureToMemoryKHR\n";
-    }
+    Timer timer("vkCmdCopyAccelerationStructureToMemoryKHR");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdCopyMemoryToAccelerationStructureKHR\n";
-    }
+    Timer timer("vkCmdCopyMemoryToAccelerationStructureKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetAccelerationStructureDeviceAddressKHR(VkDevice device, const VkAccelerationStructureDeviceAddressInfoKHR* pInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAccelerationStructureDeviceAddressKHR\n";
-    }
+    Timer timer("vkGetAccelerationStructureDeviceAddressKHR");
     VkDeviceAddress result = device_dispatch_table(device)->GetAccelerationStructureDeviceAddressKHR(device, pInfo);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdWriteAccelerationStructuresPropertiesKHR\n";
-    }
+    Timer timer("vkCmdWriteAccelerationStructuresPropertiesKHR");
     device_dispatch_table(commandBuffer)->CmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceAccelerationStructureCompatibilityKHR(VkDevice device, const VkAccelerationStructureVersionInfoKHR* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetDeviceAccelerationStructureCompatibilityKHR\n";
-    }
+    Timer timer("vkGetDeviceAccelerationStructureCompatibilityKHR");
     device_dispatch_table(device)->GetDeviceAccelerationStructureCompatibilityKHR(device, pVersionInfo, pCompatibility);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkGetAccelerationStructureBuildSizesKHR(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, const uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetAccelerationStructureBuildSizesKHR\n";
-    }
+    Timer timer("vkGetAccelerationStructureBuildSizesKHR");
     device_dispatch_table(device)->GetAccelerationStructureBuildSizesKHR(device, buildType, pBuildInfo, pMaxPrimitiveCounts, pSizeInfo);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height, uint32_t depth) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdTraceRaysKHR\n";
-    }
+    Timer timer("vkCmdTraceRaysKHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCreateRayTracingPipelinesKHR\n";
-    }
+    Timer timer("vkCreateRayTracingPipelinesKHR");
     VkResult result = device_dispatch_table(device)->CreateRayTracingPipelinesKHR(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR\n";
-    }
+    Timer timer("vkGetRayTracingCaptureReplayShaderGroupHandlesKHR");
     VkResult result = device_dispatch_table(device)->GetRayTracingCaptureReplayShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdTraceRaysIndirectKHR\n";
-    }
+    Timer timer("vkCmdTraceRaysIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR VkDeviceSize VKAPI_CALL vkGetRayTracingShaderGroupStackSizeKHR(VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkGetRayTracingShaderGroupStackSizeKHR\n";
-    }
+    Timer timer("vkGetRayTracingShaderGroupStackSizeKHR");
     VkDeviceSize result = device_dispatch_table(device)->GetRayTracingShaderGroupStackSizeKHR(device, pipeline, group, groupShader);
     return result;
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer, uint32_t pipelineStackSize) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdSetRayTracingPipelineStackSizeKHR\n";
-    }
+    Timer timer("vkCmdSetRayTracingPipelineStackSizeKHR");
     device_dispatch_table(commandBuffer)->CmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksEXT\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksIndirectEXT\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksIndirectEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
 template <ApiDumpFormat Format>
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-
-    if (ApiDumpInstance::current().shouldDumpOutput()) {
-        ApiDumpInstance::current().settings().stream() << "vkCmdDrawMeshTasksIndirectCountEXT\n";
-    }
+    Timer timer("vkCmdDrawMeshTasksIndirectCountEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 

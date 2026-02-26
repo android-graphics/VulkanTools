@@ -369,6 +369,7 @@ class ApiDumpGenerator(BaseGenerator):
     def generate_dispatch_codegen(self):
 
         self.write('''#include "api_dump_handwritten_functions.h"
+#include "timer.h"
 
             // Autogen instance functions
             ''')
@@ -381,12 +382,7 @@ class ApiDumpGenerator(BaseGenerator):
             self.write('template<ApiDumpFormat Format>')
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
-            if command.name not in BLOCKING_API_CALLS:
-                self.write(f'''
-                    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-                    if (ApiDumpInstance::current().shouldDumpOutput()) {{
-                        ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
-                    }}''')
+            self.write(f'Timer timer("{command.name}");')
 
             if command.name == 'vkGetPhysicalDeviceToolPropertiesEXT':
                 self.write('''
@@ -410,11 +406,7 @@ class ApiDumpGenerator(BaseGenerator):
 
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}instance_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
-            if command.name in BLOCKING_API_CALLS:
-                self.write('std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());')
-                self.write(f'''if (ApiDumpInstance::current().shouldDumpOutput()) {{
-                    ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
-                }}''')
+
 
             if command.name in TRACKED_STATE:
                 self.write(TRACKED_STATE[command.name])
@@ -454,22 +446,11 @@ class ApiDumpGenerator(BaseGenerator):
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
 
-            if command.name not in BLOCKING_API_CALLS:
-                self.write('std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());')
-                if command.name in ['vkDebugMarkerSetObjectNameEXT', 'vkSetDebugUtilsObjectNameEXT']:
-                    self.write('ApiDumpInstance::current().update_object_name_map(pNameInfo);')
-                self.write(f'''
-                    if (ApiDumpInstance::current().shouldDumpOutput()) {{
-                        ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
-                    }}''')
+            self.write(f'Timer timer("{command.name}");')
 
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}device_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
-            if command.name in BLOCKING_API_CALLS:
-                self.write('std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());')
-                self.write(f'''if (ApiDumpInstance::current().shouldDumpOutput()) {{
-                    ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
-                }}''')
+
 
             if command.name in TRACKED_STATE:
                 self.write('' + TRACKED_STATE[command.name])
