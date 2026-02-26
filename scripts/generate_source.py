@@ -76,6 +76,14 @@ def RunGenerators(api: str, registry: str, video_registry: str, directory: str, 
             'generator' : ApiDumpGenerator,
             'genCombined': True,
         },
+        'cputiming_dispatch.h' : {
+            'generator' : ApiDumpGenerator,
+            'genCombined': True,
+        },
+        'cputiming_implementation.h' : {
+            'generator' : ApiDumpGenerator,
+            'genCombined': True,
+        },
     }
 
     unknownTargets = [x for x in (targetFilter if targetFilter else []) if x not in generators.keys()]

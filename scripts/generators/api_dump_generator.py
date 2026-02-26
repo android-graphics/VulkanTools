@@ -335,9 +335,9 @@ class ApiDumpGenerator(BaseGenerator):
         self.build_vulkan_defined_type_set()
         self.build_only_use_as_pointer_types()
         self.generate_copyright()
-        if self.filename == 'api_dump_dispatch.h':
+        if self.filename == 'api_dump_dispatch.h' or self.filename == 'cputiming_dispatch.h':
             self.generate_dispatch_codegen()
-        elif self.filename == 'api_dump_implementation.h':
+        elif self.filename == 'api_dump_implementation.h' or self.filename == 'cputiming_implementation.h':
             self.generate_implementation()
 
 
@@ -368,8 +368,13 @@ class ApiDumpGenerator(BaseGenerator):
 
     def generate_dispatch_codegen(self):
 
-        self.write('''#include "api_dump_handwritten_functions.h"
-#include "timer.h"
+        if 'cputiming_dispatch.h' in self.genOpts.filename:
+            self.write('#include "cputiming_handwritten_functions.h"')
+        else:
+            self.write('#include "api_dump_handwritten_functions.h"')
+        self.write('\n#include "timer.h"')
+
+        self.write('''
 
             // Autogen instance functions
             ''')
@@ -607,9 +612,13 @@ class ApiDumpGenerator(BaseGenerator):
                     settings.stream() << object;
                     bool is_first = true;''')
             for field in bitmask.flags:
+                if field.protect:
+                    self.write(f'#if defined({field.protect})')
                 self.write(f'if(object {"==" if  field.zero or field.multiBit else "&"} {field.name}) {{')
                 self.write(f'settings.stream() << (is_first ? \" (\" : \" | \") << "{field.name}"; is_first = false;')
                 self.write('}')
+                if field.protect:
+                    self.write('#endif')
             self.write('''
                 if(!is_first)
                 settings.stream() << ")";

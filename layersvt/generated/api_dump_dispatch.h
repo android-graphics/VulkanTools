@@ -22,6 +22,7 @@
  */
 
 #include "api_dump_handwritten_functions.h"
+
 #include "timer.h"
 
 // Autogen instance functions

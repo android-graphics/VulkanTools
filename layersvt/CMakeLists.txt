@@ -122,11 +122,33 @@ if(BUILD_CPUTIMING)
     add_library(VkLayer_CPUTiming MODULE)
     set_target_properties(VkLayer_CPUTiming PROPERTIES FOLDER "layers/cputiming")
     target_sources(VkLayer_CPUTiming PRIVATE
-        cputiming.cpp
+        cputiming_handwritten_dispatch.cpp
+        generated/cputiming_dispatch.h
+        generated/cputiming_implementation.h
+        generated/cputiming_implementation.h
+        api_dump.h
+        cputiming_handwritten_functions.h
+        ../scripts/generators/api_dump_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
         json/VkLayer_CPUTiming.json.in
     )
+
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|DragonFly|GNU")
+        if (BUILD_WSI_XCB_SUPPORT)
+            target_compile_definitions(VkLayer_CPUTiming PRIVATE VK_USE_PLATFORM_XLIB_KHR)
+        endif()
+
+        if (BUILD_WSI_WAYLAND_SUPPORT)
+            target_compile_definitions(VkLayer_CPUTiming PRIVATE VK_USE_PLATFORM_WAYLAND_KHR)
+        endif()
+    endif()
+
+    target_compile_definitions(VkLayer_CPUTiming PRIVATE VK_ENABLE_BETA_EXTENSIONS)
+
+    if (VT_CODEGEN)
+        add_dependencies(VkLayer_CPUTiming vt_codegen_as_needed)
+    endif()
 endif()
 
 if (BUILD_TESTS AND NOT RUN_ON_GITHUB)
