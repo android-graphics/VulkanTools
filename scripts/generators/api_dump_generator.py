@@ -384,12 +384,8 @@ class ApiDumpGenerator(BaseGenerator):
             if command.name not in BLOCKING_API_CALLS:
                 self.write(f'''
                     std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-                    dump_function_head(ApiDumpInstance::current(), "{command.name}", "{command_param_usage_text(command)}", "{command.returnType}");
-                     if constexpr (Format == ApiDumpFormat::Text) {{
-                        if(ApiDumpInstance::current().settings().shouldPreDump() && ApiDumpInstance::current().shouldDumpOutput()) {{
-                            dump_before_pre_dump_formatting<Format>(ApiDumpInstance::current().settings());
-                            dump_params_{command.name}<Format>(ApiDumpInstance::current(), {command_param_usage_text(command)});
-                        }}
+                    if (ApiDumpInstance::current().shouldDumpOutput()) {{
+                        ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
                     }}''')
 
             if command.name == 'vkGetPhysicalDeviceToolPropertiesEXT':
@@ -416,7 +412,9 @@ class ApiDumpGenerator(BaseGenerator):
             self.write(f'{return_str}instance_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
             if command.name in BLOCKING_API_CALLS:
                 self.write('std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());')
-                self.write(f'dump_function_head(ApiDumpInstance::current(), "{command.name}", "{command_param_usage_text(command)}", "{command.returnType}");')
+                self.write(f'''if (ApiDumpInstance::current().shouldDumpOutput()) {{
+                    ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
+                }}''')
 
             if command.name in TRACKED_STATE:
                 self.write(TRACKED_STATE[command.name])
@@ -438,17 +436,7 @@ class ApiDumpGenerator(BaseGenerator):
                 self.write('}\n')
                 self.write('(*pToolCount)++;')
 
-            self.write('if (ApiDumpInstance::current().shouldDumpOutput()) {')
-            if command.returnType != 'void':
-                if self.get_unaliased_type(command.returnType) in self.vulkan_defined_types:
-                    self.write(f'dump_return_value<Format>(ApiDumpInstance::current().settings(), "{command.returnType}", result, dump_return_value_{command.returnType}<Format>);')
-                else:
-                    self.write(f'dump_return_value<Format>(ApiDumpInstance::current().settings(), "{command.returnType}", result);')
-            self.write(f'''dump_pre_function_formatting<Format>(ApiDumpInstance::current().settings());
-                dump_params_{command.name}<Format>(ApiDumpInstance::current(), {command_param_usage_text(command)});
-                dump_post_function_formatting<Format>(ApiDumpInstance::current().settings());
-                flush(ApiDumpInstance::current().settings());
-            }}''')
+
             if command.returnType != 'void':
                 self.write('return result;')
             self.write('}')
@@ -471,19 +459,17 @@ class ApiDumpGenerator(BaseGenerator):
                 if command.name in ['vkDebugMarkerSetObjectNameEXT', 'vkSetDebugUtilsObjectNameEXT']:
                     self.write('ApiDumpInstance::current().update_object_name_map(pNameInfo);')
                 self.write(f'''
-                    dump_function_head(ApiDumpInstance::current(), "{command.name}", "{command_param_usage_text(command)}", "{command.returnType}");
-                    if constexpr (Format == ApiDumpFormat::Text) {{
-                        if(ApiDumpInstance::current().settings().shouldPreDump() && ApiDumpInstance::current().shouldDumpOutput()) {{
-                            dump_before_pre_dump_formatting<Format>(ApiDumpInstance::current().settings());
-                            dump_params_{command.name}<Format>(ApiDumpInstance::current(), {command_param_usage_text(command)});
-                        }}
+                    if (ApiDumpInstance::current().shouldDumpOutput()) {{
+                        ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
                     }}''')
 
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}device_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
             if command.name in BLOCKING_API_CALLS:
                 self.write('std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());')
-                self.write(f'dump_function_head(ApiDumpInstance::current(), "{command.name}", "{command_param_usage_text(command)}", "{command.returnType}");')
+                self.write(f'''if (ApiDumpInstance::current().shouldDumpOutput()) {{
+                    ApiDumpInstance::current().settings().stream() << "{command.name}\\n";
+                }}''')
 
             if command.name in TRACKED_STATE:
                 self.write('' + TRACKED_STATE[command.name])
@@ -491,19 +477,7 @@ class ApiDumpGenerator(BaseGenerator):
             if command.name == 'vkDestroyDevice':
                 self.write('destroy_device_dispatch_table(get_dispatch_key(device));')
 
-            self.write('if (ApiDumpInstance::current().shouldDumpOutput()) {')
-            if command.returnType != 'void':
-                return_type = self.get_unaliased_type(command.returnType)
-                if return_type in self.vulkan_defined_types or return_type == 'VkDeviceAddress':
-                    self.write(f'dump_return_value<Format>(ApiDumpInstance::current().settings(), "{command.returnType}", result, dump_return_value_{command.returnType}<Format>);')
-                else:
-                    self.write(f'dump_return_value<Format>(ApiDumpInstance::current().settings(), "{command.returnType}", result);')
 
-            self.write(f'''dump_pre_function_formatting<Format>(ApiDumpInstance::current().settings());
-                dump_params_{command.name}<Format>(ApiDumpInstance::current(), {command_param_usage_text(command)});
-                dump_post_function_formatting<Format>(ApiDumpInstance::current().settings());
-                flush(ApiDumpInstance::current().settings());
-            }}''')
 
             if command.name == 'vkQueuePresentKHR':
                 self.write('ApiDumpInstance::current().nextFrame();')
