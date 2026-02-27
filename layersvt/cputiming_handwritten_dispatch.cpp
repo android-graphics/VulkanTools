@@ -15,10 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Author: Lenny Komow <lenny@lunarg.com>
- * Author: Shannon McPherson <shannon@lunarg.com>
- * Author: David Pinedo <david@lunarg.com>
- * Author: Charles Giessen <charles@lunarg.com>
  */
 
 // Implementation file for specifically implemented functions
@@ -33,9 +29,7 @@ extern "C" {
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* pName) {
     PFN_vkVoidFunction instance_func = cputiming_known_instance_functions(instance, pName);
     if (instance_func) return instance_func;
-    PFN_vkVoidFunction device_func = nullptr;
-
-    device_func = cputiming_known_device_functions(NULL, pName);
+    PFN_vkVoidFunction device_func = cputiming_known_device_functions(NULL, pName);
     // Make sure that device functions queried through GIPA works
     if (device_func) return device_func;
 

@@ -15,10 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Author: Lenny Komow <lenny@lunarg.com>
- * Author: Shannon McPherson <shannon@lunarg.com>
- * Author: David Pinedo <david@lunarg.com>
- * Author: Charles Giessen <charles@lunarg.com>
  */
 
 // Implementation file for specifically implemented functions
@@ -49,17 +45,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
                                                 VkInstance* pInstance) {
     std::call_once(g_perfetto_init_flag, []() { InitializePerfetto(); });
     Timer timer("vkCreateInstance");
-#if defined(_WIN32) && defined(_CRTDBG_MODE_FILE)
-#if !defined(NDEBUG)
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
-#endif
-    // Avoid "Abort, Retry, Ignore" dialog boxes
-    _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-    SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
-    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
-#endif
+
 
 
     // Get the function pointer

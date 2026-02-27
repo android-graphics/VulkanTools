@@ -19,8 +19,10 @@
 
 #include "perfetto/perfetto_helpers.h"
 
+#ifndef __ANDROID__
 #include <chrono>
 #include <iostream>
+#endif
 
 
 class Timer {

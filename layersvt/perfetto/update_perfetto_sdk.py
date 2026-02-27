@@ -38,9 +38,9 @@ def main():
 
     print(f"Updating Perfetto SDK to {version}...")
     print(f"Attempting download from: {url}")
-    
+
     found_zip_data = None
-    
+
     try:
         with urllib.request.urlopen(url) as response:
             if response.status == 200:
@@ -60,7 +60,7 @@ def main():
     try:
         with zipfile.ZipFile(io.BytesIO(found_zip_data)) as z:
             names = z.namelist()
-            
+
             for target in FILES_TO_EXTRACT:
                 # The SDK zip usually has files at root or in a folder like 'sdk/'
                 # We search for the file ending with target
@@ -68,14 +68,14 @@ def main():
                 if not candidates:
                     print(f"Error: Could not find {target} in zip.")
                     sys.exit(1)
-                
+
                 # Prefer the one with shortest path (likely root or sdk/)
                 candidate = sorted(candidates, key=len)[0]
-                
+
                 print(f"Extracting {candidate} -> {target}")
                 with z.open(candidate) as src, open(target, "wb") as dst:
                     dst.write(src.read())
-                    
+
     except zipfile.BadZipFile:
         print("Error: Invalid zip file.")
         sys.exit(1)
