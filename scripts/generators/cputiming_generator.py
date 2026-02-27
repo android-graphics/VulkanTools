@@ -57,6 +57,26 @@ def command_param_usage_text(command : Command):
     return ', '.join(p.name for p in command.params)
 
 
+# Returns the category for the command based on its first parameter type
+def get_command_category(command: Command):
+    if not command.params:
+        return 'CPUTimingCategory::Other'
+    
+    first_param_type = command.params[0].type
+    if first_param_type == 'VkDevice':
+        return 'CPUTimingCategory::VkDevice'
+    elif first_param_type == 'VkPhysicalDevice':
+        return 'CPUTimingCategory::VkPhysicalDevice'
+    elif first_param_type == 'VkInstance':
+        return 'CPUTimingCategory::VkInstance'
+    elif first_param_type == 'VkQueue':
+        return 'CPUTimingCategory::VkQueue'
+    elif first_param_type == 'VkCommandBuffer':
+        return 'CPUTimingCategory::VkCommandBuffer'
+    else:
+        return 'CPUTimingCategory::Other'
+
+
 class CpuTimingGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
@@ -112,7 +132,7 @@ class CpuTimingGenerator(BaseGenerator):
             protect.add_guard(self, command.protect)
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
-            self.write(f'Timer timer("{command.name}");')
+            self.write(f'Timer timer({get_command_category(command)}, "{command.name}");')
 
             if command.name == 'vkGetPhysicalDeviceToolPropertiesEXT':
                 self.write('''
@@ -171,7 +191,7 @@ class CpuTimingGenerator(BaseGenerator):
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
 
-            self.write(f'Timer timer("{command.name}");')
+            self.write(f'Timer timer({get_command_category(command)}, "{command.name}");')
 
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}device_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')

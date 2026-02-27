@@ -30,13 +30,13 @@
 // Autogen instance functions
 
 VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyInstance");
+    Timer timer(CPUTimingCategory::VkInstance, "vkDestroyInstance");
     auto dispatch_key = get_dispatch_key(instance);
     instance_dispatch_table(instance)->DestroyInstance(instance, pAllocator);
     destroy_instance_dispatch_table(dispatch_key);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) {
-    Timer timer("vkEnumeratePhysicalDevices");
+    Timer timer(CPUTimingCategory::VkInstance, "vkEnumeratePhysicalDevices");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
 
     if ((result == VK_SUCCESS || result == VK_INCOMPLETE) && pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
@@ -47,430 +47,430 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, u
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures) {
-    Timer timer("vkGetPhysicalDeviceFeatures");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFeatures");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures(physicalDevice, pFeatures);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceFormatProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFormatProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkImageFormatProperties* pImageFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceImageFormatProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceImageFormatProperties");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties) {
-    Timer timer("vkGetPhysicalDeviceProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties(physicalDevice, pProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties* pQueueFamilyProperties) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties) {
-    Timer timer("vkGetPhysicalDeviceMemoryProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceMemoryProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkSampleCountFlagBits samples, VkImageUsageFlags usage, VkImageTiling tiling, uint32_t* pPropertyCount, VkSparseImageFormatProperties* pProperties) {
-    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSparseImageFormatProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
-    Timer timer("vkEnumeratePhysicalDeviceGroups");
+    Timer timer(CPUTimingCategory::VkInstance, "vkEnumeratePhysicalDeviceGroups");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) {
-    Timer timer("vkGetPhysicalDeviceFeatures2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFeatures2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) {
-    Timer timer("vkGetPhysicalDeviceProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties2(physicalDevice, pProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceFormatProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFormatProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceImageFormatProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceImageFormatProperties2");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
-    Timer timer("vkGetPhysicalDeviceMemoryProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceMemoryProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) {
-    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties2");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSparseImageFormatProperties2");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalBufferProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalBufferProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalBufferProperties(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalFenceProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalFenceProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalSemaphoreProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalSemaphoreProperties");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
-    Timer timer("vkGetPhysicalDeviceToolProperties");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceToolProperties");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySurfaceKHR(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkDestroySurfaceKHR");
     instance_dispatch_table(instance)->DestroySurfaceKHR(instance, surface, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported) {
-    Timer timer("vkGetPhysicalDeviceSurfaceSupportKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceSupportKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities) {
-    Timer timer("vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR* pSurfaceFormats) {
-    Timer timer("vkGetPhysicalDeviceSurfaceFormatsKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceFormatsKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) {
-    Timer timer("vkGetPhysicalDeviceSurfacePresentModesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfacePresentModesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDevicePresentRectanglesKHR(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D* pRects) {
-    Timer timer("vkGetPhysicalDevicePresentRectanglesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDevicePresentRectanglesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR* pProperties) {
-    Timer timer("vkGetPhysicalDeviceDisplayPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDisplayPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPlanePropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR* pProperties) {
-    Timer timer("vkGetPhysicalDeviceDisplayPlanePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDisplayPlanePropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneSupportedDisplaysKHR(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR* pDisplays) {
-    Timer timer("vkGetDisplayPlaneSupportedDisplaysKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDisplayPlaneSupportedDisplaysKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, pDisplayCount, pDisplays);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayModePropertiesKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR* pProperties) {
-    Timer timer("vkGetDisplayModePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDisplayModePropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayModePropertiesKHR(physicalDevice, display, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayModeKHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, const VkDisplayModeCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDisplayModeKHR* pMode) {
-    Timer timer("vkCreateDisplayModeKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkCreateDisplayModeKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->CreateDisplayModeKHR(physicalDevice, display, pCreateInfo, pAllocator, pMode);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneCapabilitiesKHR(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities) {
-    Timer timer("vkGetDisplayPlaneCapabilitiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDisplayPlaneCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, pCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDisplayPlaneSurfaceKHR(VkInstance instance, const VkDisplaySurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateDisplayPlaneSurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateDisplayPlaneSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateDisplayPlaneSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateXlibSurfaceKHR(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateXlibSurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateXlibSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID) {
-    Timer timer("vkGetPhysicalDeviceXlibPresentationSupportKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceXlibPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
     return result;
 }
 #endif  // VK_USE_PLATFORM_XLIB_KHR
 #if defined(VK_USE_PLATFORM_XCB_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateXcbSurfaceKHR(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateXcbSurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateXcbSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateXcbSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, xcb_connection_t* connection, xcb_visualid_t visual_id) {
-    Timer timer("vkGetPhysicalDeviceXcbPresentationSupportKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceXcbPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice, queueFamilyIndex, connection, visual_id);
     return result;
 }
 #endif  // VK_USE_PLATFORM_XCB_KHR
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateWaylandSurfaceKHR(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateWaylandSurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateWaylandSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateWaylandSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWaylandPresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct wl_display* display) {
-    Timer timer("vkGetPhysicalDeviceWaylandPresentationSupportKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceWaylandPresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice, queueFamilyIndex, display);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WAYLAND_KHR
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAndroidSurfaceKHR(VkInstance instance, const VkAndroidSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateAndroidSurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateAndroidSurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateAndroidSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateWin32SurfaceKHR(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateWin32SurfaceKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateWin32SurfaceKHR");
     VkResult result = instance_dispatch_table(instance)->CreateWin32SurfaceKHR(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceWin32PresentationSupportKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex) {
-    Timer timer("vkGetPhysicalDeviceWin32PresentationSupportKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceWin32PresentationSupportKHR");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoCapabilitiesKHR(VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, VkVideoCapabilitiesKHR* pCapabilities) {
-    Timer timer("vkGetPhysicalDeviceVideoCapabilitiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceVideoCapabilitiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoCapabilitiesKHR(physicalDevice, pVideoProfile, pCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoFormatPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo, uint32_t* pVideoFormatPropertyCount, VkVideoFormatPropertiesKHR* pVideoFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, pVideoFormatProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFeatures2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures2* pFeatures) {
-    Timer timer("vkGetPhysicalDeviceFeatures2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFeatures2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFeatures2KHR(physicalDevice, pFeatures);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties2* pProperties) {
-    Timer timer("vkGetPhysicalDeviceProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceProperties2KHR(physicalDevice, pProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceFormatProperties2KHR(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties2* pFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceFormatProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFormatProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, pFormatProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo, VkImageFormatProperties2* pImageFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceImageFormatProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceImageFormatProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, pImageFormatInfo, pImageFormatProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2* pQueueFamilyProperties) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties2KHR(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties2* pMemoryProperties) {
-    Timer timer("vkGetPhysicalDeviceMemoryProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceMemoryProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties2KHR(physicalDevice, pMemoryProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceSparseImageFormatProperties2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo, uint32_t* pPropertyCount, VkSparseImageFormatProperties2* pProperties) {
-    Timer timer("vkGetPhysicalDeviceSparseImageFormatProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSparseImageFormatProperties2KHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroupsKHR(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
-    Timer timer("vkEnumeratePhysicalDeviceGroupsKHR");
+    Timer timer(CPUTimingCategory::VkInstance, "vkEnumeratePhysicalDeviceGroupsKHR");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroupsKHR(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalBufferPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo, VkExternalBufferProperties* pExternalBufferProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalBufferPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalBufferPropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice, pExternalBufferInfo, pExternalBufferProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo, VkExternalSemaphoreProperties* pExternalSemaphoreProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalSemaphorePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalSemaphorePropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice, pExternalSemaphoreInfo, pExternalSemaphoreProperties);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalFencePropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo, VkExternalFenceProperties* pExternalFenceProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalFencePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalFencePropertiesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice, pExternalFenceInfo, pExternalFenceProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterKHR* pCounters, VkPerformanceCounterDescriptionKHR* pCounterDescriptions) {
-    Timer timer("vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(VkPhysicalDevice physicalDevice, const VkQueryPoolPerformanceCreateInfoKHR* pPerformanceQueryCreateInfo, uint32_t* pNumPasses) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice, pPerformanceQueryCreateInfo, pNumPasses);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceCapabilities2KHR* pSurfaceCapabilities) {
-    Timer timer("vkGetPhysicalDeviceSurfaceCapabilities2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceCapabilities2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, pSurfaceCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceFormats2KHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pSurfaceFormatCount, VkSurfaceFormat2KHR* pSurfaceFormats) {
-    Timer timer("vkGetPhysicalDeviceSurfaceFormats2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceFormats2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR* pProperties) {
-    Timer timer("vkGetPhysicalDeviceDisplayProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDisplayProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayProperties2KHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceDisplayPlaneProperties2KHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR* pProperties) {
-    Timer timer("vkGetPhysicalDeviceDisplayPlaneProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDisplayPlaneProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayModeProperties2KHR(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR* pProperties) {
-    Timer timer("vkGetDisplayModeProperties2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDisplayModeProperties2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDisplayPlaneCapabilities2KHR(VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, VkDisplayPlaneCapabilities2KHR* pCapabilities) {
-    Timer timer("vkGetDisplayPlaneCapabilities2KHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDisplayPlaneCapabilities2KHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDisplayPlaneCapabilities2KHR(physicalDevice, pDisplayPlaneInfo, pCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceFragmentShadingRatesKHR(VkPhysicalDevice physicalDevice, uint32_t* pFragmentShadingRateCount, VkPhysicalDeviceFragmentShadingRateKHR* pFragmentShadingRates) {
-    Timer timer("vkGetPhysicalDeviceFragmentShadingRatesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceFragmentShadingRatesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, pFragmentShadingRateCount, pFragmentShadingRates);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo, VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties) {
-    Timer timer("vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(physicalDevice, pQualityLevelInfo, pQualityLevelProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR* pProperties) {
-    Timer timer("vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains) {
-    Timer timer("vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, pTimeDomainCount, pTimeDomains);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugReportCallbackEXT* pCallback) {
-    Timer timer("vkCreateDebugReportCallbackEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateDebugReportCallbackEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDebugReportCallbackEXT(instance, pCreateInfo, pAllocator, pCallback);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDebugReportCallbackEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkDestroyDebugReportCallbackEXT");
     instance_dispatch_table(instance)->DestroyDebugReportCallbackEXT(instance, callback, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkDebugReportMessageEXT(VkInstance instance, VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage) {
-    Timer timer("vkDebugReportMessageEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkDebugReportMessageEXT");
     instance_dispatch_table(instance)->DebugReportMessageEXT(instance, flags, objectType, object, location, messageCode, pLayerPrefix, pMessage);
 }
 #if defined(VK_USE_PLATFORM_GGP)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateStreamDescriptorSurfaceGGP(VkInstance instance, const VkStreamDescriptorSurfaceCreateInfoGGP* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateStreamDescriptorSurfaceGGP");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateStreamDescriptorSurfaceGGP");
     VkResult result = instance_dispatch_table(instance)->CreateStreamDescriptorSurfaceGGP(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_GGP
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type, VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags, VkExternalMemoryHandleTypeFlagsNV externalHandleType, VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties);
     return result;
 }
 #if defined(VK_USE_PLATFORM_VI_NN)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateViSurfaceNN(VkInstance instance, const VkViSurfaceCreateInfoNN* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateViSurfaceNN");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateViSurfaceNN");
     VkResult result = instance_dispatch_table(instance)->CreateViSurfaceNN(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_VI_NN
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseDisplayEXT(VkPhysicalDevice physicalDevice, VkDisplayKHR display) {
-    Timer timer("vkReleaseDisplayEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkReleaseDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->ReleaseDisplayEXT(physicalDevice, display);
     return result;
 }
 #if defined(VK_USE_PLATFORM_XLIB_XRANDR_EXT)
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireXlibDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display) {
-    Timer timer("vkAcquireXlibDisplayEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkAcquireXlibDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireXlibDisplayEXT(physicalDevice, dpy, display);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRandROutputDisplayEXT(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay) {
-    Timer timer("vkGetRandROutputDisplayEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetRandROutputDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetRandROutputDisplayEXT(physicalDevice, dpy, rrOutput, pDisplay);
     return result;
 }
 #endif  // VK_USE_PLATFORM_XLIB_XRANDR_EXT
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilities2EXT* pSurfaceCapabilities) {
-    Timer timer("vkGetPhysicalDeviceSurfaceCapabilities2EXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfaceCapabilities2EXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, pSurfaceCapabilities);
     return result;
 }
 #if defined(VK_USE_PLATFORM_IOS_MVK)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIOSSurfaceMVK(VkInstance instance, const VkIOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateIOSSurfaceMVK");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateIOSSurfaceMVK");
     VkResult result = instance_dispatch_table(instance)->CreateIOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_IOS_MVK
 #if defined(VK_USE_PLATFORM_MACOS_MVK)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMacOSSurfaceMVK(VkInstance instance, const VkMacOSSurfaceCreateInfoMVK* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateMacOSSurfaceMVK");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateMacOSSurfaceMVK");
     VkResult result = instance_dispatch_table(instance)->CreateMacOSSurfaceMVK(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_MACOS_MVK
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {
-    Timer timer("vkCreateDebugUtilsMessengerEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateDebugUtilsMessengerEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDebugUtilsMessengerEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkDestroyDebugUtilsMessengerEXT");
     instance_dispatch_table(instance)->DestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkSubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) {
-    Timer timer("vkSubmitDebugUtilsMessageEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkSubmitDebugUtilsMessageEXT");
     instance_dispatch_table(instance)->SubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
 }
 VKAPI_ATTR VkDeviceSize VKAPI_CALL vkGetPhysicalDeviceDescriptorSizeEXT(VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType) {
-    Timer timer("vkGetPhysicalDeviceDescriptorSizeEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDescriptorSizeEXT");
     VkDeviceSize result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDescriptorSizeEXT(physicalDevice, descriptorType);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMultisamplePropertiesEXT(VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, VkMultisamplePropertiesEXT* pMultisampleProperties) {
-    Timer timer("vkGetPhysicalDeviceMultisamplePropertiesEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceMultisamplePropertiesEXT");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples, pMultisampleProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR* pTimeDomains) {
-    Timer timer("vkGetPhysicalDeviceCalibrateableTimeDomainsEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCalibrateableTimeDomainsEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, pTimeDomainCount, pTimeDomains);
     return result;
 }
 #if defined(VK_USE_PLATFORM_FUCHSIA)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImagePipeSurfaceFUCHSIA(VkInstance instance, const VkImagePipeSurfaceCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateImagePipeSurfaceFUCHSIA");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateImagePipeSurfaceFUCHSIA");
     VkResult result = instance_dispatch_table(instance)->CreateImagePipeSurfaceFUCHSIA(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_FUCHSIA
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMetalSurfaceEXT(VkInstance instance, const VkMetalSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateMetalSurfaceEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateMetalSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateMetalSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties* pToolProperties) {
-    Timer timer("vkGetPhysicalDeviceToolPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceToolPropertiesEXT");
 
     static const VkPhysicalDeviceToolPropertiesEXT cputiming_layer_tool_props = {
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
@@ -496,110 +496,110 @@ VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceToolPropertiesEXT(VkPhysicalDe
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesNV* pProperties) {
-    Timer timer("vkGetPhysicalDeviceCooperativeMatrixPropertiesNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkPhysicalDevice physicalDevice, uint32_t* pCombinationCount, VkFramebufferMixedSamplesCombinationNV* pCombinations) {
-    Timer timer("vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, pCombinationCount, pCombinations);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceSurfacePresentModes2EXT(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, uint32_t* pPresentModeCount, VkPresentModeKHR* pPresentModes) {
-    Timer timer("vkGetPhysicalDeviceSurfacePresentModes2EXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceSurfacePresentModes2EXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, pSurfaceInfo, pPresentModeCount, pPresentModes);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateHeadlessSurfaceEXT(VkInstance instance, const VkHeadlessSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateHeadlessSurfaceEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateHeadlessSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateHeadlessSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display) {
-    Timer timer("vkAcquireDrmDisplayEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkAcquireDrmDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireDrmDisplayEXT(physicalDevice, drmFd, display);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDrmDisplayEXT(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display) {
-    Timer timer("vkGetDrmDisplayEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetDrmDisplayEXT");
     VkResult result = instance_dispatch_table(physicalDevice)->GetDrmDisplayEXT(physicalDevice, drmFd, connectorId, display);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display) {
-    Timer timer("vkAcquireWinrtDisplayNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkAcquireWinrtDisplayNV");
     VkResult result = instance_dispatch_table(physicalDevice)->AcquireWinrtDisplayNV(physicalDevice, display);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay) {
-    Timer timer("vkGetWinrtDisplayNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetWinrtDisplayNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 #if defined(VK_USE_PLATFORM_DIRECTFB_EXT)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDirectFBSurfaceEXT(VkInstance instance, const VkDirectFBSurfaceCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateDirectFBSurfaceEXT");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateDirectFBSurfaceEXT");
     VkResult result = instance_dispatch_table(instance)->CreateDirectFBSurfaceEXT(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceDirectFBPresentationSupportEXT(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, IDirectFB* dfb) {
-    Timer timer("vkGetPhysicalDeviceDirectFBPresentationSupportEXT");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceDirectFBPresentationSupportEXT");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceDirectFBPresentationSupportEXT(physicalDevice, queueFamilyIndex, dfb);
     return result;
 }
 #endif  // VK_USE_PLATFORM_DIRECTFB_EXT
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateScreenSurfaceQNX(VkInstance instance, const VkScreenSurfaceCreateInfoQNX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateScreenSurfaceQNX");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateScreenSurfaceQNX");
     VkResult result = instance_dispatch_table(instance)->CreateScreenSurfaceQNX(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL vkGetPhysicalDeviceScreenPresentationSupportQNX(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct _screen_window* window) {
-    Timer timer("vkGetPhysicalDeviceScreenPresentationSupportQNX");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceScreenPresentationSupportQNX");
     VkBool32 result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceScreenPresentationSupportQNX(physicalDevice, queueFamilyIndex, window);
     return result;
 }
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceExternalTensorPropertiesARM(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceExternalTensorInfoARM* pExternalTensorInfo, VkExternalTensorPropertiesARM* pExternalTensorProperties) {
-    Timer timer("vkGetPhysicalDeviceExternalTensorPropertiesARM");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceExternalTensorPropertiesARM");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceExternalTensorPropertiesARM(physicalDevice, pExternalTensorInfo, pExternalTensorProperties);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice physicalDevice, const VkOpticalFlowImageFormatInfoNV* pOpticalFlowImageFormatInfo, uint32_t* pFormatCount, VkOpticalFlowImageFormatPropertiesNV* pImageFormatProperties) {
-    Timer timer("vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, pOpticalFlowImageFormatInfo, pFormatCount, pImageFormatProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV* pProperties) {
-    Timer timer("vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pQueueFamilyDataGraphPropertyCount, VkQueueFamilyDataGraphPropertiesARM* pQueueFamilyDataGraphProperties) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM* pQueueFamilyDataGraphProcessingEngineInfo, VkQueueFamilyDataGraphProcessingEnginePropertiesARM* pQueueFamilyDataGraphProcessingEngineProperties) {
-    Timer timer("vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM");
     instance_dispatch_table(physicalDevice)->GetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(physicalDevice, pQueueFamilyDataGraphProcessingEngineInfo, pQueueFamilyDataGraphProcessingEngineProperties);
 }
 #if defined(VK_USE_PLATFORM_OHOS)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSurfaceOHOS(VkInstance instance, const VkSurfaceCreateInfoOHOS* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface) {
-    Timer timer("vkCreateSurfaceOHOS");
+    Timer timer(CPUTimingCategory::VkInstance, "vkCreateSurfaceOHOS");
     VkResult result = instance_dispatch_table(instance)->CreateSurfaceOHOS(instance, pCreateInfo, pAllocator, pSurface);
     return result;
 }
 #endif  // VK_USE_PLATFORM_OHOS
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixFlexibleDimensionsPropertiesNV* pProperties) {
-    Timer timer("vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
     VkResult result = instance_dispatch_table(physicalDevice)->GetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, pPropertyCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, uint32_t* pCounterCount, VkPerformanceCounterARM* pCounters, VkPerformanceCounterDescriptionARM* pCounterDescriptions) {
-    Timer timer("vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM");
     VkResult result = instance_dispatch_table(physicalDevice)->EnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions);
     return result;
 }
@@ -607,2947 +607,2947 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceQueueFamilyPerformanceCo
 // Autogen device functions
 
 VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDevice");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDevice");
     device_dispatch_table(device)->DestroyDevice(device, pAllocator);
     destroy_device_dispatch_table(get_dispatch_key(device));
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue) {
-    Timer timer("vkGetDeviceQueue");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceQueue");
     device_dispatch_table(device)->GetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence) {
-    Timer timer("vkQueueSubmit");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueSubmit");
     VkResult result = device_dispatch_table(queue)->QueueSubmit(queue, submitCount, pSubmits, fence);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueWaitIdle(VkQueue queue) {
-    Timer timer("vkQueueWaitIdle");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueWaitIdle");
     VkResult result = device_dispatch_table(queue)->QueueWaitIdle(queue);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkDeviceWaitIdle(VkDevice device) {
-    Timer timer("vkDeviceWaitIdle");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDeviceWaitIdle");
     VkResult result = device_dispatch_table(device)->DeviceWaitIdle(device);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) {
-    Timer timer("vkAllocateMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAllocateMemory");
     VkResult result = device_dispatch_table(device)->AllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkFreeMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkFreeMemory");
     device_dispatch_table(device)->FreeMemory(device, memory, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData) {
-    Timer timer("vkMapMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkMapMemory");
     VkResult result = device_dispatch_table(device)->MapMemory(device, memory, offset, size, flags, ppData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(VkDevice device, VkDeviceMemory memory) {
-    Timer timer("vkUnmapMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUnmapMemory");
     device_dispatch_table(device)->UnmapMemory(device, memory);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) {
-    Timer timer("vkFlushMappedMemoryRanges");
+    Timer timer(CPUTimingCategory::VkDevice, "vkFlushMappedMemoryRanges");
     VkResult result = device_dispatch_table(device)->FlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges) {
-    Timer timer("vkInvalidateMappedMemoryRanges");
+    Timer timer(CPUTimingCategory::VkDevice, "vkInvalidateMappedMemoryRanges");
     VkResult result = device_dispatch_table(device)->InvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes) {
-    Timer timer("vkGetDeviceMemoryCommitment");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceMemoryCommitment");
     device_dispatch_table(device)->GetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    Timer timer("vkBindBufferMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindBufferMemory");
     VkResult result = device_dispatch_table(device)->BindBufferMemory(device, buffer, memory, memoryOffset);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    Timer timer("vkBindImageMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindImageMemory");
     VkResult result = device_dispatch_table(device)->BindImageMemory(device, image, memory, memoryOffset);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) {
-    Timer timer("vkGetBufferMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferMemoryRequirements");
     device_dispatch_table(device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements) {
-    Timer timer("vkGetImageMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageMemoryRequirements");
     device_dispatch_table(device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements* pSparseMemoryRequirements) {
-    Timer timer("vkGetImageSparseMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSparseMemoryRequirements");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence) {
-    Timer timer("vkQueueBindSparse");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueBindSparse");
     VkResult result = device_dispatch_table(queue)->QueueBindSparse(queue, bindInfoCount, pBindInfo, fence);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateFence(VkDevice device, const VkFenceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    Timer timer("vkCreateFence");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateFence");
     VkResult result = device_dispatch_table(device)->CreateFence(device, pCreateInfo, pAllocator, pFence);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyFence");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyFence");
     device_dispatch_table(device)->DestroyFence(device, fence, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences) {
-    Timer timer("vkResetFences");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetFences");
     VkResult result = device_dispatch_table(device)->ResetFences(device, fenceCount, pFences);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceStatus(VkDevice device, VkFence fence) {
-    Timer timer("vkGetFenceStatus");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetFenceStatus");
     VkResult result = device_dispatch_table(device)->GetFenceStatus(device, fence);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout) {
-    Timer timer("vkWaitForFences");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWaitForFences");
     VkResult result = device_dispatch_table(device)->WaitForFences(device, fenceCount, pFences, waitAll, timeout);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSemaphore(VkDevice device, const VkSemaphoreCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore) {
-    Timer timer("vkCreateSemaphore");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSemaphore");
     VkResult result = device_dispatch_table(device)->CreateSemaphore(device, pCreateInfo, pAllocator, pSemaphore);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySemaphore");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroySemaphore");
     device_dispatch_table(device)->DestroySemaphore(device, semaphore, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateQueryPool(VkDevice device, const VkQueryPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool) {
-    Timer timer("vkCreateQueryPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateQueryPool");
     VkResult result = device_dispatch_table(device)->CreateQueryPool(device, pCreateInfo, pAllocator, pQueryPool);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyQueryPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyQueryPool");
     device_dispatch_table(device)->DestroyQueryPool(device, queryPool, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, size_t dataSize, void* pData, VkDeviceSize stride, VkQueryResultFlags flags) {
-    Timer timer("vkGetQueryPoolResults");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetQueryPoolResults");
     VkResult result = device_dispatch_table(device)->GetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) {
-    Timer timer("vkCreateBuffer");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateBuffer");
     VkResult result = device_dispatch_table(device)->CreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyBuffer");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyBuffer");
     device_dispatch_table(device)->DestroyBuffer(device, buffer, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage) {
-    Timer timer("vkCreateImage");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateImage");
     VkResult result = device_dispatch_table(device)->CreateImage(device, pCreateInfo, pAllocator, pImage);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyImage");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyImage");
     device_dispatch_table(device)->DestroyImage(device, image, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout) {
-    Timer timer("vkGetImageSubresourceLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSubresourceLayout");
     device_dispatch_table(device)->GetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImageView(VkDevice device, const VkImageViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImageView* pView) {
-    Timer timer("vkCreateImageView");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateImageView");
     VkResult result = device_dispatch_table(device)->CreateImageView(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyImageView");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyImageView");
     device_dispatch_table(device)->DestroyImageView(device, imageView, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCommandPool(VkDevice device, const VkCommandPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool) {
-    Timer timer("vkCreateCommandPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateCommandPool");
     VkResult result = device_dispatch_table(device)->CreateCommandPool(device, pCreateInfo, pAllocator, pCommandPool);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyCommandPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyCommandPool");
     device_dispatch_table(device)->DestroyCommandPool(device, commandPool, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags) {
-    Timer timer("vkResetCommandPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetCommandPool");
     VkResult result = device_dispatch_table(device)->ResetCommandPool(device, commandPool, flags);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateCommandBuffers(VkDevice device, const VkCommandBufferAllocateInfo* pAllocateInfo, VkCommandBuffer* pCommandBuffers) {
-    Timer timer("vkAllocateCommandBuffers");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAllocateCommandBuffers");
     VkResult result = device_dispatch_table(device)->AllocateCommandBuffers(device, pAllocateInfo, pCommandBuffers);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) {
-    Timer timer("vkFreeCommandBuffers");
+    Timer timer(CPUTimingCategory::VkDevice, "vkFreeCommandBuffers");
     device_dispatch_table(device)->FreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBeginCommandBuffer(VkCommandBuffer commandBuffer, const VkCommandBufferBeginInfo* pBeginInfo) {
-    Timer timer("vkBeginCommandBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkBeginCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->BeginCommandBuffer(commandBuffer, pBeginInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkEndCommandBuffer(VkCommandBuffer commandBuffer) {
-    Timer timer("vkEndCommandBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkEndCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->EndCommandBuffer(commandBuffer);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags) {
-    Timer timer("vkResetCommandBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkResetCommandBuffer");
     VkResult result = device_dispatch_table(commandBuffer)->ResetCommandBuffer(commandBuffer, flags);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions) {
-    Timer timer("vkCmdCopyBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBuffer");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions) {
-    Timer timer("vkCmdCopyImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImage");
     device_dispatch_table(commandBuffer)->CmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    Timer timer("vkCmdCopyBufferToImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBufferToImage");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions) {
-    Timer timer("vkCmdCopyImageToBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImageToBuffer");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData) {
-    Timer timer("vkCmdUpdateBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdUpdateBuffer");
     device_dispatch_table(commandBuffer)->CmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data) {
-    Timer timer("vkCmdFillBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdFillBuffer");
     device_dispatch_table(commandBuffer)->CmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    Timer timer("vkCmdPipelineBarrier");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPipelineBarrier");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags) {
-    Timer timer("vkCmdBeginQuery");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginQuery");
     device_dispatch_table(commandBuffer)->CmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query) {
-    Timer timer("vkCmdEndQuery");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndQuery");
     device_dispatch_table(commandBuffer)->CmdEndQuery(commandBuffer, queryPool, query);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    Timer timer("vkCmdResetQueryPool");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResetQueryPool");
     device_dispatch_table(commandBuffer)->CmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query) {
-    Timer timer("vkCmdWriteTimestamp");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteTimestamp");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyQueryPoolResults(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize stride, VkQueryResultFlags flags) {
-    Timer timer("vkCmdCopyQueryPoolResults");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyQueryPoolResults");
     device_dispatch_table(commandBuffer)->CmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers) {
-    Timer timer("vkCmdExecuteCommands");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdExecuteCommands");
     device_dispatch_table(commandBuffer)->CmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateEvent(VkDevice device, const VkEventCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent) {
-    Timer timer("vkCreateEvent");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateEvent");
     VkResult result = device_dispatch_table(device)->CreateEvent(device, pCreateInfo, pAllocator, pEvent);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyEvent");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyEvent");
     device_dispatch_table(device)->DestroyEvent(device, event, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetEventStatus(VkDevice device, VkEvent event) {
-    Timer timer("vkGetEventStatus");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetEventStatus");
     VkResult result = device_dispatch_table(device)->GetEventStatus(device, event);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetEvent(VkDevice device, VkEvent event) {
-    Timer timer("vkSetEvent");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetEvent");
     VkResult result = device_dispatch_table(device)->SetEvent(device, event);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkResetEvent(VkDevice device, VkEvent event) {
-    Timer timer("vkResetEvent");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetEvent");
     VkResult result = device_dispatch_table(device)->ResetEvent(device, event);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferView(VkDevice device, const VkBufferViewCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferView* pView) {
-    Timer timer("vkCreateBufferView");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateBufferView");
     VkResult result = device_dispatch_table(device)->CreateBufferView(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyBufferView");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyBufferView");
     device_dispatch_table(device)->DestroyBufferView(device, bufferView, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateShaderModule(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pShaderModule) {
-    Timer timer("vkCreateShaderModule");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateShaderModule");
     VkResult result = device_dispatch_table(device)->CreateShaderModule(device, pCreateInfo, pAllocator, pShaderModule);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyShaderModule");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyShaderModule");
     device_dispatch_table(device)->DestroyShaderModule(device, shaderModule, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineCache(VkDevice device, const VkPipelineCacheCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineCache* pPipelineCache) {
-    Timer timer("vkCreatePipelineCache");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreatePipelineCache");
     VkResult result = device_dispatch_table(device)->CreatePipelineCache(device, pCreateInfo, pAllocator, pPipelineCache);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPipelineCache");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPipelineCache");
     device_dispatch_table(device)->DestroyPipelineCache(device, pipelineCache, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData) {
-    Timer timer("vkGetPipelineCacheData");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineCacheData");
     VkResult result = device_dispatch_table(device)->GetPipelineCacheData(device, pipelineCache, pDataSize, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches) {
-    Timer timer("vkMergePipelineCaches");
+    Timer timer(CPUTimingCategory::VkDevice, "vkMergePipelineCaches");
     VkResult result = device_dispatch_table(device)->MergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateComputePipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkComputePipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateComputePipelines");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateComputePipelines");
     VkResult result = device_dispatch_table(device)->CreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPipeline");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPipeline");
     device_dispatch_table(device)->DestroyPipeline(device, pipeline, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineLayout(VkDevice device, const VkPipelineLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineLayout* pPipelineLayout) {
-    Timer timer("vkCreatePipelineLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreatePipelineLayout");
     VkResult result = device_dispatch_table(device)->CreatePipelineLayout(device, pCreateInfo, pAllocator, pPipelineLayout);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPipelineLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPipelineLayout");
     device_dispatch_table(device)->DestroyPipelineLayout(device, pipelineLayout, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSampler(VkDevice device, const VkSamplerCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSampler* pSampler) {
-    Timer timer("vkCreateSampler");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSampler");
     VkResult result = device_dispatch_table(device)->CreateSampler(device, pCreateInfo, pAllocator, pSampler);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySampler");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroySampler");
     device_dispatch_table(device)->DestroySampler(device, sampler, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorSetLayout(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorSetLayout* pSetLayout) {
-    Timer timer("vkCreateDescriptorSetLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDescriptorSetLayout");
     VkResult result = device_dispatch_table(device)->CreateDescriptorSetLayout(device, pCreateInfo, pAllocator, pSetLayout);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDescriptorSetLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDescriptorSetLayout");
     device_dispatch_table(device)->DestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorPool(VkDevice device, const VkDescriptorPoolCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorPool* pDescriptorPool) {
-    Timer timer("vkCreateDescriptorPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDescriptorPool");
     VkResult result = device_dispatch_table(device)->CreateDescriptorPool(device, pCreateInfo, pAllocator, pDescriptorPool);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDescriptorPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDescriptorPool");
     device_dispatch_table(device)->DestroyDescriptorPool(device, descriptorPool, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags) {
-    Timer timer("vkResetDescriptorPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetDescriptorPool");
     VkResult result = device_dispatch_table(device)->ResetDescriptorPool(device, descriptorPool, flags);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateDescriptorSets(VkDevice device, const VkDescriptorSetAllocateInfo* pAllocateInfo, VkDescriptorSet* pDescriptorSets) {
-    Timer timer("vkAllocateDescriptorSets");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAllocateDescriptorSets");
     VkResult result = device_dispatch_table(device)->AllocateDescriptorSets(device, pAllocateInfo, pDescriptorSets);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkFreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets) {
-    Timer timer("vkFreeDescriptorSets");
+    Timer timer(CPUTimingCategory::VkDevice, "vkFreeDescriptorSets");
     VkResult result = device_dispatch_table(device)->FreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies) {
-    Timer timer("vkUpdateDescriptorSets");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateDescriptorSets");
     device_dispatch_table(device)->UpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
-    Timer timer("vkCmdBindPipeline");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindPipeline");
     device_dispatch_table(commandBuffer)->CmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets) {
-    Timer timer("vkCmdBindDescriptorSets");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorSets");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
-    Timer timer("vkCmdClearColorImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdClearColorImage");
     device_dispatch_table(commandBuffer)->CmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    Timer timer("vkCmdDispatch");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatch");
     device_dispatch_table(commandBuffer)->CmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    Timer timer("vkCmdDispatchIndirect");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchIndirect");
     device_dispatch_table(commandBuffer)->CmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    Timer timer("vkCmdSetEvent");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetEvent");
     device_dispatch_table(commandBuffer)->CmdSetEvent(commandBuffer, event, stageMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask) {
-    Timer timer("vkCmdResetEvent");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResetEvent");
     device_dispatch_table(commandBuffer)->CmdResetEvent(commandBuffer, event, stageMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers) {
-    Timer timer("vkCmdWaitEvents");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWaitEvents");
     device_dispatch_table(commandBuffer)->CmdWaitEvents(commandBuffer, eventCount, pEvents, srcStageMask, dstStageMask, memoryBarrierCount, pMemoryBarriers, bufferMemoryBarrierCount, pBufferMemoryBarriers, imageMemoryBarrierCount, pImageMemoryBarriers);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues) {
-    Timer timer("vkCmdPushConstants");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushConstants");
     device_dispatch_table(commandBuffer)->CmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateGraphicsPipelines(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkGraphicsPipelineCreateInfo* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateGraphicsPipelines");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateGraphicsPipelines");
     VkResult result = device_dispatch_table(device)->CreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateFramebuffer(VkDevice device, const VkFramebufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkFramebuffer* pFramebuffer) {
-    Timer timer("vkCreateFramebuffer");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateFramebuffer");
     VkResult result = device_dispatch_table(device)->CreateFramebuffer(device, pCreateInfo, pAllocator, pFramebuffer);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyFramebuffer");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyFramebuffer");
     device_dispatch_table(device)->DestroyFramebuffer(device, framebuffer, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass(VkDevice device, const VkRenderPassCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    Timer timer("vkCreateRenderPass");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateRenderPass");
     VkResult result = device_dispatch_table(device)->CreateRenderPass(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyRenderPass");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyRenderPass");
     device_dispatch_table(device)->DestroyRenderPass(device, renderPass, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity) {
-    Timer timer("vkGetRenderAreaGranularity");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRenderAreaGranularity");
     device_dispatch_table(device)->GetRenderAreaGranularity(device, renderPass, pGranularity);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports) {
-    Timer timer("vkCmdSetViewport");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewport");
     device_dispatch_table(commandBuffer)->CmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors) {
-    Timer timer("vkCmdSetScissor");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetScissor");
     device_dispatch_table(commandBuffer)->CmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth) {
-    Timer timer("vkCmdSetLineWidth");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineWidth");
     device_dispatch_table(commandBuffer)->CmdSetLineWidth(commandBuffer, lineWidth);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor) {
-    Timer timer("vkCmdSetDepthBias");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBias");
     device_dispatch_table(commandBuffer)->CmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4]) {
-    Timer timer("vkCmdSetBlendConstants");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetBlendConstants");
     device_dispatch_table(commandBuffer)->CmdSetBlendConstants(commandBuffer, blendConstants);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds) {
-    Timer timer("vkCmdSetDepthBounds");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBounds");
     device_dispatch_table(commandBuffer)->CmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask) {
-    Timer timer("vkCmdSetStencilCompareMask");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilCompareMask");
     device_dispatch_table(commandBuffer)->CmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask) {
-    Timer timer("vkCmdSetStencilWriteMask");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilWriteMask");
     device_dispatch_table(commandBuffer)->CmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference) {
-    Timer timer("vkCmdSetStencilReference");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilReference");
     device_dispatch_table(commandBuffer)->CmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType) {
-    Timer timer("vkCmdBindIndexBuffer");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindIndexBuffer");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets) {
-    Timer timer("vkCmdBindVertexBuffers");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindVertexBuffers");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance) {
-    Timer timer("vkCmdDraw");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDraw");
     device_dispatch_table(commandBuffer)->CmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance) {
-    Timer timer("vkCmdDrawIndexed");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndexed");
     device_dispatch_table(commandBuffer)->CmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndirect");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndirect");
     device_dispatch_table(commandBuffer)->CmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndexedIndirect");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndexedIndirect");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageBlit* pRegions, VkFilter filter) {
-    Timer timer("vkCmdBlitImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBlitImage");
     device_dispatch_table(commandBuffer)->CmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdClearDepthStencilImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearDepthStencilValue* pDepthStencil, uint32_t rangeCount, const VkImageSubresourceRange* pRanges) {
-    Timer timer("vkCmdClearDepthStencilImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdClearDepthStencilImage");
     device_dispatch_table(commandBuffer)->CmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects) {
-    Timer timer("vkCmdClearAttachments");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdClearAttachments");
     device_dispatch_table(commandBuffer)->CmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageResolve* pRegions) {
-    Timer timer("vkCmdResolveImage");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResolveImage");
     device_dispatch_table(commandBuffer)->CmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, VkSubpassContents contents) {
-    Timer timer("vkCmdBeginRenderPass");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginRenderPass");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass(commandBuffer, pRenderPassBegin, contents);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents) {
-    Timer timer("vkCmdNextSubpass");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdNextSubpass");
     device_dispatch_table(commandBuffer)->CmdNextSubpass(commandBuffer, contents);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdEndRenderPass");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRenderPass");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass(commandBuffer);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    Timer timer("vkBindBufferMemory2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindBufferMemory2");
     VkResult result = device_dispatch_table(device)->BindBufferMemory2(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    Timer timer("vkBindImageMemory2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindImageMemory2");
     VkResult result = device_dispatch_table(device)->BindImageMemory2(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) {
-    Timer timer("vkGetDeviceGroupPeerMemoryFeatures");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceGroupPeerMemoryFeatures");
     device_dispatch_table(device)->GetDeviceGroupPeerMemoryFeatures(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
-    Timer timer("vkCmdSetDeviceMask");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDeviceMask");
     device_dispatch_table(commandBuffer)->CmdSetDeviceMask(commandBuffer, deviceMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetImageMemoryRequirements2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageMemoryRequirements2");
     device_dispatch_table(device)->GetImageMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetBufferMemoryRequirements2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferMemoryRequirements2");
     device_dispatch_table(device)->GetBufferMemoryRequirements2(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements2(VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    Timer timer("vkGetImageSparseMemoryRequirements2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSparseMemoryRequirements2");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements2(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkTrimCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) {
-    Timer timer("vkTrimCommandPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkTrimCommandPool");
     device_dispatch_table(device)->TrimCommandPool(device, commandPool, flags);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue) {
-    Timer timer("vkGetDeviceQueue2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceQueue2");
     device_dispatch_table(device)->GetDeviceQueue2(device, pQueueInfo, pQueue);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    Timer timer("vkCmdDispatchBase");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchBase");
     device_dispatch_table(commandBuffer)->CmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorUpdateTemplate(VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) {
-    Timer timer("vkCreateDescriptorUpdateTemplate");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDescriptorUpdateTemplate");
     VkResult result = device_dispatch_table(device)->CreateDescriptorUpdateTemplate(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDescriptorUpdateTemplate");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDescriptorUpdateTemplate");
     device_dispatch_table(device)->DestroyDescriptorUpdateTemplate(device, descriptorUpdateTemplate, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData) {
-    Timer timer("vkUpdateDescriptorSetWithTemplate");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateDescriptorSetWithTemplate");
     device_dispatch_table(device)->UpdateDescriptorSetWithTemplate(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSupport(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) {
-    Timer timer("vkGetDescriptorSetLayoutSupport");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetLayoutSupport");
     device_dispatch_table(device)->GetDescriptorSetLayoutSupport(device, pCreateInfo, pSupport);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSamplerYcbcrConversion(VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) {
-    Timer timer("vkCreateSamplerYcbcrConversion");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSamplerYcbcrConversion");
     VkResult result = device_dispatch_table(device)->CreateSamplerYcbcrConversion(device, pCreateInfo, pAllocator, pYcbcrConversion);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySamplerYcbcrConversion");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroySamplerYcbcrConversion");
     device_dispatch_table(device)->DestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    Timer timer("vkResetQueryPool");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetQueryPool");
     device_dispatch_table(device)->ResetQueryPool(device, queryPool, firstQuery, queryCount);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
-    Timer timer("vkGetSemaphoreCounterValue");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSemaphoreCounterValue");
     VkResult result = device_dispatch_table(device)->GetSemaphoreCounterValue(device, semaphore, pValue);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
-    Timer timer("vkWaitSemaphores");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWaitSemaphores");
     VkResult result = device_dispatch_table(device)->WaitSemaphores(device, pWaitInfo, timeout);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
-    Timer timer("vkSignalSemaphore");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSignalSemaphore");
     VkResult result = device_dispatch_table(device)->SignalSemaphore(device, pSignalInfo);
     return result;
 }
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    Timer timer("vkGetBufferDeviceAddress");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferDeviceAddress");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddress(device, pInfo);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    Timer timer("vkGetBufferOpaqueCaptureAddress");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferOpaqueCaptureAddress");
     uint64_t result = device_dispatch_table(device)->GetBufferOpaqueCaptureAddress(device, pInfo);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) {
-    Timer timer("vkGetDeviceMemoryOpaqueCaptureAddress");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceMemoryOpaqueCaptureAddress");
     uint64_t result = device_dispatch_table(device)->GetDeviceMemoryOpaqueCaptureAddress(device, pInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndirectCount");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndirectCount");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndexedIndirectCount");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndexedIndirectCount");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass2(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    Timer timer("vkCreateRenderPass2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateRenderPass2");
     VkResult result = device_dispatch_table(device)->CreateRenderPass2(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass2(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo) {
-    Timer timer("vkCmdBeginRenderPass2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginRenderPass2");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass2(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass2(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo) {
-    Timer timer("vkCmdNextSubpass2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdNextSubpass2");
     device_dispatch_table(commandBuffer)->CmdNextSubpass2(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass2(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) {
-    Timer timer("vkCmdEndRenderPass2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRenderPass2");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass2(commandBuffer, pSubpassEndInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePrivateDataSlot(VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) {
-    Timer timer("vkCreatePrivateDataSlot");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreatePrivateDataSlot");
     VkResult result = device_dispatch_table(device)->CreatePrivateDataSlot(device, pCreateInfo, pAllocator, pPrivateDataSlot);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPrivateDataSlot(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPrivateDataSlot");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPrivateDataSlot");
     device_dispatch_table(device)->DestroyPrivateDataSlot(device, privateDataSlot, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) {
-    Timer timer("vkSetPrivateData");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetPrivateData");
     VkResult result = device_dispatch_table(device)->SetPrivateData(device, objectType, objectHandle, privateDataSlot, data);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) {
-    Timer timer("vkGetPrivateData");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPrivateData");
     device_dispatch_table(device)->GetPrivateData(device, objectType, objectHandle, privateDataSlot, pData);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier2(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
-    Timer timer("vkCmdPipelineBarrier2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPipelineBarrier2");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier2(commandBuffer, pDependencyInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) {
-    Timer timer("vkCmdWriteTimestamp2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteTimestamp2");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp2(commandBuffer, stage, queryPool, query);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit2(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    Timer timer("vkQueueSubmit2");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueSubmit2");
     VkResult result = device_dispatch_table(queue)->QueueSubmit2(queue, submitCount, pSubmits, fence);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer2(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
-    Timer timer("vkCmdCopyBuffer2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBuffer2");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer2(commandBuffer, pCopyBufferInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage2(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) {
-    Timer timer("vkCmdCopyImage2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImage2");
     device_dispatch_table(commandBuffer)->CmdCopyImage2(commandBuffer, pCopyImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage2(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
-    Timer timer("vkCmdCopyBufferToImage2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBufferToImage2");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage2(commandBuffer, pCopyBufferToImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer2(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
-    Timer timer("vkCmdCopyImageToBuffer2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImageToBuffer2");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer2(commandBuffer, pCopyImageToBufferInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceBufferMemoryRequirements(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDeviceBufferMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceBufferMemoryRequirements");
     device_dispatch_table(device)->GetDeviceBufferMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDeviceImageMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageMemoryRequirements");
     device_dispatch_table(device)->GetDeviceImageMemoryRequirements(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSparseMemoryRequirements(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    Timer timer("vkGetDeviceImageSparseMemoryRequirements");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageSparseMemoryRequirements");
     device_dispatch_table(device)->GetDeviceImageSparseMemoryRequirements(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent2(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    Timer timer("vkCmdSetEvent2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetEvent2");
     device_dispatch_table(commandBuffer)->CmdSetEvent2(commandBuffer, event, pDependencyInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent2(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    Timer timer("vkCmdResetEvent2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResetEvent2");
     device_dispatch_table(commandBuffer)->CmdResetEvent2(commandBuffer, event, stageMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents2(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
-    Timer timer("vkCmdWaitEvents2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWaitEvents2");
     device_dispatch_table(commandBuffer)->CmdWaitEvents2(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage2(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
-    Timer timer("vkCmdBlitImage2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBlitImage2");
     device_dispatch_table(commandBuffer)->CmdBlitImage2(commandBuffer, pBlitImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage2(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo) {
-    Timer timer("vkCmdResolveImage2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResolveImage2");
     device_dispatch_table(commandBuffer)->CmdResolveImage2(commandBuffer, pResolveImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRendering(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    Timer timer("vkCmdBeginRendering");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginRendering");
     device_dispatch_table(commandBuffer)->CmdBeginRendering(commandBuffer, pRenderingInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdEndRendering");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRendering");
     device_dispatch_table(commandBuffer)->CmdEndRendering(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
-    Timer timer("vkCmdSetCullMode");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCullMode");
     device_dispatch_table(commandBuffer)->CmdSetCullMode(commandBuffer, cullMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
-    Timer timer("vkCmdSetFrontFace");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetFrontFace");
     device_dispatch_table(commandBuffer)->CmdSetFrontFace(commandBuffer, frontFace);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) {
-    Timer timer("vkCmdSetPrimitiveTopology");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPrimitiveTopology");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveTopology(commandBuffer, primitiveTopology);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) {
-    Timer timer("vkCmdSetViewportWithCount");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportWithCount");
     device_dispatch_table(commandBuffer)->CmdSetViewportWithCount(commandBuffer, viewportCount, pViewports);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) {
-    Timer timer("vkCmdSetScissorWithCount");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetScissorWithCount");
     device_dispatch_table(commandBuffer)->CmdSetScissorWithCount(commandBuffer, scissorCount, pScissors);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers2(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) {
-    Timer timer("vkCmdBindVertexBuffers2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindVertexBuffers2");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers2(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
-    Timer timer("vkCmdSetDepthTestEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthTestEnable(commandBuffer, depthTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthWriteEnable(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
-    Timer timer("vkCmdSetDepthWriteEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthWriteEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthWriteEnable(commandBuffer, depthWriteEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
-    Timer timer("vkCmdSetDepthCompareOp");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthCompareOp");
     device_dispatch_table(commandBuffer)->CmdSetDepthCompareOp(commandBuffer, depthCompareOp);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) {
-    Timer timer("vkCmdSetDepthBoundsTestEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBoundsTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthBoundsTestEnable(commandBuffer, depthBoundsTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
-    Timer timer("vkCmdSetStencilTestEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilTestEnable");
     device_dispatch_table(commandBuffer)->CmdSetStencilTestEnable(commandBuffer, stencilTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilOp(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) {
-    Timer timer("vkCmdSetStencilOp");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilOp");
     device_dispatch_table(commandBuffer)->CmdSetStencilOp(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) {
-    Timer timer("vkCmdSetRasterizerDiscardEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRasterizerDiscardEnable");
     device_dispatch_table(commandBuffer)->CmdSetRasterizerDiscardEnable(commandBuffer, rasterizerDiscardEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
-    Timer timer("vkCmdSetDepthBiasEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBiasEnable");
     device_dispatch_table(commandBuffer)->CmdSetDepthBiasEnable(commandBuffer, depthBiasEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) {
-    Timer timer("vkCmdSetPrimitiveRestartEnable");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPrimitiveRestartEnable");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveRestartEnable(commandBuffer, primitiveRestartEnable);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory2(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData) {
-    Timer timer("vkMapMemory2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkMapMemory2");
     VkResult result = device_dispatch_table(device)->MapMemory2(device, pMemoryMapInfo, ppData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkUnmapMemory2(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo) {
-    Timer timer("vkUnmapMemory2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUnmapMemory2");
     VkResult result = device_dispatch_table(device)->UnmapMemory2(device, pMemoryUnmapInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSubresourceLayout(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout) {
-    Timer timer("vkGetDeviceImageSubresourceLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageSubresourceLayout");
     device_dispatch_table(device)->GetDeviceImageSubresourceLayout(device, pInfo, pLayout);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    Timer timer("vkGetImageSubresourceLayout2");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSubresourceLayout2");
     device_dispatch_table(device)->GetImageSubresourceLayout2(device, image, pSubresource, pLayout);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToImage(VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo) {
-    Timer timer("vkCopyMemoryToImage");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMemoryToImage");
     VkResult result = device_dispatch_table(device)->CopyMemoryToImage(device, pCopyMemoryToImageInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToMemory(VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo) {
-    Timer timer("vkCopyImageToMemory");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyImageToMemory");
     VkResult result = device_dispatch_table(device)->CopyImageToMemory(device, pCopyImageToMemoryInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToImage(VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo) {
-    Timer timer("vkCopyImageToImage");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyImageToImage");
     VkResult result = device_dispatch_table(device)->CopyImageToImage(device, pCopyImageToImageInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkTransitionImageLayout(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions) {
-    Timer timer("vkTransitionImageLayout");
+    Timer timer(CPUTimingCategory::VkDevice, "vkTransitionImageLayout");
     VkResult result = device_dispatch_table(device)->TransitionImageLayout(device, transitionCount, pTransitions);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) {
-    Timer timer("vkCmdPushDescriptorSet");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSet");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) {
-    Timer timer("vkCmdPushDescriptorSetWithTemplate");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSetWithTemplate");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets2(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
-    Timer timer("vkCmdBindDescriptorSets2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorSets2");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets2(commandBuffer, pBindDescriptorSetsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants2(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {
-    Timer timer("vkCmdPushConstants2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushConstants2");
     device_dispatch_table(commandBuffer)->CmdPushConstants2(commandBuffer, pPushConstantsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
-    Timer timer("vkCmdPushDescriptorSet2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSet2");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet2(commandBuffer, pPushDescriptorSetInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate2(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
-    Timer timer("vkCmdPushDescriptorSetWithTemplate2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSetWithTemplate2");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate2(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    Timer timer("vkCmdSetLineStipple");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineStipple");
     device_dispatch_table(commandBuffer)->CmdSetLineStipple(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) {
-    Timer timer("vkCmdBindIndexBuffer2");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindIndexBuffer2");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer2(commandBuffer, buffer, offset, size, indexType);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetRenderingAreaGranularity(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity) {
-    Timer timer("vkGetRenderingAreaGranularity");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRenderingAreaGranularity");
     device_dispatch_table(device)->GetRenderingAreaGranularity(device, pRenderingAreaInfo, pGranularity);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    Timer timer("vkCmdSetRenderingAttachmentLocations");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRenderingAttachmentLocations");
     device_dispatch_table(commandBuffer)->CmdSetRenderingAttachmentLocations(commandBuffer, pLocationInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    Timer timer("vkCmdSetRenderingInputAttachmentIndices");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRenderingInputAttachmentIndices");
     device_dispatch_table(commandBuffer)->CmdSetRenderingInputAttachmentIndices(commandBuffer, pInputAttachmentIndexInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSwapchainKHR(VkDevice device, const VkSwapchainCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchain) {
-    Timer timer("vkCreateSwapchainKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSwapchainKHR");
     VkResult result = device_dispatch_table(device)->CreateSwapchainKHR(device, pCreateInfo, pAllocator, pSwapchain);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySwapchainKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroySwapchainKHR");
     device_dispatch_table(device)->DestroySwapchainKHR(device, swapchain, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainImagesKHR(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage* pSwapchainImages) {
-    Timer timer("vkGetSwapchainImagesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSwapchainImagesKHR");
     VkResult result = device_dispatch_table(device)->GetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImageKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex) {
-    Timer timer("vkAcquireNextImageKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAcquireNextImageKHR");
     VkResult result = device_dispatch_table(device)->AcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueuePresentKHR(VkQueue queue, const VkPresentInfoKHR* pPresentInfo) {
-    Timer timer("vkQueuePresentKHR");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueuePresentKHR");
     VkResult result = device_dispatch_table(queue)->QueuePresentKHR(queue, pPresentInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupPresentCapabilitiesKHR(VkDevice device, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities) {
-    Timer timer("vkGetDeviceGroupPresentCapabilitiesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceGroupPresentCapabilitiesKHR");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupPresentCapabilitiesKHR(device, pDeviceGroupPresentCapabilities);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModesKHR(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes) {
-    Timer timer("vkGetDeviceGroupSurfacePresentModesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceGroupSurfacePresentModesKHR");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireNextImage2KHR(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex) {
-    Timer timer("vkAcquireNextImage2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAcquireNextImage2KHR");
     VkResult result = device_dispatch_table(device)->AcquireNextImage2KHR(device, pAcquireInfo, pImageIndex);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSharedSwapchainsKHR(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains) {
-    Timer timer("vkCreateSharedSwapchainsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSharedSwapchainsKHR");
     VkResult result = device_dispatch_table(device)->CreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateVideoSessionKHR(VkDevice device, const VkVideoSessionCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionKHR* pVideoSession) {
-    Timer timer("vkCreateVideoSessionKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateVideoSessionKHR");
     VkResult result = device_dispatch_table(device)->CreateVideoSessionKHR(device, pCreateInfo, pAllocator, pVideoSession);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyVideoSessionKHR(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyVideoSessionKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyVideoSessionKHR");
     device_dispatch_table(device)->DestroyVideoSessionKHR(device, videoSession, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetVideoSessionMemoryRequirementsKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t* pMemoryRequirementsCount, VkVideoSessionMemoryRequirementsKHR* pMemoryRequirements) {
-    Timer timer("vkGetVideoSessionMemoryRequirementsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetVideoSessionMemoryRequirementsKHR");
     VkResult result = device_dispatch_table(device)->GetVideoSessionMemoryRequirementsKHR(device, videoSession, pMemoryRequirementsCount, pMemoryRequirements);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindVideoSessionMemoryKHR(VkDevice device, VkVideoSessionKHR videoSession, uint32_t bindSessionMemoryInfoCount, const VkBindVideoSessionMemoryInfoKHR* pBindSessionMemoryInfos) {
-    Timer timer("vkBindVideoSessionMemoryKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindVideoSessionMemoryKHR");
     VkResult result = device_dispatch_table(device)->BindVideoSessionMemoryKHR(device, videoSession, bindSessionMemoryInfoCount, pBindSessionMemoryInfos);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateVideoSessionParametersKHR(VkDevice device, const VkVideoSessionParametersCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkVideoSessionParametersKHR* pVideoSessionParameters) {
-    Timer timer("vkCreateVideoSessionParametersKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->CreateVideoSessionParametersKHR(device, pCreateInfo, pAllocator, pVideoSessionParameters);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkUpdateVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkVideoSessionParametersUpdateInfoKHR* pUpdateInfo) {
-    Timer timer("vkUpdateVideoSessionParametersKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->UpdateVideoSessionParametersKHR(device, videoSessionParameters, pUpdateInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyVideoSessionParametersKHR(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyVideoSessionParametersKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyVideoSessionParametersKHR");
     device_dispatch_table(device)->DestroyVideoSessionParametersKHR(device, videoSessionParameters, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoBeginCodingInfoKHR* pBeginInfo) {
-    Timer timer("vkCmdBeginVideoCodingKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdBeginVideoCodingKHR(commandBuffer, pBeginInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoEndCodingInfoKHR* pEndCodingInfo) {
-    Timer timer("vkCmdEndVideoCodingKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdEndVideoCodingKHR(commandBuffer, pEndCodingInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdControlVideoCodingKHR(VkCommandBuffer commandBuffer, const VkVideoCodingControlInfoKHR* pCodingControlInfo) {
-    Timer timer("vkCmdControlVideoCodingKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdControlVideoCodingKHR");
     device_dispatch_table(commandBuffer)->CmdControlVideoCodingKHR(commandBuffer, pCodingControlInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDecodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoDecodeInfoKHR* pDecodeInfo) {
-    Timer timer("vkCmdDecodeVideoKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDecodeVideoKHR");
     device_dispatch_table(commandBuffer)->CmdDecodeVideoKHR(commandBuffer, pDecodeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderingKHR(VkCommandBuffer commandBuffer, const VkRenderingInfo* pRenderingInfo) {
-    Timer timer("vkCmdBeginRenderingKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginRenderingKHR");
     device_dispatch_table(commandBuffer)->CmdBeginRenderingKHR(commandBuffer, pRenderingInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderingKHR(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdEndRenderingKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRenderingKHR");
     device_dispatch_table(commandBuffer)->CmdEndRenderingKHR(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceGroupPeerMemoryFeaturesKHR(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures) {
-    Timer timer("vkGetDeviceGroupPeerMemoryFeaturesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceGroupPeerMemoryFeaturesKHR");
     device_dispatch_table(device)->GetDeviceGroupPeerMemoryFeaturesKHR(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDeviceMaskKHR(VkCommandBuffer commandBuffer, uint32_t deviceMask) {
-    Timer timer("vkCmdSetDeviceMaskKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDeviceMaskKHR");
     device_dispatch_table(commandBuffer)->CmdSetDeviceMaskKHR(commandBuffer, deviceMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchBaseKHR(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    Timer timer("vkCmdDispatchBaseKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchBaseKHR");
     device_dispatch_table(commandBuffer)->CmdDispatchBaseKHR(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 VKAPI_ATTR void VKAPI_CALL vkTrimCommandPoolKHR(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags) {
-    Timer timer("vkTrimCommandPoolKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkTrimCommandPoolKHR");
     device_dispatch_table(device)->TrimCommandPoolKHR(device, commandPool, flags);
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandleKHR(VkDevice device, const VkMemoryGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    Timer timer("vkGetMemoryWin32HandleKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandlePropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties) {
-    Timer timer("vkGetMemoryWin32HandlePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryWin32HandlePropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandlePropertiesKHR(device, handleType, handle, pMemoryWin32HandleProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryFdKHR(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    Timer timer("vkGetMemoryFdKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryFdKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryFdPropertiesKHR(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, VkMemoryFdPropertiesKHR* pMemoryFdProperties) {
-    Timer timer("vkGetMemoryFdPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryFdPropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetMemoryFdPropertiesKHR(device, handleType, fd, pMemoryFdProperties);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreWin32HandleKHR(VkDevice device, const VkImportSemaphoreWin32HandleInfoKHR* pImportSemaphoreWin32HandleInfo) {
-    Timer timer("vkImportSemaphoreWin32HandleKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkImportSemaphoreWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreWin32HandleKHR(device, pImportSemaphoreWin32HandleInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreWin32HandleKHR(VkDevice device, const VkSemaphoreGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    Timer timer("vkGetSemaphoreWin32HandleKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSemaphoreWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreFdKHR(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo) {
-    Timer timer("vkImportSemaphoreFdKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkImportSemaphoreFdKHR");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreFdKHR(device, pImportSemaphoreFdInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreFdKHR(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    Timer timer("vkGetSemaphoreFdKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSemaphoreFdKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetKHR(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites) {
-    Timer timer("vkCmdPushDescriptorSetKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSetKHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, descriptorWriteCount, pDescriptorWrites);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplateKHR(VkCommandBuffer commandBuffer, VkDescriptorUpdateTemplate descriptorUpdateTemplate, VkPipelineLayout layout, uint32_t set, const void* pData) {
-    Timer timer("vkCmdPushDescriptorSetWithTemplateKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSetWithTemplateKHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplateKHR(commandBuffer, descriptorUpdateTemplate, layout, set, pData);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDescriptorUpdateTemplateKHR(VkDevice device, const VkDescriptorUpdateTemplateCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDescriptorUpdateTemplate* pDescriptorUpdateTemplate) {
-    Timer timer("vkCreateDescriptorUpdateTemplateKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDescriptorUpdateTemplateKHR");
     VkResult result = device_dispatch_table(device)->CreateDescriptorUpdateTemplateKHR(device, pCreateInfo, pAllocator, pDescriptorUpdateTemplate);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDescriptorUpdateTemplateKHR(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDescriptorUpdateTemplateKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDescriptorUpdateTemplateKHR");
     device_dispatch_table(device)->DestroyDescriptorUpdateTemplateKHR(device, descriptorUpdateTemplate, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkUpdateDescriptorSetWithTemplateKHR(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData) {
-    Timer timer("vkUpdateDescriptorSetWithTemplateKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateDescriptorSetWithTemplateKHR");
     device_dispatch_table(device)->UpdateDescriptorSetWithTemplateKHR(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRenderPass2KHR(VkDevice device, const VkRenderPassCreateInfo2* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkRenderPass* pRenderPass) {
-    Timer timer("vkCreateRenderPass2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateRenderPass2KHR");
     VkResult result = device_dispatch_table(device)->CreateRenderPass2KHR(device, pCreateInfo, pAllocator, pRenderPass);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginRenderPass2KHR(VkCommandBuffer commandBuffer, const VkRenderPassBeginInfo* pRenderPassBegin, const VkSubpassBeginInfo* pSubpassBeginInfo) {
-    Timer timer("vkCmdBeginRenderPass2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginRenderPass2KHR");
     device_dispatch_table(commandBuffer)->CmdBeginRenderPass2KHR(commandBuffer, pRenderPassBegin, pSubpassBeginInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdNextSubpass2KHR(VkCommandBuffer commandBuffer, const VkSubpassBeginInfo* pSubpassBeginInfo, const VkSubpassEndInfo* pSubpassEndInfo) {
-    Timer timer("vkCmdNextSubpass2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdNextSubpass2KHR");
     device_dispatch_table(commandBuffer)->CmdNextSubpass2KHR(commandBuffer, pSubpassBeginInfo, pSubpassEndInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRenderPass2KHR(VkCommandBuffer commandBuffer, const VkSubpassEndInfo* pSubpassEndInfo) {
-    Timer timer("vkCmdEndRenderPass2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRenderPass2KHR");
     device_dispatch_table(commandBuffer)->CmdEndRenderPass2KHR(commandBuffer, pSubpassEndInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainStatusKHR(VkDevice device, VkSwapchainKHR swapchain) {
-    Timer timer("vkGetSwapchainStatusKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSwapchainStatusKHR");
     VkResult result = device_dispatch_table(device)->GetSwapchainStatusKHR(device, swapchain);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkImportFenceWin32HandleKHR(VkDevice device, const VkImportFenceWin32HandleInfoKHR* pImportFenceWin32HandleInfo) {
-    Timer timer("vkImportFenceWin32HandleKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkImportFenceWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->ImportFenceWin32HandleKHR(device, pImportFenceWin32HandleInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceWin32HandleKHR(VkDevice device, const VkFenceGetWin32HandleInfoKHR* pGetWin32HandleInfo, HANDLE* pHandle) {
-    Timer timer("vkGetFenceWin32HandleKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetFenceWin32HandleKHR");
     VkResult result = device_dispatch_table(device)->GetFenceWin32HandleKHR(device, pGetWin32HandleInfo, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR VkResult VKAPI_CALL vkImportFenceFdKHR(VkDevice device, const VkImportFenceFdInfoKHR* pImportFenceFdInfo) {
-    Timer timer("vkImportFenceFdKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkImportFenceFdKHR");
     VkResult result = device_dispatch_table(device)->ImportFenceFdKHR(device, pImportFenceFdInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFenceFdKHR(VkDevice device, const VkFenceGetFdInfoKHR* pGetFdInfo, int* pFd) {
-    Timer timer("vkGetFenceFdKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetFenceFdKHR");
     VkResult result = device_dispatch_table(device)->GetFenceFdKHR(device, pGetFdInfo, pFd);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireProfilingLockKHR(VkDevice device, const VkAcquireProfilingLockInfoKHR* pInfo) {
-    Timer timer("vkAcquireProfilingLockKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAcquireProfilingLockKHR");
     VkResult result = device_dispatch_table(device)->AcquireProfilingLockKHR(device, pInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkReleaseProfilingLockKHR(VkDevice device) {
-    Timer timer("vkReleaseProfilingLockKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleaseProfilingLockKHR");
     device_dispatch_table(device)->ReleaseProfilingLockKHR(device);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2KHR(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetImageMemoryRequirements2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageMemoryRequirements2KHR");
     device_dispatch_table(device)->GetImageMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2KHR(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetBufferMemoryRequirements2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferMemoryRequirements2KHR");
     device_dispatch_table(device)->GetBufferMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSparseMemoryRequirements2KHR(VkDevice device, const VkImageSparseMemoryRequirementsInfo2* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    Timer timer("vkGetImageSparseMemoryRequirements2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSparseMemoryRequirements2KHR");
     device_dispatch_table(device)->GetImageSparseMemoryRequirements2KHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateSamplerYcbcrConversionKHR(VkDevice device, const VkSamplerYcbcrConversionCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSamplerYcbcrConversion* pYcbcrConversion) {
-    Timer timer("vkCreateSamplerYcbcrConversionKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateSamplerYcbcrConversionKHR");
     VkResult result = device_dispatch_table(device)->CreateSamplerYcbcrConversionKHR(device, pCreateInfo, pAllocator, pYcbcrConversion);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroySamplerYcbcrConversionKHR(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroySamplerYcbcrConversionKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroySamplerYcbcrConversionKHR");
     device_dispatch_table(device)->DestroySamplerYcbcrConversionKHR(device, ycbcrConversion, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    Timer timer("vkBindBufferMemory2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindBufferMemory2KHR");
     VkResult result = device_dispatch_table(device)->BindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    Timer timer("vkBindImageMemory2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindImageMemory2KHR");
     VkResult result = device_dispatch_table(device)->BindImageMemory2KHR(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSupportKHR(VkDevice device, const VkDescriptorSetLayoutCreateInfo* pCreateInfo, VkDescriptorSetLayoutSupport* pSupport) {
-    Timer timer("vkGetDescriptorSetLayoutSupportKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetLayoutSupportKHR");
     device_dispatch_table(device)->GetDescriptorSetLayoutSupportKHR(device, pCreateInfo, pSupport);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndirectCountKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndirectCountKHR");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCountKHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndexedIndirectCountKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndexedIndirectCountKHR");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCountKHR(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreCounterValueKHR(VkDevice device, VkSemaphore semaphore, uint64_t* pValue) {
-    Timer timer("vkGetSemaphoreCounterValueKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSemaphoreCounterValueKHR");
     VkResult result = device_dispatch_table(device)->GetSemaphoreCounterValueKHR(device, semaphore, pValue);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitSemaphoresKHR(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout) {
-    Timer timer("vkWaitSemaphoresKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWaitSemaphoresKHR");
     VkResult result = device_dispatch_table(device)->WaitSemaphoresKHR(device, pWaitInfo, timeout);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSignalSemaphoreKHR(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo) {
-    Timer timer("vkSignalSemaphoreKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSignalSemaphoreKHR");
     VkResult result = device_dispatch_table(device)->SignalSemaphoreKHR(device, pSignalInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFragmentShadingRateKHR(VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
-    Timer timer("vkCmdSetFragmentShadingRateKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetFragmentShadingRateKHR");
     device_dispatch_table(commandBuffer)->CmdSetFragmentShadingRateKHR(commandBuffer, pFragmentSize, combinerOps);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingAttachmentLocationsKHR(VkCommandBuffer commandBuffer, const VkRenderingAttachmentLocationInfo* pLocationInfo) {
-    Timer timer("vkCmdSetRenderingAttachmentLocationsKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRenderingAttachmentLocationsKHR");
     device_dispatch_table(commandBuffer)->CmdSetRenderingAttachmentLocationsKHR(commandBuffer, pLocationInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRenderingInputAttachmentIndicesKHR(VkCommandBuffer commandBuffer, const VkRenderingInputAttachmentIndexInfo* pInputAttachmentIndexInfo) {
-    Timer timer("vkCmdSetRenderingInputAttachmentIndicesKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRenderingInputAttachmentIndicesKHR");
     device_dispatch_table(commandBuffer)->CmdSetRenderingInputAttachmentIndicesKHR(commandBuffer, pInputAttachmentIndexInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForPresentKHR(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout) {
-    Timer timer("vkWaitForPresentKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWaitForPresentKHR");
     VkResult result = device_dispatch_table(device)->WaitForPresentKHR(device, swapchain, presentId, timeout);
     return result;
 }
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddressKHR(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    Timer timer("vkGetBufferDeviceAddressKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferDeviceAddressKHR");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddressKHR(device, pInfo);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetBufferOpaqueCaptureAddressKHR(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    Timer timer("vkGetBufferOpaqueCaptureAddressKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferOpaqueCaptureAddressKHR");
     uint64_t result = device_dispatch_table(device)->GetBufferOpaqueCaptureAddressKHR(device, pInfo);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceMemoryOpaqueCaptureAddressKHR(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo) {
-    Timer timer("vkGetDeviceMemoryOpaqueCaptureAddressKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceMemoryOpaqueCaptureAddressKHR");
     uint64_t result = device_dispatch_table(device)->GetDeviceMemoryOpaqueCaptureAddressKHR(device, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDeferredOperationKHR(VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation) {
-    Timer timer("vkCreateDeferredOperationKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDeferredOperationKHR");
     VkResult result = device_dispatch_table(device)->CreateDeferredOperationKHR(device, pAllocator, pDeferredOperation);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDeferredOperationKHR(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDeferredOperationKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDeferredOperationKHR");
     device_dispatch_table(device)->DestroyDeferredOperationKHR(device, operation, pAllocator);
 }
 VKAPI_ATTR uint32_t VKAPI_CALL vkGetDeferredOperationMaxConcurrencyKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    Timer timer("vkGetDeferredOperationMaxConcurrencyKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeferredOperationMaxConcurrencyKHR");
     uint32_t result = device_dispatch_table(device)->GetDeferredOperationMaxConcurrencyKHR(device, operation);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeferredOperationResultKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    Timer timer("vkGetDeferredOperationResultKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeferredOperationResultKHR");
     VkResult result = device_dispatch_table(device)->GetDeferredOperationResultKHR(device, operation);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkDeferredOperationJoinKHR(VkDevice device, VkDeferredOperationKHR operation) {
-    Timer timer("vkDeferredOperationJoinKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDeferredOperationJoinKHR");
     VkResult result = device_dispatch_table(device)->DeferredOperationJoinKHR(device, operation);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutablePropertiesKHR(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR* pProperties) {
-    Timer timer("vkGetPipelineExecutablePropertiesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineExecutablePropertiesKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutablePropertiesKHR(device, pPipelineInfo, pExecutableCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutableStatisticsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pStatisticCount, VkPipelineExecutableStatisticKHR* pStatistics) {
-    Timer timer("vkGetPipelineExecutableStatisticsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineExecutableStatisticsKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutableStatisticsKHR(device, pExecutableInfo, pStatisticCount, pStatistics);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineExecutableInternalRepresentationsKHR(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, uint32_t* pInternalRepresentationCount, VkPipelineExecutableInternalRepresentationKHR* pInternalRepresentations) {
-    Timer timer("vkGetPipelineExecutableInternalRepresentationsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineExecutableInternalRepresentationsKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, pInternalRepresentationCount, pInternalRepresentations);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory2KHR(VkDevice device, const VkMemoryMapInfo* pMemoryMapInfo, void** ppData) {
-    Timer timer("vkMapMemory2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkMapMemory2KHR");
     VkResult result = device_dispatch_table(device)->MapMemory2KHR(device, pMemoryMapInfo, ppData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkUnmapMemory2KHR(VkDevice device, const VkMemoryUnmapInfo* pMemoryUnmapInfo) {
-    Timer timer("vkUnmapMemory2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUnmapMemory2KHR");
     VkResult result = device_dispatch_table(device)->UnmapMemory2KHR(device, pMemoryUnmapInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetEncodedVideoSessionParametersKHR(VkDevice device, const VkVideoEncodeSessionParametersGetInfoKHR* pVideoSessionParametersInfo, VkVideoEncodeSessionParametersFeedbackInfoKHR* pFeedbackInfo, size_t* pDataSize, void* pData) {
-    Timer timer("vkGetEncodedVideoSessionParametersKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetEncodedVideoSessionParametersKHR");
     VkResult result = device_dispatch_table(device)->GetEncodedVideoSessionParametersKHR(device, pVideoSessionParametersInfo, pFeedbackInfo, pDataSize, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEncodeVideoKHR(VkCommandBuffer commandBuffer, const VkVideoEncodeInfoKHR* pEncodeInfo) {
-    Timer timer("vkCmdEncodeVideoKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEncodeVideoKHR");
     device_dispatch_table(commandBuffer)->CmdEncodeVideoKHR(commandBuffer, pEncodeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, const VkDependencyInfo* pDependencyInfo) {
-    Timer timer("vkCmdSetEvent2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetEvent2KHR");
     device_dispatch_table(commandBuffer)->CmdSetEvent2KHR(commandBuffer, event, pDependencyInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResetEvent2KHR(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags2 stageMask) {
-    Timer timer("vkCmdResetEvent2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResetEvent2KHR");
     device_dispatch_table(commandBuffer)->CmdResetEvent2KHR(commandBuffer, event, stageMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWaitEvents2KHR(VkCommandBuffer commandBuffer, uint32_t eventCount, const VkEvent* pEvents, const VkDependencyInfo* pDependencyInfos) {
-    Timer timer("vkCmdWaitEvents2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWaitEvents2KHR");
     device_dispatch_table(commandBuffer)->CmdWaitEvents2KHR(commandBuffer, eventCount, pEvents, pDependencyInfos);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPipelineBarrier2KHR(VkCommandBuffer commandBuffer, const VkDependencyInfo* pDependencyInfo) {
-    Timer timer("vkCmdPipelineBarrier2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPipelineBarrier2KHR");
     device_dispatch_table(commandBuffer)->CmdPipelineBarrier2KHR(commandBuffer, pDependencyInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteTimestamp2KHR(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkQueryPool queryPool, uint32_t query) {
-    Timer timer("vkCmdWriteTimestamp2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteTimestamp2KHR");
     device_dispatch_table(commandBuffer)->CmdWriteTimestamp2KHR(commandBuffer, stage, queryPool, query);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSubmit2KHR(VkQueue queue, uint32_t submitCount, const VkSubmitInfo2* pSubmits, VkFence fence) {
-    Timer timer("vkQueueSubmit2KHR");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueSubmit2KHR");
     VkResult result = device_dispatch_table(queue)->QueueSubmit2KHR(queue, submitCount, pSubmits, fence);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferInfo2* pCopyBufferInfo) {
-    Timer timer("vkCmdCopyBuffer2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyBuffer2KHR(commandBuffer, pCopyBufferInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImage2KHR(VkCommandBuffer commandBuffer, const VkCopyImageInfo2* pCopyImageInfo) {
-    Timer timer("vkCmdCopyImage2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImage2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyImage2KHR(commandBuffer, pCopyImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyBufferToImage2KHR(VkCommandBuffer commandBuffer, const VkCopyBufferToImageInfo2* pCopyBufferToImageInfo) {
-    Timer timer("vkCmdCopyBufferToImage2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyBufferToImage2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyBufferToImage2KHR(commandBuffer, pCopyBufferToImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyImageToBuffer2KHR(VkCommandBuffer commandBuffer, const VkCopyImageToBufferInfo2* pCopyImageToBufferInfo) {
-    Timer timer("vkCmdCopyImageToBuffer2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyImageToBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdCopyImageToBuffer2KHR(commandBuffer, pCopyImageToBufferInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBlitImage2KHR(VkCommandBuffer commandBuffer, const VkBlitImageInfo2* pBlitImageInfo) {
-    Timer timer("vkCmdBlitImage2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBlitImage2KHR");
     device_dispatch_table(commandBuffer)->CmdBlitImage2KHR(commandBuffer, pBlitImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdResolveImage2KHR(VkCommandBuffer commandBuffer, const VkResolveImageInfo2* pResolveImageInfo) {
-    Timer timer("vkCmdResolveImage2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdResolveImage2KHR");
     device_dispatch_table(commandBuffer)->CmdResolveImage2KHR(commandBuffer, pResolveImageInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysIndirect2KHR(VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress) {
-    Timer timer("vkCmdTraceRaysIndirect2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdTraceRaysIndirect2KHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysIndirect2KHR(commandBuffer, indirectDeviceAddress);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceBufferMemoryRequirementsKHR(VkDevice device, const VkDeviceBufferMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDeviceBufferMemoryRequirementsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceBufferMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceBufferMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDeviceImageMemoryRequirementsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceImageMemoryRequirementsKHR(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSparseMemoryRequirementsKHR(VkDevice device, const VkDeviceImageMemoryRequirements* pInfo, uint32_t* pSparseMemoryRequirementCount, VkSparseImageMemoryRequirements2* pSparseMemoryRequirements) {
-    Timer timer("vkGetDeviceImageSparseMemoryRequirementsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageSparseMemoryRequirementsKHR");
     device_dispatch_table(device)->GetDeviceImageSparseMemoryRequirementsKHR(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer2KHR(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size, VkIndexType indexType) {
-    Timer timer("vkCmdBindIndexBuffer2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindIndexBuffer2KHR");
     device_dispatch_table(commandBuffer)->CmdBindIndexBuffer2KHR(commandBuffer, buffer, offset, size, indexType);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetRenderingAreaGranularityKHR(VkDevice device, const VkRenderingAreaInfo* pRenderingAreaInfo, VkExtent2D* pGranularity) {
-    Timer timer("vkGetRenderingAreaGranularityKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRenderingAreaGranularityKHR");
     device_dispatch_table(device)->GetRenderingAreaGranularityKHR(device, pRenderingAreaInfo, pGranularity);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceImageSubresourceLayoutKHR(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, VkSubresourceLayout2* pLayout) {
-    Timer timer("vkGetDeviceImageSubresourceLayoutKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceImageSubresourceLayoutKHR");
     device_dispatch_table(device)->GetDeviceImageSubresourceLayoutKHR(device, pInfo, pLayout);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2KHR(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    Timer timer("vkGetImageSubresourceLayout2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSubresourceLayout2KHR");
     device_dispatch_table(device)->GetImageSubresourceLayout2KHR(device, image, pSubresource, pLayout);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWaitForPresent2KHR(VkDevice device, VkSwapchainKHR swapchain, const VkPresentWait2InfoKHR* pPresentWait2Info) {
-    Timer timer("vkWaitForPresent2KHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWaitForPresent2KHR");
     VkResult result = device_dispatch_table(device)->WaitForPresent2KHR(device, swapchain, pPresentWait2Info);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePipelineBinariesKHR(VkDevice device, const VkPipelineBinaryCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPipelineBinaryHandlesInfoKHR* pBinaries) {
-    Timer timer("vkCreatePipelineBinariesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreatePipelineBinariesKHR");
     VkResult result = device_dispatch_table(device)->CreatePipelineBinariesKHR(device, pCreateInfo, pAllocator, pBinaries);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPipelineBinaryKHR(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPipelineBinaryKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPipelineBinaryKHR");
     device_dispatch_table(device)->DestroyPipelineBinaryKHR(device, pipelineBinary, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineKeyKHR(VkDevice device, const VkPipelineCreateInfoKHR* pPipelineCreateInfo, VkPipelineBinaryKeyKHR* pPipelineKey) {
-    Timer timer("vkGetPipelineKeyKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineKeyKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineKeyKHR(device, pPipelineCreateInfo, pPipelineKey);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelineBinaryDataKHR(VkDevice device, const VkPipelineBinaryDataInfoKHR* pInfo, VkPipelineBinaryKeyKHR* pPipelineBinaryKey, size_t* pPipelineBinaryDataSize, void* pPipelineBinaryData) {
-    Timer timer("vkGetPipelineBinaryDataKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineBinaryDataKHR");
     VkResult result = device_dispatch_table(device)->GetPipelineBinaryDataKHR(device, pInfo, pPipelineBinaryKey, pPipelineBinaryDataSize, pPipelineBinaryData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseCapturedPipelineDataKHR(VkDevice device, const VkReleaseCapturedPipelineDataInfoKHR* pInfo, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkReleaseCapturedPipelineDataKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleaseCapturedPipelineDataKHR");
     VkResult result = device_dispatch_table(device)->ReleaseCapturedPipelineDataKHR(device, pInfo, pAllocator);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseSwapchainImagesKHR(VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) {
-    Timer timer("vkReleaseSwapchainImagesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleaseSwapchainImagesKHR");
     VkResult result = device_dispatch_table(device)->ReleaseSwapchainImagesKHR(device, pReleaseInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleKHR(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    Timer timer("vkCmdSetLineStippleKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineStippleKHR");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleKHR(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsKHR(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) {
-    Timer timer("vkGetCalibratedTimestampsKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetCalibratedTimestampsKHR");
     VkResult result = device_dispatch_table(device)->GetCalibratedTimestampsKHR(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorSets2KHR(VkCommandBuffer commandBuffer, const VkBindDescriptorSetsInfo* pBindDescriptorSetsInfo) {
-    Timer timer("vkCmdBindDescriptorSets2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorSets2KHR");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorSets2KHR(commandBuffer, pBindDescriptorSetsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushConstants2KHR(VkCommandBuffer commandBuffer, const VkPushConstantsInfo* pPushConstantsInfo) {
-    Timer timer("vkCmdPushConstants2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushConstants2KHR");
     device_dispatch_table(commandBuffer)->CmdPushConstants2KHR(commandBuffer, pPushConstantsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSet2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetInfo* pPushDescriptorSetInfo) {
-    Timer timer("vkCmdPushDescriptorSet2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSet2KHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSet2KHR(commandBuffer, pPushDescriptorSetInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDescriptorSetWithTemplate2KHR(VkCommandBuffer commandBuffer, const VkPushDescriptorSetWithTemplateInfo* pPushDescriptorSetWithTemplateInfo) {
-    Timer timer("vkCmdPushDescriptorSetWithTemplate2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDescriptorSetWithTemplate2KHR");
     device_dispatch_table(commandBuffer)->CmdPushDescriptorSetWithTemplate2KHR(commandBuffer, pPushDescriptorSetWithTemplateInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDescriptorBufferOffsets2EXT(VkCommandBuffer commandBuffer, const VkSetDescriptorBufferOffsetsInfoEXT* pSetDescriptorBufferOffsetsInfo) {
-    Timer timer("vkCmdSetDescriptorBufferOffsets2EXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDescriptorBufferOffsets2EXT");
     device_dispatch_table(commandBuffer)->CmdSetDescriptorBufferOffsets2EXT(commandBuffer, pSetDescriptorBufferOffsetsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBufferEmbeddedSamplers2EXT(VkCommandBuffer commandBuffer, const VkBindDescriptorBufferEmbeddedSamplersInfoEXT* pBindDescriptorBufferEmbeddedSamplersInfo) {
-    Timer timer("vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBufferEmbeddedSamplers2EXT(commandBuffer, pBindDescriptorBufferEmbeddedSamplersInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryIndirectKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryIndirectInfoKHR* pCopyMemoryIndirectInfo) {
-    Timer timer("vkCmdCopyMemoryIndirectKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryIndirectKHR(commandBuffer, pCopyMemoryIndirectInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToImageIndirectKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryToImageIndirectInfoKHR* pCopyMemoryToImageIndirectInfo) {
-    Timer timer("vkCmdCopyMemoryToImageIndirectKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryToImageIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToImageIndirectKHR(commandBuffer, pCopyMemoryToImageIndirectInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering2KHR(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
-    Timer timer("vkCmdEndRendering2KHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRendering2KHR");
     device_dispatch_table(commandBuffer)->CmdEndRendering2KHR(commandBuffer, pRenderingEndInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo) {
-    Timer timer("vkDebugMarkerSetObjectTagEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDebugMarkerSetObjectTagEXT");
     VkResult result = device_dispatch_table(device)->DebugMarkerSetObjectTagEXT(device, pTagInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
-    Timer timer("vkDebugMarkerSetObjectNameEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDebugMarkerSetObjectNameEXT");
     VkResult result = device_dispatch_table(device)->DebugMarkerSetObjectNameEXT(device, pNameInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    Timer timer("vkCmdDebugMarkerBeginEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDebugMarkerBeginEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdDebugMarkerEndEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDebugMarkerEndEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerEndEXT(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
-    Timer timer("vkCmdDebugMarkerInsertEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDebugMarkerInsertEXT");
     device_dispatch_table(commandBuffer)->CmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindTransformFeedbackBuffersEXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes) {
-    Timer timer("vkCmdBindTransformFeedbackBuffersEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindTransformFeedbackBuffersEXT");
     device_dispatch_table(commandBuffer)->CmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) {
-    Timer timer("vkCmdBeginTransformFeedbackEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginTransformFeedbackEXT");
     device_dispatch_table(commandBuffer)->CmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndTransformFeedbackEXT(VkCommandBuffer commandBuffer, uint32_t firstCounterBuffer, uint32_t counterBufferCount, const VkBuffer* pCounterBuffers, const VkDeviceSize* pCounterBufferOffsets) {
-    Timer timer("vkCmdEndTransformFeedbackEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndTransformFeedbackEXT");
     device_dispatch_table(commandBuffer)->CmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index) {
-    Timer timer("vkCmdBeginQueryIndexedEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginQueryIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags, index);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndQueryIndexedEXT(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index) {
-    Timer timer("vkCmdEndQueryIndexedEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndQueryIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdEndQueryIndexedEXT(commandBuffer, queryPool, query, index);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectByteCountEXT(VkCommandBuffer commandBuffer, uint32_t instanceCount, uint32_t firstInstance, VkBuffer counterBuffer, VkDeviceSize counterBufferOffset, uint32_t counterOffset, uint32_t vertexStride) {
-    Timer timer("vkCmdDrawIndirectByteCountEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndirectByteCountEXT");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectByteCountEXT(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCuModuleNVX(VkDevice device, const VkCuModuleCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuModuleNVX* pModule) {
-    Timer timer("vkCreateCuModuleNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateCuModuleNVX");
     VkResult result = device_dispatch_table(device)->CreateCuModuleNVX(device, pCreateInfo, pAllocator, pModule);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCuFunctionNVX(VkDevice device, const VkCuFunctionCreateInfoNVX* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction) {
-    Timer timer("vkCreateCuFunctionNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateCuFunctionNVX");
     VkResult result = device_dispatch_table(device)->CreateCuFunctionNVX(device, pCreateInfo, pAllocator, pFunction);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyCuModuleNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyCuModuleNVX");
     device_dispatch_table(device)->DestroyCuModuleNVX(device, module, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyCuFunctionNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyCuFunctionNVX");
     device_dispatch_table(device)->DestroyCuFunctionNVX(device, function, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCuLaunchKernelNVX(VkCommandBuffer commandBuffer, const VkCuLaunchInfoNVX* pLaunchInfo) {
-    Timer timer("vkCmdCuLaunchKernelNVX");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCuLaunchKernelNVX");
     device_dispatch_table(commandBuffer)->CmdCuLaunchKernelNVX(commandBuffer, pLaunchInfo);
 }
 VKAPI_ATTR uint32_t VKAPI_CALL vkGetImageViewHandleNVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) {
-    Timer timer("vkGetImageViewHandleNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageViewHandleNVX");
     uint32_t result = device_dispatch_table(device)->GetImageViewHandleNVX(device, pInfo);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetImageViewHandle64NVX(VkDevice device, const VkImageViewHandleInfoNVX* pInfo) {
-    Timer timer("vkGetImageViewHandle64NVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageViewHandle64NVX");
     uint64_t result = device_dispatch_table(device)->GetImageViewHandle64NVX(device, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageViewAddressNVX(VkDevice device, VkImageView imageView, VkImageViewAddressPropertiesNVX* pProperties) {
-    Timer timer("vkGetImageViewAddressNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageViewAddressNVX");
     VkResult result = device_dispatch_table(device)->GetImageViewAddressNVX(device, imageView, pProperties);
     return result;
 }
 VKAPI_ATTR uint64_t VKAPI_CALL vkGetDeviceCombinedImageSamplerIndexNVX(VkDevice device, uint64_t imageViewIndex, uint64_t samplerIndex) {
-    Timer timer("vkGetDeviceCombinedImageSamplerIndexNVX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceCombinedImageSamplerIndexNVX");
     uint64_t result = device_dispatch_table(device)->GetDeviceCombinedImageSamplerIndexNVX(device, imageViewIndex, samplerIndex);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndirectCountAMD");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndirectCountAMD");
     device_dispatch_table(commandBuffer)->CmdDrawIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawIndexedIndirectCountAMD(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawIndexedIndirectCountAMD");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawIndexedIndirectCountAMD");
     device_dispatch_table(commandBuffer)->CmdDrawIndexedIndirectCountAMD(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo) {
-    Timer timer("vkGetShaderInfoAMD");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetShaderInfoAMD");
     VkResult result = device_dispatch_table(device)->GetShaderInfoAMD(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle) {
-    Timer timer("vkGetMemoryWin32HandleNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryWin32HandleNV");
     VkResult result = device_dispatch_table(device)->GetMemoryWin32HandleNV(device, memory, handleType, pHandle);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginConditionalRenderingEXT(VkCommandBuffer commandBuffer, const VkConditionalRenderingBeginInfoEXT* pConditionalRenderingBegin) {
-    Timer timer("vkCmdBeginConditionalRenderingEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginConditionalRenderingEXT");
     device_dispatch_table(commandBuffer)->CmdBeginConditionalRenderingEXT(commandBuffer, pConditionalRenderingBegin);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndConditionalRenderingEXT(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdEndConditionalRenderingEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndConditionalRenderingEXT");
     device_dispatch_table(commandBuffer)->CmdEndConditionalRenderingEXT(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWScalingNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings) {
-    Timer timer("vkCmdSetViewportWScalingNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportWScalingNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportWScalingNV(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkDisplayPowerControlEXT(VkDevice device, VkDisplayKHR display, const VkDisplayPowerInfoEXT* pDisplayPowerInfo) {
-    Timer timer("vkDisplayPowerControlEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDisplayPowerControlEXT");
     VkResult result = device_dispatch_table(device)->DisplayPowerControlEXT(device, display, pDisplayPowerInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterDeviceEventEXT(VkDevice device, const VkDeviceEventInfoEXT* pDeviceEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    Timer timer("vkRegisterDeviceEventEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkRegisterDeviceEventEXT");
     VkResult result = device_dispatch_table(device)->RegisterDeviceEventEXT(device, pDeviceEventInfo, pAllocator, pFence);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterDisplayEventEXT(VkDevice device, VkDisplayKHR display, const VkDisplayEventInfoEXT* pDisplayEventInfo, const VkAllocationCallbacks* pAllocator, VkFence* pFence) {
-    Timer timer("vkRegisterDisplayEventEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkRegisterDisplayEventEXT");
     VkResult result = device_dispatch_table(device)->RegisterDisplayEventEXT(device, display, pDisplayEventInfo, pAllocator, pFence);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainCounterEXT(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue) {
-    Timer timer("vkGetSwapchainCounterEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSwapchainCounterEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainCounterEXT(device, swapchain, counter, pCounterValue);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties) {
-    Timer timer("vkGetRefreshCycleDurationGOOGLE");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRefreshCycleDurationGOOGLE");
     VkResult result = device_dispatch_table(device)->GetRefreshCycleDurationGOOGLE(device, swapchain, pDisplayTimingProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pPresentationTimingCount, VkPastPresentationTimingGOOGLE* pPresentationTimings) {
-    Timer timer("vkGetPastPresentationTimingGOOGLE");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPastPresentationTimingGOOGLE");
     VkResult result = device_dispatch_table(device)->GetPastPresentationTimingGOOGLE(device, swapchain, pPresentationTimingCount, pPresentationTimings);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleEXT(VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles) {
-    Timer timer("vkCmdSetDiscardRectangleEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDiscardRectangleEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable) {
-    Timer timer("vkCmdSetDiscardRectangleEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDiscardRectangleEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleEnableEXT(commandBuffer, discardRectangleEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDiscardRectangleModeEXT(VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode) {
-    Timer timer("vkCmdSetDiscardRectangleModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDiscardRectangleModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetDiscardRectangleModeEXT(commandBuffer, discardRectangleMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkSetHdrMetadataEXT(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata) {
-    Timer timer("vkSetHdrMetadataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetHdrMetadataEXT");
     device_dispatch_table(device)->SetHdrMetadataEXT(device, swapchainCount, pSwapchains, pMetadata);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
-    Timer timer("vkSetDebugUtilsObjectNameEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetDebugUtilsObjectNameEXT");
     VkResult result = device_dispatch_table(device)->SetDebugUtilsObjectNameEXT(device, pNameInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) {
-    Timer timer("vkSetDebugUtilsObjectTagEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetDebugUtilsObjectTagEXT");
     VkResult result = device_dispatch_table(device)->SetDebugUtilsObjectTagEXT(device, pTagInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkQueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    Timer timer("vkQueueBeginDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueBeginDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkQueueEndDebugUtilsLabelEXT(VkQueue queue) {
-    Timer timer("vkQueueEndDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueEndDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueEndDebugUtilsLabelEXT(queue);
 }
 VKAPI_ATTR void VKAPI_CALL vkQueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    Timer timer("vkQueueInsertDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueInsertDebugUtilsLabelEXT");
     device_dispatch_table(queue)->QueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    Timer timer("vkCmdBeginDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdEndDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
-    Timer timer("vkCmdInsertDebugUtilsLabelEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdInsertDebugUtilsLabelEXT");
     device_dispatch_table(commandBuffer)->CmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
 }
 #if defined(VK_USE_PLATFORM_ANDROID_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, VkAndroidHardwareBufferPropertiesANDROID* pProperties) {
-    Timer timer("vkGetAndroidHardwareBufferPropertiesANDROID");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAndroidHardwareBufferPropertiesANDROID");
     VkResult result = device_dispatch_table(device)->GetAndroidHardwareBufferPropertiesANDROID(device, buffer, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryAndroidHardwareBufferANDROID(VkDevice device, const VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo, struct AHardwareBuffer** pBuffer) {
-    Timer timer("vkGetMemoryAndroidHardwareBufferANDROID");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryAndroidHardwareBufferANDROID");
     VkResult result = device_dispatch_table(device)->GetMemoryAndroidHardwareBufferANDROID(device, pInfo, pBuffer);
     return result;
 }
 #endif  // VK_USE_PLATFORM_ANDROID_KHR
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateExecutionGraphPipelinesAMDX(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkExecutionGraphPipelineCreateInfoAMDX* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateExecutionGraphPipelinesAMDX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateExecutionGraphPipelinesAMDX");
     VkResult result = device_dispatch_table(device)->CreateExecutionGraphPipelinesAMDX(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetExecutionGraphPipelineScratchSizeAMDX(VkDevice device, VkPipeline executionGraph, VkExecutionGraphPipelineScratchSizeAMDX* pSizeInfo) {
-    Timer timer("vkGetExecutionGraphPipelineScratchSizeAMDX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetExecutionGraphPipelineScratchSizeAMDX");
     VkResult result = device_dispatch_table(device)->GetExecutionGraphPipelineScratchSizeAMDX(device, executionGraph, pSizeInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetExecutionGraphPipelineNodeIndexAMDX(VkDevice device, VkPipeline executionGraph, const VkPipelineShaderStageNodeCreateInfoAMDX* pNodeInfo, uint32_t* pNodeIndex) {
-    Timer timer("vkGetExecutionGraphPipelineNodeIndexAMDX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetExecutionGraphPipelineNodeIndexAMDX");
     VkResult result = device_dispatch_table(device)->GetExecutionGraphPipelineNodeIndexAMDX(device, executionGraph, pNodeInfo, pNodeIndex);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdInitializeGraphScratchMemoryAMDX(VkCommandBuffer commandBuffer, VkPipeline executionGraph, VkDeviceAddress scratch, VkDeviceSize scratchSize) {
-    Timer timer("vkCmdInitializeGraphScratchMemoryAMDX");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdInitializeGraphScratchMemoryAMDX");
     device_dispatch_table(commandBuffer)->CmdInitializeGraphScratchMemoryAMDX(commandBuffer, executionGraph, scratch, scratchSize);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    Timer timer("vkCmdDispatchGraphAMDX");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchGraphAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphIndirectAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, const VkDispatchGraphCountInfoAMDX* pCountInfo) {
-    Timer timer("vkCmdDispatchGraphIndirectAMDX");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchGraphIndirectAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphIndirectAMDX(commandBuffer, scratch, scratchSize, pCountInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchGraphIndirectCountAMDX(VkCommandBuffer commandBuffer, VkDeviceAddress scratch, VkDeviceSize scratchSize, VkDeviceAddress countInfo) {
-    Timer timer("vkCmdDispatchGraphIndirectCountAMDX");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchGraphIndirectCountAMDX");
     device_dispatch_table(commandBuffer)->CmdDispatchGraphIndirectCountAMDX(commandBuffer, scratch, scratchSize, countInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteSamplerDescriptorsEXT(VkDevice device, uint32_t samplerCount, const VkSamplerCreateInfo* pSamplers, const VkHostAddressRangeEXT* pDescriptors) {
-    Timer timer("vkWriteSamplerDescriptorsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWriteSamplerDescriptorsEXT");
     VkResult result = device_dispatch_table(device)->WriteSamplerDescriptorsEXT(device, samplerCount, pSamplers, pDescriptors);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteResourceDescriptorsEXT(VkDevice device, uint32_t resourceCount, const VkResourceDescriptorInfoEXT* pResources, const VkHostAddressRangeEXT* pDescriptors) {
-    Timer timer("vkWriteResourceDescriptorsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWriteResourceDescriptorsEXT");
     VkResult result = device_dispatch_table(device)->WriteResourceDescriptorsEXT(device, resourceCount, pResources, pDescriptors);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindSamplerHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
-    Timer timer("vkCmdBindSamplerHeapEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindSamplerHeapEXT");
     device_dispatch_table(commandBuffer)->CmdBindSamplerHeapEXT(commandBuffer, pBindInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindResourceHeapEXT(VkCommandBuffer commandBuffer, const VkBindHeapInfoEXT* pBindInfo) {
-    Timer timer("vkCmdBindResourceHeapEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindResourceHeapEXT");
     device_dispatch_table(commandBuffer)->CmdBindResourceHeapEXT(commandBuffer, pBindInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPushDataEXT(VkCommandBuffer commandBuffer, const VkPushDataInfoEXT* pPushDataInfo) {
-    Timer timer("vkCmdPushDataEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPushDataEXT");
     device_dispatch_table(commandBuffer)->CmdPushDataEXT(commandBuffer, pPushDataInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageOpaqueCaptureDataEXT(VkDevice device, uint32_t imageCount, const VkImage* pImages, VkHostAddressRangeEXT* pDatas) {
-    Timer timer("vkGetImageOpaqueCaptureDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageOpaqueCaptureDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageOpaqueCaptureDataEXT(device, imageCount, pImages, pDatas);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkRegisterCustomBorderColorEXT(VkDevice device, const VkSamplerCustomBorderColorCreateInfoEXT* pBorderColor, VkBool32 requestIndex, uint32_t* pIndex) {
-    Timer timer("vkRegisterCustomBorderColorEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkRegisterCustomBorderColorEXT");
     VkResult result = device_dispatch_table(device)->RegisterCustomBorderColorEXT(device, pBorderColor, requestIndex, pIndex);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkUnregisterCustomBorderColorEXT(VkDevice device, uint32_t index) {
-    Timer timer("vkUnregisterCustomBorderColorEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUnregisterCustomBorderColorEXT");
     device_dispatch_table(device)->UnregisterCustomBorderColorEXT(device, index);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorOpaqueCaptureDataARM(VkDevice device, uint32_t tensorCount, const VkTensorARM* pTensors, VkHostAddressRangeEXT* pDatas) {
-    Timer timer("vkGetTensorOpaqueCaptureDataARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetTensorOpaqueCaptureDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorOpaqueCaptureDataARM(device, tensorCount, pTensors, pDatas);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleLocationsEXT(VkCommandBuffer commandBuffer, const VkSampleLocationsInfoEXT* pSampleLocationsInfo) {
-    Timer timer("vkCmdSetSampleLocationsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetSampleLocationsEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleLocationsEXT(commandBuffer, pSampleLocationsInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageDrmFormatModifierPropertiesEXT(VkDevice device, VkImage image, VkImageDrmFormatModifierPropertiesEXT* pProperties) {
-    Timer timer("vkGetImageDrmFormatModifierPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageDrmFormatModifierPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetImageDrmFormatModifierPropertiesEXT(device, image, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateValidationCacheEXT(VkDevice device, const VkValidationCacheCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkValidationCacheEXT* pValidationCache) {
-    Timer timer("vkCreateValidationCacheEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateValidationCacheEXT");
     VkResult result = device_dispatch_table(device)->CreateValidationCacheEXT(device, pCreateInfo, pAllocator, pValidationCache);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyValidationCacheEXT(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyValidationCacheEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyValidationCacheEXT");
     device_dispatch_table(device)->DestroyValidationCacheEXT(device, validationCache, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkMergeValidationCachesEXT(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches) {
-    Timer timer("vkMergeValidationCachesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkMergeValidationCachesEXT");
     VkResult result = device_dispatch_table(device)->MergeValidationCachesEXT(device, dstCache, srcCacheCount, pSrcCaches);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetValidationCacheDataEXT(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData) {
-    Timer timer("vkGetValidationCacheDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetValidationCacheDataEXT");
     VkResult result = device_dispatch_table(device)->GetValidationCacheDataEXT(device, validationCache, pDataSize, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindShadingRateImageNV(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) {
-    Timer timer("vkCmdBindShadingRateImageNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindShadingRateImageNV");
     device_dispatch_table(commandBuffer)->CmdBindShadingRateImageNV(commandBuffer, imageView, imageLayout);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkShadingRatePaletteNV* pShadingRatePalettes) {
-    Timer timer("vkCmdSetViewportShadingRatePaletteNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportShadingRatePaletteNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoarseSampleOrderNV(VkCommandBuffer commandBuffer, VkCoarseSampleOrderTypeNV sampleOrderType, uint32_t customSampleOrderCount, const VkCoarseSampleOrderCustomNV* pCustomSampleOrders) {
-    Timer timer("vkCmdSetCoarseSampleOrderNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoarseSampleOrderNV");
     device_dispatch_table(commandBuffer)->CmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAccelerationStructureNV(VkDevice device, const VkAccelerationStructureCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureNV* pAccelerationStructure) {
-    Timer timer("vkCreateAccelerationStructureNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateAccelerationStructureNV");
     VkResult result = device_dispatch_table(device)->CreateAccelerationStructureNV(device, pCreateInfo, pAllocator, pAccelerationStructure);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyAccelerationStructureNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyAccelerationStructureNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyAccelerationStructureNV");
     device_dispatch_table(device)->DestroyAccelerationStructureNV(device, accelerationStructure, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetAccelerationStructureMemoryRequirementsNV(VkDevice device, const VkAccelerationStructureMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2KHR* pMemoryRequirements) {
-    Timer timer("vkGetAccelerationStructureMemoryRequirementsNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAccelerationStructureMemoryRequirementsNV");
     device_dispatch_table(device)->GetAccelerationStructureMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindAccelerationStructureMemoryNV(VkDevice device, uint32_t bindInfoCount, const VkBindAccelerationStructureMemoryInfoNV* pBindInfos) {
-    Timer timer("vkBindAccelerationStructureMemoryNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindAccelerationStructureMemoryNV");
     VkResult result = device_dispatch_table(device)->BindAccelerationStructureMemoryNV(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructureNV(VkCommandBuffer commandBuffer, const VkAccelerationStructureInfoNV* pInfo, VkBuffer instanceData, VkDeviceSize instanceOffset, VkBool32 update, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkBuffer scratch, VkDeviceSize scratchOffset) {
-    Timer timer("vkCmdBuildAccelerationStructureNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildAccelerationStructureNV");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructureNV(commandBuffer, pInfo, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureNV(VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode) {
-    Timer timer("vkCmdCopyAccelerationStructureNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyAccelerationStructureNV");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureNV(commandBuffer, dst, src, mode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysNV(VkCommandBuffer commandBuffer, VkBuffer raygenShaderBindingTableBuffer, VkDeviceSize raygenShaderBindingOffset, VkBuffer missShaderBindingTableBuffer, VkDeviceSize missShaderBindingOffset, VkDeviceSize missShaderBindingStride, VkBuffer hitShaderBindingTableBuffer, VkDeviceSize hitShaderBindingOffset, VkDeviceSize hitShaderBindingStride, VkBuffer callableShaderBindingTableBuffer, VkDeviceSize callableShaderBindingOffset, VkDeviceSize callableShaderBindingStride, uint32_t width, uint32_t height, uint32_t depth) {
-    Timer timer("vkCmdTraceRaysNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdTraceRaysNV");
     device_dispatch_table(commandBuffer)->CmdTraceRaysNV(commandBuffer, raygenShaderBindingTableBuffer, raygenShaderBindingOffset, missShaderBindingTableBuffer, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRayTracingPipelinesNV(VkDevice device, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoNV* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateRayTracingPipelinesNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateRayTracingPipelinesNV");
     VkResult result = device_dispatch_table(device)->CreateRayTracingPipelinesNV(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    Timer timer("vkGetRayTracingShaderGroupHandlesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRayTracingShaderGroupHandlesKHR");
     VkResult result = device_dispatch_table(device)->GetRayTracingShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingShaderGroupHandlesNV(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    Timer timer("vkGetRayTracingShaderGroupHandlesNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRayTracingShaderGroupHandlesNV");
     VkResult result = device_dispatch_table(device)->GetRayTracingShaderGroupHandlesNV(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAccelerationStructureHandleNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData) {
-    Timer timer("vkGetAccelerationStructureHandleNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAccelerationStructureHandleNV");
     VkResult result = device_dispatch_table(device)->GetAccelerationStructureHandleNV(device, accelerationStructure, dataSize, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteAccelerationStructuresPropertiesNV(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureNV* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    Timer timer("vkCmdWriteAccelerationStructuresPropertiesNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteAccelerationStructuresPropertiesNV");
     device_dispatch_table(commandBuffer)->CmdWriteAccelerationStructuresPropertiesNV(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCompileDeferredNV(VkDevice device, VkPipeline pipeline, uint32_t shader) {
-    Timer timer("vkCompileDeferredNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCompileDeferredNV");
     VkResult result = device_dispatch_table(device)->CompileDeferredNV(device, pipeline, shader);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryHostPointerPropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHostPointer, VkMemoryHostPointerPropertiesEXT* pMemoryHostPointerProperties) {
-    Timer timer("vkGetMemoryHostPointerPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryHostPointerPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryHostPointerPropertiesEXT(device, handleType, pHostPointer, pMemoryHostPointerProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarkerAMD(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    Timer timer("vkCmdWriteBufferMarkerAMD");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteBufferMarkerAMD");
     device_dispatch_table(commandBuffer)->CmdWriteBufferMarkerAMD(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteBufferMarker2AMD(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker) {
-    Timer timer("vkCmdWriteBufferMarker2AMD");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteBufferMarker2AMD");
     device_dispatch_table(commandBuffer)->CmdWriteBufferMarker2AMD(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCalibratedTimestampsEXT(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation) {
-    Timer timer("vkGetCalibratedTimestampsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetCalibratedTimestampsEXT");
     VkResult result = device_dispatch_table(device)->GetCalibratedTimestampsEXT(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksNV(VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask) {
-    Timer timer("vkCmdDrawMeshTasksNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksNV(commandBuffer, taskCount, firstTask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawMeshTasksIndirectNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksIndirectNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectNV(commandBuffer, buffer, offset, drawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectCountNV(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawMeshTasksIndirectCountNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksIndirectCountNV");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectCountNV(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExclusiveScissorEnableNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkBool32* pExclusiveScissorEnables) {
-    Timer timer("vkCmdSetExclusiveScissorEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetExclusiveScissorEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetExclusiveScissorEnableNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExclusiveScissorNV(VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkRect2D* pExclusiveScissors) {
-    Timer timer("vkCmdSetExclusiveScissorNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetExclusiveScissorNV");
     device_dispatch_table(commandBuffer)->CmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void* pCheckpointMarker) {
-    Timer timer("vkCmdSetCheckpointNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCheckpointNV");
     device_dispatch_table(commandBuffer)->CmdSetCheckpointNV(commandBuffer, pCheckpointMarker);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointDataNV* pCheckpointData) {
-    Timer timer("vkGetQueueCheckpointDataNV");
+    Timer timer(CPUTimingCategory::VkQueue, "vkGetQueueCheckpointDataNV");
     device_dispatch_table(queue)->GetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointData2NV* pCheckpointData) {
-    Timer timer("vkGetQueueCheckpointData2NV");
+    Timer timer(CPUTimingCategory::VkQueue, "vkGetQueueCheckpointData2NV");
     device_dispatch_table(queue)->GetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetSwapchainPresentTimingQueueSizeEXT(VkDevice device, VkSwapchainKHR swapchain, uint32_t size) {
-    Timer timer("vkSetSwapchainPresentTimingQueueSizeEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetSwapchainPresentTimingQueueSizeEXT");
     VkResult result = device_dispatch_table(device)->SetSwapchainPresentTimingQueueSizeEXT(device, swapchain, size);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainTimingPropertiesEXT(VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimingPropertiesEXT* pSwapchainTimingProperties, uint64_t* pSwapchainTimingPropertiesCounter) {
-    Timer timer("vkGetSwapchainTimingPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSwapchainTimingPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainTimingPropertiesEXT(device, swapchain, pSwapchainTimingProperties, pSwapchainTimingPropertiesCounter);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSwapchainTimeDomainPropertiesEXT(VkDevice device, VkSwapchainKHR swapchain, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter) {
-    Timer timer("vkGetSwapchainTimeDomainPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSwapchainTimeDomainPropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetSwapchainTimeDomainPropertiesEXT(device, swapchain, pSwapchainTimeDomainProperties, pTimeDomainsCounter);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPastPresentationTimingEXT(VkDevice device, const VkPastPresentationTimingInfoEXT* pPastPresentationTimingInfo, VkPastPresentationTimingPropertiesEXT* pPastPresentationTimingProperties) {
-    Timer timer("vkGetPastPresentationTimingEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPastPresentationTimingEXT");
     VkResult result = device_dispatch_table(device)->GetPastPresentationTimingEXT(device, pPastPresentationTimingInfo, pPastPresentationTimingProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkInitializePerformanceApiINTEL(VkDevice device, const VkInitializePerformanceApiInfoINTEL* pInitializeInfo) {
-    Timer timer("vkInitializePerformanceApiINTEL");
+    Timer timer(CPUTimingCategory::VkDevice, "vkInitializePerformanceApiINTEL");
     VkResult result = device_dispatch_table(device)->InitializePerformanceApiINTEL(device, pInitializeInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkUninitializePerformanceApiINTEL(VkDevice device) {
-    Timer timer("vkUninitializePerformanceApiINTEL");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUninitializePerformanceApiINTEL");
     device_dispatch_table(device)->UninitializePerformanceApiINTEL(device);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceMarkerInfoINTEL* pMarkerInfo) {
-    Timer timer("vkCmdSetPerformanceMarkerINTEL");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPerformanceMarkerINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceMarkerINTEL(commandBuffer, pMarkerInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceStreamMarkerINTEL(VkCommandBuffer commandBuffer, const VkPerformanceStreamMarkerInfoINTEL* pMarkerInfo) {
-    Timer timer("vkCmdSetPerformanceStreamMarkerINTEL");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPerformanceStreamMarkerINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceStreamMarkerINTEL(commandBuffer, pMarkerInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCmdSetPerformanceOverrideINTEL(VkCommandBuffer commandBuffer, const VkPerformanceOverrideInfoINTEL* pOverrideInfo) {
-    Timer timer("vkCmdSetPerformanceOverrideINTEL");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPerformanceOverrideINTEL");
     VkResult result = device_dispatch_table(commandBuffer)->CmdSetPerformanceOverrideINTEL(commandBuffer, pOverrideInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquirePerformanceConfigurationINTEL(VkDevice device, const VkPerformanceConfigurationAcquireInfoINTEL* pAcquireInfo, VkPerformanceConfigurationINTEL* pConfiguration) {
-    Timer timer("vkAcquirePerformanceConfigurationINTEL");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAcquirePerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(device)->AcquirePerformanceConfigurationINTEL(device, pAcquireInfo, pConfiguration);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkReleasePerformanceConfigurationINTEL(VkDevice device, VkPerformanceConfigurationINTEL configuration) {
-    Timer timer("vkReleasePerformanceConfigurationINTEL");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleasePerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(device)->ReleasePerformanceConfigurationINTEL(device, configuration);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkQueueSetPerformanceConfigurationINTEL(VkQueue queue, VkPerformanceConfigurationINTEL configuration) {
-    Timer timer("vkQueueSetPerformanceConfigurationINTEL");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueSetPerformanceConfigurationINTEL");
     VkResult result = device_dispatch_table(queue)->QueueSetPerformanceConfigurationINTEL(queue, configuration);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue) {
-    Timer timer("vkGetPerformanceParameterINTEL");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPerformanceParameterINTEL");
     VkResult result = device_dispatch_table(device)->GetPerformanceParameterINTEL(device, parameter, pValue);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkSetLocalDimmingAMD(VkDevice device, VkSwapchainKHR swapChain, VkBool32 localDimmingEnable) {
-    Timer timer("vkSetLocalDimmingAMD");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetLocalDimmingAMD");
     device_dispatch_table(device)->SetLocalDimmingAMD(device, swapChain, localDimmingEnable);
 }
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetBufferDeviceAddressEXT(VkDevice device, const VkBufferDeviceAddressInfo* pInfo) {
-    Timer timer("vkGetBufferDeviceAddressEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferDeviceAddressEXT");
     VkDeviceAddress result = device_dispatch_table(device)->GetBufferDeviceAddressEXT(device, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VKAPI_ATTR VkResult VKAPI_CALL vkAcquireFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) {
-    Timer timer("vkAcquireFullScreenExclusiveModeEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAcquireFullScreenExclusiveModeEXT");
     VkResult result = device_dispatch_table(device)->AcquireFullScreenExclusiveModeEXT(device, swapchain);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseFullScreenExclusiveModeEXT(VkDevice device, VkSwapchainKHR swapchain) {
-    Timer timer("vkReleaseFullScreenExclusiveModeEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleaseFullScreenExclusiveModeEXT");
     VkResult result = device_dispatch_table(device)->ReleaseFullScreenExclusiveModeEXT(device, swapchain);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceGroupSurfacePresentModes2EXT(VkDevice device, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkDeviceGroupPresentModeFlagsKHR* pModes) {
-    Timer timer("vkGetDeviceGroupSurfacePresentModes2EXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceGroupSurfacePresentModes2EXT");
     VkResult result = device_dispatch_table(device)->GetDeviceGroupSurfacePresentModes2EXT(device, pSurfaceInfo, pModes);
     return result;
 }
 #endif  // VK_USE_PLATFORM_WIN32_KHR
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleEXT(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern) {
-    Timer timer("vkCmdSetLineStippleEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineStippleEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleEXT(commandBuffer, lineStippleFactor, lineStipplePattern);
 }
 VKAPI_ATTR void VKAPI_CALL vkResetQueryPoolEXT(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount) {
-    Timer timer("vkResetQueryPoolEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkResetQueryPoolEXT");
     device_dispatch_table(device)->ResetQueryPoolEXT(device, queryPool, firstQuery, queryCount);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCullModeEXT(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode) {
-    Timer timer("vkCmdSetCullModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCullModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetCullModeEXT(commandBuffer, cullMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFrontFaceEXT(VkCommandBuffer commandBuffer, VkFrontFace frontFace) {
-    Timer timer("vkCmdSetFrontFaceEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetFrontFaceEXT");
     device_dispatch_table(commandBuffer)->CmdSetFrontFaceEXT(commandBuffer, frontFace);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveTopologyEXT(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology) {
-    Timer timer("vkCmdSetPrimitiveTopologyEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPrimitiveTopologyEXT");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveTopologyEXT(commandBuffer, primitiveTopology);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWithCountEXT(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports) {
-    Timer timer("vkCmdSetViewportWithCountEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportWithCountEXT");
     device_dispatch_table(commandBuffer)->CmdSetViewportWithCountEXT(commandBuffer, viewportCount, pViewports);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetScissorWithCountEXT(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors) {
-    Timer timer("vkCmdSetScissorWithCountEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetScissorWithCountEXT");
     device_dispatch_table(commandBuffer)->CmdSetScissorWithCountEXT(commandBuffer, scissorCount, pScissors);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindVertexBuffers2EXT(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets, const VkDeviceSize* pSizes, const VkDeviceSize* pStrides) {
-    Timer timer("vkCmdBindVertexBuffers2EXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindVertexBuffers2EXT");
     device_dispatch_table(commandBuffer)->CmdBindVertexBuffers2EXT(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes, pStrides);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthTestEnable) {
-    Timer timer("vkCmdSetDepthTestEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthTestEnableEXT(commandBuffer, depthTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthWriteEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthWriteEnable) {
-    Timer timer("vkCmdSetDepthWriteEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthWriteEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthWriteEnableEXT(commandBuffer, depthWriteEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthCompareOpEXT(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp) {
-    Timer timer("vkCmdSetDepthCompareOpEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthCompareOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthCompareOpEXT(commandBuffer, depthCompareOp);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBoundsTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBoundsTestEnable) {
-    Timer timer("vkCmdSetDepthBoundsTestEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBoundsTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBoundsTestEnableEXT(commandBuffer, depthBoundsTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilTestEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stencilTestEnable) {
-    Timer timer("vkCmdSetStencilTestEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilTestEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetStencilTestEnableEXT(commandBuffer, stencilTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetStencilOpEXT(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, VkStencilOp failOp, VkStencilOp passOp, VkStencilOp depthFailOp, VkCompareOp compareOp) {
-    Timer timer("vkCmdSetStencilOpEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetStencilOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetStencilOpEXT(commandBuffer, faceMask, failOp, passOp, depthFailOp, compareOp);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToImageEXT(VkDevice device, const VkCopyMemoryToImageInfo* pCopyMemoryToImageInfo) {
-    Timer timer("vkCopyMemoryToImageEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMemoryToImageEXT");
     VkResult result = device_dispatch_table(device)->CopyMemoryToImageEXT(device, pCopyMemoryToImageInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToMemoryEXT(VkDevice device, const VkCopyImageToMemoryInfo* pCopyImageToMemoryInfo) {
-    Timer timer("vkCopyImageToMemoryEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyImageToMemoryEXT");
     VkResult result = device_dispatch_table(device)->CopyImageToMemoryEXT(device, pCopyImageToMemoryInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyImageToImageEXT(VkDevice device, const VkCopyImageToImageInfo* pCopyImageToImageInfo) {
-    Timer timer("vkCopyImageToImageEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyImageToImageEXT");
     VkResult result = device_dispatch_table(device)->CopyImageToImageEXT(device, pCopyImageToImageInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkTransitionImageLayoutEXT(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions) {
-    Timer timer("vkTransitionImageLayoutEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkTransitionImageLayoutEXT");
     VkResult result = device_dispatch_table(device)->TransitionImageLayoutEXT(device, transitionCount, pTransitions);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetImageSubresourceLayout2EXT(VkDevice device, VkImage image, const VkImageSubresource2* pSubresource, VkSubresourceLayout2* pLayout) {
-    Timer timer("vkGetImageSubresourceLayout2EXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageSubresourceLayout2EXT");
     device_dispatch_table(device)->GetImageSubresourceLayout2EXT(device, image, pSubresource, pLayout);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkReleaseSwapchainImagesEXT(VkDevice device, const VkReleaseSwapchainImagesInfoKHR* pReleaseInfo) {
-    Timer timer("vkReleaseSwapchainImagesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkReleaseSwapchainImagesEXT");
     VkResult result = device_dispatch_table(device)->ReleaseSwapchainImagesEXT(device, pReleaseInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetGeneratedCommandsMemoryRequirementsNV(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoNV* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetGeneratedCommandsMemoryRequirementsNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetGeneratedCommandsMemoryRequirementsNV");
     device_dispatch_table(device)->GetGeneratedCommandsMemoryRequirementsNV(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPreprocessGeneratedCommandsNV(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
-    Timer timer("vkCmdPreprocessGeneratedCommandsNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPreprocessGeneratedCommandsNV");
     device_dispatch_table(commandBuffer)->CmdPreprocessGeneratedCommandsNV(commandBuffer, pGeneratedCommandsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteGeneratedCommandsNV(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoNV* pGeneratedCommandsInfo) {
-    Timer timer("vkCmdExecuteGeneratedCommandsNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdExecuteGeneratedCommandsNV");
     device_dispatch_table(commandBuffer)->CmdExecuteGeneratedCommandsNV(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindPipelineShaderGroupNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline, uint32_t groupIndex) {
-    Timer timer("vkCmdBindPipelineShaderGroupNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindPipelineShaderGroupNV");
     device_dispatch_table(commandBuffer)->CmdBindPipelineShaderGroupNV(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectCommandsLayoutNV(VkDevice device, const VkIndirectCommandsLayoutCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutNV* pIndirectCommandsLayout) {
-    Timer timer("vkCreateIndirectCommandsLayoutNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateIndirectCommandsLayoutNV");
     VkResult result = device_dispatch_table(device)->CreateIndirectCommandsLayoutNV(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyIndirectCommandsLayoutNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyIndirectCommandsLayoutNV");
     device_dispatch_table(device)->DestroyIndirectCommandsLayoutNV(device, indirectCommandsLayout, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBias2EXT(VkCommandBuffer commandBuffer, const VkDepthBiasInfoEXT* pDepthBiasInfo) {
-    Timer timer("vkCmdSetDepthBias2EXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBias2EXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBias2EXT(commandBuffer, pDepthBiasInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreatePrivateDataSlotEXT(VkDevice device, const VkPrivateDataSlotCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkPrivateDataSlot* pPrivateDataSlot) {
-    Timer timer("vkCreatePrivateDataSlotEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreatePrivateDataSlotEXT");
     VkResult result = device_dispatch_table(device)->CreatePrivateDataSlotEXT(device, pCreateInfo, pAllocator, pPrivateDataSlot);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyPrivateDataSlotEXT(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyPrivateDataSlotEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyPrivateDataSlotEXT");
     device_dispatch_table(device)->DestroyPrivateDataSlotEXT(device, privateDataSlot, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data) {
-    Timer timer("vkSetPrivateDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetPrivateDataEXT");
     VkResult result = device_dispatch_table(device)->SetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, data);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPrivateDataEXT(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData) {
-    Timer timer("vkGetPrivateDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPrivateDataEXT");
     device_dispatch_table(device)->GetPrivateDataEXT(device, objectType, objectHandle, privateDataSlot, pData);
 }
 #if defined(VK_ENABLE_BETA_EXTENSIONS)
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCudaModuleNV(VkDevice device, const VkCudaModuleCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaModuleNV* pModule) {
-    Timer timer("vkCreateCudaModuleNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateCudaModuleNV");
     VkResult result = device_dispatch_table(device)->CreateCudaModuleNV(device, pCreateInfo, pAllocator, pModule);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetCudaModuleCacheNV(VkDevice device, VkCudaModuleNV module, size_t* pCacheSize, void* pCacheData) {
-    Timer timer("vkGetCudaModuleCacheNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetCudaModuleCacheNV");
     VkResult result = device_dispatch_table(device)->GetCudaModuleCacheNV(device, module, pCacheSize, pCacheData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateCudaFunctionNV(VkDevice device, const VkCudaFunctionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkCudaFunctionNV* pFunction) {
-    Timer timer("vkCreateCudaFunctionNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateCudaFunctionNV");
     VkResult result = device_dispatch_table(device)->CreateCudaFunctionNV(device, pCreateInfo, pAllocator, pFunction);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyCudaModuleNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyCudaModuleNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyCudaModuleNV");
     device_dispatch_table(device)->DestroyCudaModuleNV(device, module, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyCudaFunctionNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyCudaFunctionNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyCudaFunctionNV");
     device_dispatch_table(device)->DestroyCudaFunctionNV(device, function, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCudaLaunchKernelNV(VkCommandBuffer commandBuffer, const VkCudaLaunchInfoNV* pLaunchInfo) {
-    Timer timer("vkCmdCudaLaunchKernelNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCudaLaunchKernelNV");
     device_dispatch_table(commandBuffer)->CmdCudaLaunchKernelNV(commandBuffer, pLaunchInfo);
 }
 #endif  // VK_ENABLE_BETA_EXTENSIONS
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchTileQCOM(VkCommandBuffer commandBuffer, const VkDispatchTileInfoQCOM* pDispatchTileInfo) {
-    Timer timer("vkCmdDispatchTileQCOM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchTileQCOM");
     device_dispatch_table(commandBuffer)->CmdDispatchTileQCOM(commandBuffer, pDispatchTileInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileBeginInfoQCOM* pPerTileBeginInfo) {
-    Timer timer("vkCmdBeginPerTileExecutionQCOM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginPerTileExecutionQCOM");
     device_dispatch_table(commandBuffer)->CmdBeginPerTileExecutionQCOM(commandBuffer, pPerTileBeginInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdEndPerTileExecutionQCOM(VkCommandBuffer commandBuffer, const VkPerTileEndInfoQCOM* pPerTileEndInfo) {
-    Timer timer("vkCmdEndPerTileExecutionQCOM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndPerTileExecutionQCOM");
     device_dispatch_table(commandBuffer)->CmdEndPerTileExecutionQCOM(commandBuffer, pPerTileEndInfo);
 }
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 VKAPI_ATTR void VKAPI_CALL vkExportMetalObjectsEXT(VkDevice device, VkExportMetalObjectsInfoEXT* pMetalObjectsInfo) {
-    Timer timer("vkExportMetalObjectsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkExportMetalObjectsEXT");
     device_dispatch_table(device)->ExportMetalObjectsEXT(device, pMetalObjectsInfo);
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutSizeEXT(VkDevice device, VkDescriptorSetLayout layout, VkDeviceSize* pLayoutSizeInBytes) {
-    Timer timer("vkGetDescriptorSetLayoutSizeEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetLayoutSizeEXT");
     device_dispatch_table(device)->GetDescriptorSetLayoutSizeEXT(device, layout, pLayoutSizeInBytes);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutBindingOffsetEXT(VkDevice device, VkDescriptorSetLayout layout, uint32_t binding, VkDeviceSize* pOffset) {
-    Timer timer("vkGetDescriptorSetLayoutBindingOffsetEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetLayoutBindingOffsetEXT");
     device_dispatch_table(device)->GetDescriptorSetLayoutBindingOffsetEXT(device, layout, binding, pOffset);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorEXT(VkDevice device, const VkDescriptorGetInfoEXT* pDescriptorInfo, size_t dataSize, void* pDescriptor) {
-    Timer timer("vkGetDescriptorEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorEXT");
     device_dispatch_table(device)->GetDescriptorEXT(device, pDescriptorInfo, dataSize, pDescriptor);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBuffersEXT(VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos) {
-    Timer timer("vkCmdBindDescriptorBuffersEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorBuffersEXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBuffersEXT(commandBuffer, bufferCount, pBindingInfos);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDescriptorBufferOffsetsEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t firstSet, uint32_t setCount, const uint32_t* pBufferIndices, const VkDeviceSize* pOffsets) {
-    Timer timer("vkCmdSetDescriptorBufferOffsetsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDescriptorBufferOffsetsEXT");
     device_dispatch_table(commandBuffer)->CmdSetDescriptorBufferOffsetsEXT(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindDescriptorBufferEmbeddedSamplersEXT(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set) {
-    Timer timer("vkCmdBindDescriptorBufferEmbeddedSamplersEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT");
     device_dispatch_table(commandBuffer)->CmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer, pipelineBindPoint, layout, set);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetBufferOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkBufferCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    Timer timer("vkGetBufferOpaqueCaptureDescriptorDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetBufferOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    Timer timer("vkGetImageOpaqueCaptureDescriptorDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetImageViewOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkImageViewCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    Timer timer("vkGetImageViewOpaqueCaptureDescriptorDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetImageViewOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetImageViewOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSamplerOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkSamplerCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    Timer timer("vkGetSamplerOpaqueCaptureDescriptorDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSamplerOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetSamplerOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT(VkDevice device, const VkAccelerationStructureCaptureDescriptorDataInfoEXT* pInfo, void* pData) {
-    Timer timer("vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT");
     VkResult result = device_dispatch_table(device)->GetAccelerationStructureOpaqueCaptureDescriptorDataEXT(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetFragmentShadingRateEnumNV(VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]) {
-    Timer timer("vkCmdSetFragmentShadingRateEnumNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetFragmentShadingRateEnumNV");
     device_dispatch_table(commandBuffer)->CmdSetFragmentShadingRateEnumNV(commandBuffer, shadingRate, combinerOps);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceFaultInfoEXT(VkDevice device, VkDeviceFaultCountsEXT* pFaultCounts, VkDeviceFaultInfoEXT* pFaultInfo) {
-    Timer timer("vkGetDeviceFaultInfoEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceFaultInfoEXT");
     VkResult result = device_dispatch_table(device)->GetDeviceFaultInfoEXT(device, pFaultCounts, pFaultInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetVertexInputEXT(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions) {
-    Timer timer("vkCmdSetVertexInputEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetVertexInputEXT");
     device_dispatch_table(commandBuffer)->CmdSetVertexInputEXT(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 #if defined(VK_USE_PLATFORM_FUCHSIA)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryZirconHandleFUCHSIA(VkDevice device, const VkMemoryGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) {
-    Timer timer("vkGetMemoryZirconHandleFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetMemoryZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t zirconHandle, VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties) {
-    Timer timer("vkGetMemoryZirconHandlePropertiesFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryZirconHandlePropertiesFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetMemoryZirconHandlePropertiesFUCHSIA(device, handleType, zirconHandle, pMemoryZirconHandleProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkImportSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkImportSemaphoreZirconHandleInfoFUCHSIA* pImportSemaphoreZirconHandleInfo) {
-    Timer timer("vkImportSemaphoreZirconHandleFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkImportSemaphoreZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->ImportSemaphoreZirconHandleFUCHSIA(device, pImportSemaphoreZirconHandleInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetSemaphoreZirconHandleFUCHSIA(VkDevice device, const VkSemaphoreGetZirconHandleInfoFUCHSIA* pGetZirconHandleInfo, zx_handle_t* pZirconHandle) {
-    Timer timer("vkGetSemaphoreZirconHandleFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetSemaphoreZirconHandleFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetSemaphoreZirconHandleFUCHSIA(device, pGetZirconHandleInfo, pZirconHandle);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBufferCollectionFUCHSIA(VkDevice device, const VkBufferCollectionCreateInfoFUCHSIA* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBufferCollectionFUCHSIA* pCollection) {
-    Timer timer("vkCreateBufferCollectionFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateBufferCollectionFUCHSIA");
     VkResult result = device_dispatch_table(device)->CreateBufferCollectionFUCHSIA(device, pCreateInfo, pAllocator, pCollection);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkImageConstraintsInfoFUCHSIA* pImageConstraintsInfo) {
-    Timer timer("vkSetBufferCollectionImageConstraintsFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetBufferCollectionImageConstraintsFUCHSIA");
     VkResult result = device_dispatch_table(device)->SetBufferCollectionImageConstraintsFUCHSIA(device, collection, pImageConstraintsInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkBufferConstraintsInfoFUCHSIA* pBufferConstraintsInfo) {
-    Timer timer("vkSetBufferCollectionBufferConstraintsFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetBufferCollectionBufferConstraintsFUCHSIA");
     VkResult result = device_dispatch_table(device)->SetBufferCollectionBufferConstraintsFUCHSIA(device, collection, pBufferConstraintsInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyBufferCollectionFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyBufferCollectionFUCHSIA");
     device_dispatch_table(device)->DestroyBufferCollectionFUCHSIA(device, collection, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, VkBufferCollectionPropertiesFUCHSIA* pProperties) {
-    Timer timer("vkGetBufferCollectionPropertiesFUCHSIA");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetBufferCollectionPropertiesFUCHSIA");
     VkResult result = device_dispatch_table(device)->GetBufferCollectionPropertiesFUCHSIA(device, collection, pProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_FUCHSIA
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize) {
-    Timer timer("vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI");
     VkResult result = device_dispatch_table(device)->GetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(device, renderpass, pMaxWorkgroupSize);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSubpassShadingHUAWEI(VkCommandBuffer commandBuffer) {
-    Timer timer("vkCmdSubpassShadingHUAWEI");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSubpassShadingHUAWEI");
     device_dispatch_table(commandBuffer)->CmdSubpassShadingHUAWEI(commandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindInvocationMaskHUAWEI(VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout) {
-    Timer timer("vkCmdBindInvocationMaskHUAWEI");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindInvocationMaskHUAWEI");
     device_dispatch_table(commandBuffer)->CmdBindInvocationMaskHUAWEI(commandBuffer, imageView, imageLayout);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryRemoteAddressNV(VkDevice device, const VkMemoryGetRemoteAddressInfoNV* pMemoryGetRemoteAddressInfo, VkRemoteAddressNV* pAddress) {
-    Timer timer("vkGetMemoryRemoteAddressNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryRemoteAddressNV");
     VkResult result = device_dispatch_table(device)->GetMemoryRemoteAddressNV(device, pMemoryGetRemoteAddressInfo, pAddress);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetPipelinePropertiesEXT(VkDevice device, const VkPipelineInfoEXT* pPipelineInfo, VkBaseOutStructure* pPipelineProperties) {
-    Timer timer("vkGetPipelinePropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelinePropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetPipelinePropertiesEXT(device, pPipelineInfo, pPipelineProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPatchControlPointsEXT(VkCommandBuffer commandBuffer, uint32_t patchControlPoints) {
-    Timer timer("vkCmdSetPatchControlPointsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPatchControlPointsEXT");
     device_dispatch_table(commandBuffer)->CmdSetPatchControlPointsEXT(commandBuffer, patchControlPoints);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizerDiscardEnableEXT(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable) {
-    Timer timer("vkCmdSetRasterizerDiscardEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRasterizerDiscardEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizerDiscardEnableEXT(commandBuffer, rasterizerDiscardEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthBiasEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable) {
-    Timer timer("vkCmdSetDepthBiasEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthBiasEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthBiasEnableEXT(commandBuffer, depthBiasEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLogicOpEXT(VkCommandBuffer commandBuffer, VkLogicOp logicOp) {
-    Timer timer("vkCmdSetLogicOpEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLogicOpEXT");
     device_dispatch_table(commandBuffer)->CmdSetLogicOpEXT(commandBuffer, logicOp);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPrimitiveRestartEnableEXT(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable) {
-    Timer timer("vkCmdSetPrimitiveRestartEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPrimitiveRestartEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetPrimitiveRestartEnableEXT(commandBuffer, primitiveRestartEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorWriteEnableEXT(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables) {
-    Timer timer("vkCmdSetColorWriteEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetColorWriteEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorWriteEnableEXT(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride) {
-    Timer timer("vkCmdDrawMultiEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMultiEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMultiEXT(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiIndexedEXT(VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawIndexedInfoEXT* pIndexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride, const int32_t* pVertexOffset) {
-    Timer timer("vkCmdDrawMultiIndexedEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMultiIndexedEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMultiIndexedEXT(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMicromapEXT(VkDevice device, const VkMicromapCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkMicromapEXT* pMicromap) {
-    Timer timer("vkCreateMicromapEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateMicromapEXT");
     VkResult result = device_dispatch_table(device)->CreateMicromapEXT(device, pCreateInfo, pAllocator, pMicromap);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyMicromapEXT(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyMicromapEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyMicromapEXT");
     device_dispatch_table(device)->DestroyMicromapEXT(device, micromap, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildMicromapsEXT(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) {
-    Timer timer("vkCmdBuildMicromapsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildMicromapsEXT");
     device_dispatch_table(commandBuffer)->CmdBuildMicromapsEXT(commandBuffer, infoCount, pInfos);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBuildMicromapsEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos) {
-    Timer timer("vkBuildMicromapsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBuildMicromapsEXT");
     VkResult result = device_dispatch_table(device)->BuildMicromapsEXT(device, deferredOperation, infoCount, pInfos);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapInfoEXT* pInfo) {
-    Timer timer("vkCopyMicromapEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMicromapEXT");
     VkResult result = device_dispatch_table(device)->CopyMicromapEXT(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMicromapToMemoryEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMicromapToMemoryInfoEXT* pInfo) {
-    Timer timer("vkCopyMicromapToMemoryEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMicromapToMemoryEXT");
     VkResult result = device_dispatch_table(device)->CopyMicromapToMemoryEXT(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToMicromapEXT(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToMicromapInfoEXT* pInfo) {
-    Timer timer("vkCopyMemoryToMicromapEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMemoryToMicromapEXT");
     VkResult result = device_dispatch_table(device)->CopyMemoryToMicromapEXT(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteMicromapsPropertiesEXT(VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) {
-    Timer timer("vkWriteMicromapsPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWriteMicromapsPropertiesEXT");
     VkResult result = device_dispatch_table(device)->WriteMicromapsPropertiesEXT(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapInfoEXT* pInfo) {
-    Timer timer("vkCmdCopyMicromapEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMicromapEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMicromapEXT(commandBuffer, pInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMicromapToMemoryEXT(VkCommandBuffer commandBuffer, const VkCopyMicromapToMemoryInfoEXT* pInfo) {
-    Timer timer("vkCmdCopyMicromapToMemoryEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMicromapToMemoryEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMicromapToMemoryEXT(commandBuffer, pInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToMicromapEXT(VkCommandBuffer commandBuffer, const VkCopyMemoryToMicromapInfoEXT* pInfo) {
-    Timer timer("vkCmdCopyMemoryToMicromapEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryToMicromapEXT");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToMicromapEXT(commandBuffer, pInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteMicromapsPropertiesEXT(VkCommandBuffer commandBuffer, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    Timer timer("vkCmdWriteMicromapsPropertiesEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteMicromapsPropertiesEXT");
     device_dispatch_table(commandBuffer)->CmdWriteMicromapsPropertiesEXT(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceMicromapCompatibilityEXT(VkDevice device, const VkMicromapVersionInfoEXT* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) {
-    Timer timer("vkGetDeviceMicromapCompatibilityEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceMicromapCompatibilityEXT");
     device_dispatch_table(device)->GetDeviceMicromapCompatibilityEXT(device, pVersionInfo, pCompatibility);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetMicromapBuildSizesEXT(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkMicromapBuildInfoEXT* pBuildInfo, VkMicromapBuildSizesInfoEXT* pSizeInfo) {
-    Timer timer("vkGetMicromapBuildSizesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMicromapBuildSizesEXT");
     device_dispatch_table(device)->GetMicromapBuildSizesEXT(device, buildType, pBuildInfo, pSizeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawClusterHUAWEI(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    Timer timer("vkCmdDrawClusterHUAWEI");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawClusterHUAWEI");
     device_dispatch_table(commandBuffer)->CmdDrawClusterHUAWEI(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawClusterIndirectHUAWEI(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset) {
-    Timer timer("vkCmdDrawClusterIndirectHUAWEI");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawClusterIndirectHUAWEI");
     device_dispatch_table(commandBuffer)->CmdDrawClusterIndirectHUAWEI(commandBuffer, buffer, offset);
 }
 VKAPI_ATTR void VKAPI_CALL vkSetDeviceMemoryPriorityEXT(VkDevice device, VkDeviceMemory memory, float priority) {
-    Timer timer("vkSetDeviceMemoryPriorityEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetDeviceMemoryPriorityEXT");
     device_dispatch_table(device)->SetDeviceMemoryPriorityEXT(device, memory, priority);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice device, const VkDescriptorSetBindingReferenceVALVE* pBindingReference, VkDescriptorSetLayoutHostMappingInfoVALVE* pHostMapping) {
-    Timer timer("vkGetDescriptorSetLayoutHostMappingInfoVALVE");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetLayoutHostMappingInfoVALVE");
     device_dispatch_table(device)->GetDescriptorSetLayoutHostMappingInfoVALVE(device, pBindingReference, pHostMapping);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptorSet descriptorSet, void** ppData) {
-    Timer timer("vkGetDescriptorSetHostMappingVALVE");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDescriptorSetHostMappingVALVE");
     device_dispatch_table(device)->GetDescriptorSetHostMappingVALVE(device, descriptorSet, ppData);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride) {
-    Timer timer("vkCmdCopyMemoryIndirectNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryIndirectNV");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToImageIndirectNV(VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride, VkImage dstImage, VkImageLayout dstImageLayout, const VkImageSubresourceLayers* pImageSubresources) {
-    Timer timer("vkCmdCopyMemoryToImageIndirectNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryToImageIndirectNV");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToImageIndirectNV(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryNV(VkCommandBuffer commandBuffer, uint32_t decompressRegionCount, const VkDecompressMemoryRegionNV* pDecompressMemoryRegions) {
-    Timer timer("vkCmdDecompressMemoryNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDecompressMemoryNV");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryNV(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryIndirectCountNV(VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t stride) {
-    Timer timer("vkCmdDecompressMemoryIndirectCountNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDecompressMemoryIndirectCountNV");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryIndirectCountNV(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPipelineIndirectMemoryRequirementsNV(VkDevice device, const VkComputePipelineCreateInfo* pCreateInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetPipelineIndirectMemoryRequirementsNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineIndirectMemoryRequirementsNV");
     device_dispatch_table(device)->GetPipelineIndirectMemoryRequirementsNV(device, pCreateInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdUpdatePipelineIndirectBufferNV(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline) {
-    Timer timer("vkCmdUpdatePipelineIndirectBufferNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdUpdatePipelineIndirectBufferNV");
     device_dispatch_table(commandBuffer)->CmdUpdatePipelineIndirectBufferNV(commandBuffer, pipelineBindPoint, pipeline);
 }
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetPipelineIndirectDeviceAddressNV(VkDevice device, const VkPipelineIndirectDeviceAddressInfoNV* pInfo) {
-    Timer timer("vkGetPipelineIndirectDeviceAddressNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPipelineIndirectDeviceAddressNV");
     VkDeviceAddress result = device_dispatch_table(device)->GetPipelineIndirectDeviceAddressNV(device, pInfo);
     return result;
 }
 #if defined(VK_USE_PLATFORM_OHOS)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, VkNativeBufferPropertiesOHOS* pProperties) {
-    Timer timer("vkGetNativeBufferPropertiesOHOS");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetNativeBufferPropertiesOHOS");
     VkResult result = device_dispatch_table(device)->GetNativeBufferPropertiesOHOS(device, buffer, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryNativeBufferOHOS(VkDevice device, const VkMemoryGetNativeBufferInfoOHOS* pInfo, struct OH_NativeBuffer** pBuffer) {
-    Timer timer("vkGetMemoryNativeBufferOHOS");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryNativeBufferOHOS");
     VkResult result = device_dispatch_table(device)->GetMemoryNativeBufferOHOS(device, pInfo, pBuffer);
     return result;
 }
 #endif  // VK_USE_PLATFORM_OHOS
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClampEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClampEnable) {
-    Timer timer("vkCmdSetDepthClampEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthClampEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClampEnableEXT(commandBuffer, depthClampEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetPolygonModeEXT(VkCommandBuffer commandBuffer, VkPolygonMode polygonMode) {
-    Timer timer("vkCmdSetPolygonModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetPolygonModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetPolygonModeEXT(commandBuffer, polygonMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizationSamplesEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits rasterizationSamples) {
-    Timer timer("vkCmdSetRasterizationSamplesEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRasterizationSamplesEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizationSamplesEXT(commandBuffer, rasterizationSamples);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleMaskEXT(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask) {
-    Timer timer("vkCmdSetSampleMaskEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetSampleMaskEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleMaskEXT(commandBuffer, samples, pSampleMask);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAlphaToCoverageEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToCoverageEnable) {
-    Timer timer("vkCmdSetAlphaToCoverageEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetAlphaToCoverageEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAlphaToCoverageEnableEXT(commandBuffer, alphaToCoverageEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAlphaToOneEnableEXT(VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable) {
-    Timer timer("vkCmdSetAlphaToOneEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetAlphaToOneEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAlphaToOneEnableEXT(commandBuffer, alphaToOneEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLogicOpEnableEXT(VkCommandBuffer commandBuffer, VkBool32 logicOpEnable) {
-    Timer timer("vkCmdSetLogicOpEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLogicOpEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetLogicOpEnableEXT(commandBuffer, logicOpEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendEnableEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkBool32* pColorBlendEnables) {
-    Timer timer("vkCmdSetColorBlendEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetColorBlendEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendEnableEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendEquationEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendEquationEXT* pColorBlendEquations) {
-    Timer timer("vkCmdSetColorBlendEquationEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetColorBlendEquationEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendEquationEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorWriteMaskEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorComponentFlags* pColorWriteMasks) {
-    Timer timer("vkCmdSetColorWriteMaskEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetColorWriteMaskEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorWriteMaskEXT(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetTessellationDomainOriginEXT(VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin) {
-    Timer timer("vkCmdSetTessellationDomainOriginEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetTessellationDomainOriginEXT");
     device_dispatch_table(commandBuffer)->CmdSetTessellationDomainOriginEXT(commandBuffer, domainOrigin);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRasterizationStreamEXT(VkCommandBuffer commandBuffer, uint32_t rasterizationStream) {
-    Timer timer("vkCmdSetRasterizationStreamEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRasterizationStreamEXT");
     device_dispatch_table(commandBuffer)->CmdSetRasterizationStreamEXT(commandBuffer, rasterizationStream);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetConservativeRasterizationModeEXT(VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode) {
-    Timer timer("vkCmdSetConservativeRasterizationModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetConservativeRasterizationModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetConservativeRasterizationModeEXT(commandBuffer, conservativeRasterizationMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetExtraPrimitiveOverestimationSizeEXT(VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize) {
-    Timer timer("vkCmdSetExtraPrimitiveOverestimationSizeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetExtraPrimitiveOverestimationSizeEXT");
     device_dispatch_table(commandBuffer)->CmdSetExtraPrimitiveOverestimationSizeEXT(commandBuffer, extraPrimitiveOverestimationSize);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClipEnableEXT(VkCommandBuffer commandBuffer, VkBool32 depthClipEnable) {
-    Timer timer("vkCmdSetDepthClipEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthClipEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClipEnableEXT(commandBuffer, depthClipEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetSampleLocationsEnableEXT(VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable) {
-    Timer timer("vkCmdSetSampleLocationsEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetSampleLocationsEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetSampleLocationsEnableEXT(commandBuffer, sampleLocationsEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetColorBlendAdvancedEXT(VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendAdvancedEXT* pColorBlendAdvanced) {
-    Timer timer("vkCmdSetColorBlendAdvancedEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetColorBlendAdvancedEXT");
     device_dispatch_table(commandBuffer)->CmdSetColorBlendAdvancedEXT(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetProvokingVertexModeEXT(VkCommandBuffer commandBuffer, VkProvokingVertexModeEXT provokingVertexMode) {
-    Timer timer("vkCmdSetProvokingVertexModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetProvokingVertexModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetProvokingVertexModeEXT(commandBuffer, provokingVertexMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineRasterizationModeEXT(VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode) {
-    Timer timer("vkCmdSetLineRasterizationModeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineRasterizationModeEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineRasterizationModeEXT(commandBuffer, lineRasterizationMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetLineStippleEnableEXT(VkCommandBuffer commandBuffer, VkBool32 stippledLineEnable) {
-    Timer timer("vkCmdSetLineStippleEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetLineStippleEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetLineStippleEnableEXT(commandBuffer, stippledLineEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClipNegativeOneToOneEXT(VkCommandBuffer commandBuffer, VkBool32 negativeOneToOne) {
-    Timer timer("vkCmdSetDepthClipNegativeOneToOneEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthClipNegativeOneToOneEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClipNegativeOneToOneEXT(commandBuffer, negativeOneToOne);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable) {
-    Timer timer("vkCmdSetViewportWScalingEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportWScalingEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportWScalingEnableNV(commandBuffer, viewportWScalingEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles) {
-    Timer timer("vkCmdSetViewportSwizzleNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetViewportSwizzleNV");
     device_dispatch_table(commandBuffer)->CmdSetViewportSwizzleNV(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageToColorEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageToColorEnable) {
-    Timer timer("vkCmdSetCoverageToColorEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageToColorEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageToColorEnableNV(commandBuffer, coverageToColorEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageToColorLocationNV(VkCommandBuffer commandBuffer, uint32_t coverageToColorLocation) {
-    Timer timer("vkCmdSetCoverageToColorLocationNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageToColorLocationNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageToColorLocationNV(commandBuffer, coverageToColorLocation);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationModeNV(VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode) {
-    Timer timer("vkCmdSetCoverageModulationModeNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageModulationModeNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationModeNV(commandBuffer, coverageModulationMode);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationTableEnableNV(VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable) {
-    Timer timer("vkCmdSetCoverageModulationTableEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageModulationTableEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationTableEnableNV(commandBuffer, coverageModulationTableEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageModulationTableNV(VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount, const float* pCoverageModulationTable) {
-    Timer timer("vkCmdSetCoverageModulationTableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageModulationTableNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageModulationTableNV(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable) {
-    Timer timer("vkCmdSetShadingRateImageEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetShadingRateImageEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetShadingRateImageEnableNV(commandBuffer, shadingRateImageEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable) {
-    Timer timer("vkCmdSetRepresentativeFragmentTestEnableNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRepresentativeFragmentTestEnableNV");
     device_dispatch_table(commandBuffer)->CmdSetRepresentativeFragmentTestEnableNV(commandBuffer, representativeFragmentTestEnable);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetCoverageReductionModeNV(VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode) {
-    Timer timer("vkCmdSetCoverageReductionModeNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetCoverageReductionModeNV");
     device_dispatch_table(commandBuffer)->CmdSetCoverageReductionModeNV(commandBuffer, coverageReductionMode);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorARM(VkDevice device, const VkTensorCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorARM* pTensor) {
-    Timer timer("vkCreateTensorARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateTensorARM");
     VkResult result = device_dispatch_table(device)->CreateTensorARM(device, pCreateInfo, pAllocator, pTensor);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyTensorARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyTensorARM");
     device_dispatch_table(device)->DestroyTensorARM(device, tensor, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateTensorViewARM(VkDevice device, const VkTensorViewCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkTensorViewARM* pView) {
-    Timer timer("vkCreateTensorViewARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateTensorViewARM");
     VkResult result = device_dispatch_table(device)->CreateTensorViewARM(device, pCreateInfo, pAllocator, pView);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyTensorViewARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyTensorViewARM");
     device_dispatch_table(device)->DestroyTensorViewARM(device, tensorView, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetTensorMemoryRequirementsARM(VkDevice device, const VkTensorMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetTensorMemoryRequirementsARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetTensorMemoryRequirementsARM");
     device_dispatch_table(device)->GetTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindTensorMemoryInfoARM* pBindInfos) {
-    Timer timer("vkBindTensorMemoryARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindTensorMemoryARM");
     VkResult result = device_dispatch_table(device)->BindTensorMemoryARM(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceTensorMemoryRequirementsARM(VkDevice device, const VkDeviceTensorMemoryRequirementsARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDeviceTensorMemoryRequirementsARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceTensorMemoryRequirementsARM");
     device_dispatch_table(device)->GetDeviceTensorMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyTensorARM(VkCommandBuffer commandBuffer, const VkCopyTensorInfoARM* pCopyTensorInfo) {
-    Timer timer("vkCmdCopyTensorARM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyTensorARM");
     device_dispatch_table(commandBuffer)->CmdCopyTensorARM(commandBuffer, pCopyTensorInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorOpaqueCaptureDescriptorDataARM(VkDevice device, const VkTensorCaptureDescriptorDataInfoARM* pInfo, void* pData) {
-    Timer timer("vkGetTensorOpaqueCaptureDescriptorDataARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetTensorOpaqueCaptureDescriptorDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice device, const VkTensorViewCaptureDescriptorDataInfoARM* pInfo, void* pData) {
-    Timer timer("vkGetTensorViewOpaqueCaptureDescriptorDataARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetTensorViewOpaqueCaptureDescriptorDataARM");
     VkResult result = device_dispatch_table(device)->GetTensorViewOpaqueCaptureDescriptorDataARM(device, pInfo, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleIdentifierEXT(VkDevice device, VkShaderModule shaderModule, VkShaderModuleIdentifierEXT* pIdentifier) {
-    Timer timer("vkGetShaderModuleIdentifierEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetShaderModuleIdentifierEXT");
     device_dispatch_table(device)->GetShaderModuleIdentifierEXT(device, shaderModule, pIdentifier);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetShaderModuleCreateInfoIdentifierEXT(VkDevice device, const VkShaderModuleCreateInfo* pCreateInfo, VkShaderModuleIdentifierEXT* pIdentifier) {
-    Timer timer("vkGetShaderModuleCreateInfoIdentifierEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetShaderModuleCreateInfoIdentifierEXT");
     device_dispatch_table(device)->GetShaderModuleCreateInfoIdentifierEXT(device, pCreateInfo, pIdentifier);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateOpticalFlowSessionNV(VkDevice device, const VkOpticalFlowSessionCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkOpticalFlowSessionNV* pSession) {
-    Timer timer("vkCreateOpticalFlowSessionNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateOpticalFlowSessionNV");
     VkResult result = device_dispatch_table(device)->CreateOpticalFlowSessionNV(device, pCreateInfo, pAllocator, pSession);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyOpticalFlowSessionNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyOpticalFlowSessionNV");
     device_dispatch_table(device)->DestroyOpticalFlowSessionNV(device, session, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFlowSessionNV session, VkOpticalFlowSessionBindingPointNV bindingPoint, VkImageView view, VkImageLayout layout) {
-    Timer timer("vkBindOpticalFlowSessionImageNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindOpticalFlowSessionImageNV");
     VkResult result = device_dispatch_table(device)->BindOpticalFlowSessionImageNV(device, session, bindingPoint, view, layout);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdOpticalFlowExecuteNV(VkCommandBuffer commandBuffer, VkOpticalFlowSessionNV session, const VkOpticalFlowExecuteInfoNV* pExecuteInfo) {
-    Timer timer("vkCmdOpticalFlowExecuteNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdOpticalFlowExecuteNV");
     device_dispatch_table(commandBuffer)->CmdOpticalFlowExecuteNV(commandBuffer, session, pExecuteInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkAntiLagUpdateAMD(VkDevice device, const VkAntiLagDataAMD* pData) {
-    Timer timer("vkAntiLagUpdateAMD");
+    Timer timer(CPUTimingCategory::VkDevice, "vkAntiLagUpdateAMD");
     device_dispatch_table(device)->AntiLagUpdateAMD(device, pData);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateShadersEXT(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders) {
-    Timer timer("vkCreateShadersEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateShadersEXT");
     VkResult result = device_dispatch_table(device)->CreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyShaderEXT(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyShaderEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyShaderEXT");
     device_dispatch_table(device)->DestroyShaderEXT(device, shader, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetShaderBinaryDataEXT(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData) {
-    Timer timer("vkGetShaderBinaryDataEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetShaderBinaryDataEXT");
     VkResult result = device_dispatch_table(device)->GetShaderBinaryDataEXT(device, shader, pDataSize, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBindShadersEXT(VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders) {
-    Timer timer("vkCmdBindShadersEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindShadersEXT");
     device_dispatch_table(commandBuffer)->CmdBindShadersEXT(commandBuffer, stageCount, pStages, pShaders);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetDepthClampRangeEXT(VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange) {
-    Timer timer("vkCmdSetDepthClampRangeEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetDepthClampRangeEXT");
     device_dispatch_table(commandBuffer)->CmdSetDepthClampRangeEXT(commandBuffer, depthClampMode, pDepthClampRange);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, uint32_t* pPropertiesCount, VkTilePropertiesQCOM* pProperties) {
-    Timer timer("vkGetFramebufferTilePropertiesQCOM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetFramebufferTilePropertiesQCOM");
     VkResult result = device_dispatch_table(device)->GetFramebufferTilePropertiesQCOM(device, framebuffer, pPropertiesCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDynamicRenderingTilePropertiesQCOM(VkDevice device, const VkRenderingInfo* pRenderingInfo, VkTilePropertiesQCOM* pProperties) {
-    Timer timer("vkGetDynamicRenderingTilePropertiesQCOM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDynamicRenderingTilePropertiesQCOM");
     VkResult result = device_dispatch_table(device)->GetDynamicRenderingTilePropertiesQCOM(device, pRenderingInfo, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkConvertCooperativeVectorMatrixNV(VkDevice device, const VkConvertCooperativeVectorMatrixInfoNV* pInfo) {
-    Timer timer("vkConvertCooperativeVectorMatrixNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkConvertCooperativeVectorMatrixNV");
     VkResult result = device_dispatch_table(device)->ConvertCooperativeVectorMatrixNV(device, pInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdConvertCooperativeVectorMatrixNV(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos) {
-    Timer timer("vkCmdConvertCooperativeVectorMatrixNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdConvertCooperativeVectorMatrixNV");
     device_dispatch_table(commandBuffer)->CmdConvertCooperativeVectorMatrixNV(commandBuffer, infoCount, pInfos);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkSetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepModeInfoNV* pSleepModeInfo) {
-    Timer timer("vkSetLatencySleepModeNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetLatencySleepModeNV");
     VkResult result = device_dispatch_table(device)->SetLatencySleepModeNV(device, swapchain, pSleepModeInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkLatencySleepNV(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepInfoNV* pSleepInfo) {
-    Timer timer("vkLatencySleepNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkLatencySleepNV");
     VkResult result = device_dispatch_table(device)->LatencySleepNV(device, swapchain, pSleepInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkSetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain, const VkSetLatencyMarkerInfoNV* pLatencyMarkerInfo) {
-    Timer timer("vkSetLatencyMarkerNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkSetLatencyMarkerNV");
     device_dispatch_table(device)->SetLatencyMarkerNV(device, swapchain, pLatencyMarkerInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain, VkGetLatencyMarkerInfoNV* pLatencyMarkerInfo) {
-    Timer timer("vkGetLatencyTimingsNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetLatencyTimingsNV");
     device_dispatch_table(device)->GetLatencyTimingsNV(device, swapchain, pLatencyMarkerInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkQueueNotifyOutOfBandNV(VkQueue queue, const VkOutOfBandQueueTypeInfoNV* pQueueTypeInfo) {
-    Timer timer("vkQueueNotifyOutOfBandNV");
+    Timer timer(CPUTimingCategory::VkQueue, "vkQueueNotifyOutOfBandNV");
     device_dispatch_table(queue)->QueueNotifyOutOfBandNV(queue, pQueueTypeInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDataGraphPipelinesARM(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkDataGraphPipelineCreateInfoARM* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateDataGraphPipelinesARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDataGraphPipelinesARM");
     VkResult result = device_dispatch_table(device)->CreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDataGraphPipelineSessionARM(VkDevice device, const VkDataGraphPipelineSessionCreateInfoARM* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDataGraphPipelineSessionARM* pSession) {
-    Timer timer("vkCreateDataGraphPipelineSessionARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateDataGraphPipelineSessionARM");
     VkResult result = device_dispatch_table(device)->CreateDataGraphPipelineSessionARM(device, pCreateInfo, pAllocator, pSession);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice device, const VkDataGraphPipelineSessionBindPointRequirementsInfoARM* pInfo, uint32_t* pBindPointRequirementCount, VkDataGraphPipelineSessionBindPointRequirementARM* pBindPointRequirements) {
-    Timer timer("vkGetDataGraphPipelineSessionBindPointRequirementsARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDataGraphPipelineSessionBindPointRequirementsARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelineSessionBindPointRequirementsARM(device, pInfo, pBindPointRequirementCount, pBindPointRequirements);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDataGraphPipelineSessionMemoryRequirementsARM(VkDevice device, const VkDataGraphPipelineSessionMemoryRequirementsInfoARM* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetDataGraphPipelineSessionMemoryRequirementsARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDataGraphPipelineSessionMemoryRequirementsARM");
     device_dispatch_table(device)->GetDataGraphPipelineSessionMemoryRequirementsARM(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBindDataGraphPipelineSessionMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos) {
-    Timer timer("vkBindDataGraphPipelineSessionMemoryARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBindDataGraphPipelineSessionMemoryARM");
     VkResult result = device_dispatch_table(device)->BindDataGraphPipelineSessionMemoryARM(device, bindInfoCount, pBindInfos);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyDataGraphPipelineSessionARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyDataGraphPipelineSessionARM");
     device_dispatch_table(device)->DestroyDataGraphPipelineSessionARM(device, session, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDispatchDataGraphARM(VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const VkDataGraphPipelineDispatchInfoARM* pInfo) {
-    Timer timer("vkCmdDispatchDataGraphARM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDispatchDataGraphARM");
     device_dispatch_table(commandBuffer)->CmdDispatchDataGraphARM(commandBuffer, session, pInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t* pPropertiesCount, VkDataGraphPipelinePropertyARM* pProperties) {
-    Timer timer("vkGetDataGraphPipelineAvailablePropertiesARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDataGraphPipelineAvailablePropertiesARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelineAvailablePropertiesARM(device, pPipelineInfo, pPropertiesCount, pProperties);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetDataGraphPipelinePropertiesARM(VkDevice device, const VkDataGraphPipelineInfoARM* pPipelineInfo, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties) {
-    Timer timer("vkGetDataGraphPipelinePropertiesARM");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDataGraphPipelinePropertiesARM");
     VkResult result = device_dispatch_table(device)->GetDataGraphPipelinePropertiesARM(device, pPipelineInfo, propertiesCount, pProperties);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetAttachmentFeedbackLoopEnableEXT(VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask) {
-    Timer timer("vkCmdSetAttachmentFeedbackLoopEnableEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetAttachmentFeedbackLoopEnableEXT");
     device_dispatch_table(commandBuffer)->CmdSetAttachmentFeedbackLoopEnableEXT(commandBuffer, aspectMask);
 }
 #if defined(VK_USE_PLATFORM_SCREEN_QNX)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetScreenBufferPropertiesQNX(VkDevice device, const struct _screen_buffer* buffer, VkScreenBufferPropertiesQNX* pProperties) {
-    Timer timer("vkGetScreenBufferPropertiesQNX");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetScreenBufferPropertiesQNX");
     VkResult result = device_dispatch_table(device)->GetScreenBufferPropertiesQNX(device, buffer, pProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_SCREEN_QNX
 VKAPI_ATTR void VKAPI_CALL vkCmdBindTileMemoryQCOM(VkCommandBuffer commandBuffer, const VkTileMemoryBindInfoQCOM* pTileMemoryBindInfo) {
-    Timer timer("vkCmdBindTileMemoryQCOM");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBindTileMemoryQCOM");
     device_dispatch_table(commandBuffer)->CmdBindTileMemoryQCOM(commandBuffer, pTileMemoryBindInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryEXT(VkCommandBuffer commandBuffer, const VkDecompressMemoryInfoEXT* pDecompressMemoryInfoEXT) {
-    Timer timer("vkCmdDecompressMemoryEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDecompressMemoryEXT");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryEXT(commandBuffer, pDecompressMemoryInfoEXT);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDecompressMemoryIndirectCountEXT(VkCommandBuffer commandBuffer, VkMemoryDecompressionMethodFlagsEXT decompressionMethod, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t maxDecompressionCount, uint32_t stride) {
-    Timer timer("vkCmdDecompressMemoryIndirectCountEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDecompressMemoryIndirectCountEXT");
     device_dispatch_table(commandBuffer)->CmdDecompressMemoryIndirectCountEXT(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount, stride);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateExternalComputeQueueNV(VkDevice device, const VkExternalComputeQueueCreateInfoNV* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkExternalComputeQueueNV* pExternalQueue) {
-    Timer timer("vkCreateExternalComputeQueueNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateExternalComputeQueueNV");
     VkResult result = device_dispatch_table(device)->CreateExternalComputeQueueNV(device, pCreateInfo, pAllocator, pExternalQueue);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyExternalComputeQueueNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyExternalComputeQueueNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyExternalComputeQueueNV");
     device_dispatch_table(device)->DestroyExternalComputeQueueNV(device, externalQueue, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetExternalComputeQueueDataNV(VkExternalComputeQueueNV externalQueue, VkExternalComputeQueueDataParamsNV* params, void* pData) {
-    Timer timer("vkGetExternalComputeQueueDataNV");
+    Timer timer(CPUTimingCategory::Other, "vkGetExternalComputeQueueDataNV");
     device_dispatch_table(externalQueue)->GetExternalComputeQueueDataNV(externalQueue, params, pData);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetClusterAccelerationStructureBuildSizesNV(VkDevice device, const VkClusterAccelerationStructureInputInfoNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    Timer timer("vkGetClusterAccelerationStructureBuildSizesNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetClusterAccelerationStructureBuildSizesNV");
     device_dispatch_table(device)->GetClusterAccelerationStructureBuildSizesNV(device, pInfo, pSizeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildClusterAccelerationStructureIndirectNV(VkCommandBuffer commandBuffer, const VkClusterAccelerationStructureCommandsInfoNV* pCommandInfos) {
-    Timer timer("vkCmdBuildClusterAccelerationStructureIndirectNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildClusterAccelerationStructureIndirectNV");
     device_dispatch_table(commandBuffer)->CmdBuildClusterAccelerationStructureIndirectNV(commandBuffer, pCommandInfos);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetPartitionedAccelerationStructuresBuildSizesNV(VkDevice device, const VkPartitionedAccelerationStructureInstancesInputNV* pInfo, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    Timer timer("vkGetPartitionedAccelerationStructuresBuildSizesNV");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetPartitionedAccelerationStructuresBuildSizesNV");
     device_dispatch_table(device)->GetPartitionedAccelerationStructuresBuildSizesNV(device, pInfo, pSizeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildPartitionedAccelerationStructuresNV(VkCommandBuffer commandBuffer, const VkBuildPartitionedAccelerationStructureInfoNV* pBuildInfo) {
-    Timer timer("vkCmdBuildPartitionedAccelerationStructuresNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildPartitionedAccelerationStructuresNV");
     device_dispatch_table(commandBuffer)->CmdBuildPartitionedAccelerationStructuresNV(commandBuffer, pBuildInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetGeneratedCommandsMemoryRequirementsEXT(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
-    Timer timer("vkGetGeneratedCommandsMemoryRequirementsEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetGeneratedCommandsMemoryRequirementsEXT");
     device_dispatch_table(device)->GetGeneratedCommandsMemoryRequirementsEXT(device, pInfo, pMemoryRequirements);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdPreprocessGeneratedCommandsEXT(VkCommandBuffer commandBuffer, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo, VkCommandBuffer stateCommandBuffer) {
-    Timer timer("vkCmdPreprocessGeneratedCommandsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdPreprocessGeneratedCommandsEXT");
     device_dispatch_table(commandBuffer)->CmdPreprocessGeneratedCommandsEXT(commandBuffer, pGeneratedCommandsInfo, stateCommandBuffer);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdExecuteGeneratedCommandsEXT(VkCommandBuffer commandBuffer, VkBool32 isPreprocessed, const VkGeneratedCommandsInfoEXT* pGeneratedCommandsInfo) {
-    Timer timer("vkCmdExecuteGeneratedCommandsEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdExecuteGeneratedCommandsEXT");
     device_dispatch_table(commandBuffer)->CmdExecuteGeneratedCommandsEXT(commandBuffer, isPreprocessed, pGeneratedCommandsInfo);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectCommandsLayoutEXT(VkDevice device, const VkIndirectCommandsLayoutCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectCommandsLayoutEXT* pIndirectCommandsLayout) {
-    Timer timer("vkCreateIndirectCommandsLayoutEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateIndirectCommandsLayoutEXT");
     VkResult result = device_dispatch_table(device)->CreateIndirectCommandsLayoutEXT(device, pCreateInfo, pAllocator, pIndirectCommandsLayout);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectCommandsLayoutEXT(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyIndirectCommandsLayoutEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyIndirectCommandsLayoutEXT");
     device_dispatch_table(device)->DestroyIndirectCommandsLayoutEXT(device, indirectCommandsLayout, pAllocator);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateIndirectExecutionSetEXT(VkDevice device, const VkIndirectExecutionSetCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkIndirectExecutionSetEXT* pIndirectExecutionSet) {
-    Timer timer("vkCreateIndirectExecutionSetEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateIndirectExecutionSetEXT");
     VkResult result = device_dispatch_table(device)->CreateIndirectExecutionSetEXT(device, pCreateInfo, pAllocator, pIndirectExecutionSet);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyIndirectExecutionSetEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyIndirectExecutionSetEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyIndirectExecutionSetEXT");
     device_dispatch_table(device)->DestroyIndirectExecutionSetEXT(device, indirectExecutionSet, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkUpdateIndirectExecutionSetPipelineEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites) {
-    Timer timer("vkUpdateIndirectExecutionSetPipelineEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateIndirectExecutionSetPipelineEXT");
     device_dispatch_table(device)->UpdateIndirectExecutionSetPipelineEXT(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 VKAPI_ATTR void VKAPI_CALL vkUpdateIndirectExecutionSetShaderEXT(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, uint32_t executionSetWriteCount, const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites) {
-    Timer timer("vkUpdateIndirectExecutionSetShaderEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkUpdateIndirectExecutionSetShaderEXT");
     device_dispatch_table(device)->UpdateIndirectExecutionSetShaderEXT(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 #if defined(VK_USE_PLATFORM_METAL_EXT)
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryMetalHandleEXT(VkDevice device, const VkMemoryGetMetalHandleInfoEXT* pGetMetalHandleInfo, void** pHandle) {
-    Timer timer("vkGetMemoryMetalHandleEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryMetalHandleEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryMetalHandleEXT(device, pGetMetalHandleInfo, pHandle);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetMemoryMetalHandlePropertiesEXT(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, const void* pHandle, VkMemoryMetalHandlePropertiesEXT* pMemoryMetalHandleProperties) {
-    Timer timer("vkGetMemoryMetalHandlePropertiesEXT");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetMemoryMetalHandlePropertiesEXT");
     VkResult result = device_dispatch_table(device)->GetMemoryMetalHandlePropertiesEXT(device, handleType, pHandle, pMemoryMetalHandleProperties);
     return result;
 }
 #endif  // VK_USE_PLATFORM_METAL_EXT
 VKAPI_ATTR void VKAPI_CALL vkCmdEndRendering2EXT(VkCommandBuffer commandBuffer, const VkRenderingEndInfoKHR* pRenderingEndInfo) {
-    Timer timer("vkCmdEndRendering2EXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdEndRendering2EXT");
     device_dispatch_table(commandBuffer)->CmdEndRendering2EXT(commandBuffer, pRenderingEndInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBeginCustomResolveEXT(VkCommandBuffer commandBuffer, const VkBeginCustomResolveInfoEXT* pBeginCustomResolveInfo) {
-    Timer timer("vkCmdBeginCustomResolveEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBeginCustomResolveEXT");
     device_dispatch_table(commandBuffer)->CmdBeginCustomResolveEXT(commandBuffer, pBeginCustomResolveInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetComputeOccupancyPriorityNV(VkCommandBuffer commandBuffer, const VkComputeOccupancyPriorityParametersNV* pParameters) {
-    Timer timer("vkCmdSetComputeOccupancyPriorityNV");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetComputeOccupancyPriorityNV");
     device_dispatch_table(commandBuffer)->CmdSetComputeOccupancyPriorityNV(commandBuffer, pParameters);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateAccelerationStructureKHR(VkDevice device, const VkAccelerationStructureCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkAccelerationStructureKHR* pAccelerationStructure) {
-    Timer timer("vkCreateAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CreateAccelerationStructureKHR(device, pCreateInfo, pAllocator, pAccelerationStructure);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkDestroyAccelerationStructureKHR(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator) {
-    Timer timer("vkDestroyAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkDestroyAccelerationStructureKHR");
     device_dispatch_table(device)->DestroyAccelerationStructureKHR(device, accelerationStructure, pAllocator);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructuresKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-    Timer timer("vkCmdBuildAccelerationStructuresKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildAccelerationStructuresKHR");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructuresKHR(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdBuildAccelerationStructuresIndirectKHR(VkCommandBuffer commandBuffer, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkDeviceAddress* pIndirectDeviceAddresses, const uint32_t* pIndirectStrides, const uint32_t* const* ppMaxPrimitiveCounts) {
-    Timer timer("vkCmdBuildAccelerationStructuresIndirectKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdBuildAccelerationStructuresIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdBuildAccelerationStructuresIndirectKHR(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkBuildAccelerationStructuresKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos) {
-    Timer timer("vkBuildAccelerationStructuresKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkBuildAccelerationStructuresKHR");
     VkResult result = device_dispatch_table(device)->BuildAccelerationStructuresKHR(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureInfoKHR* pInfo) {
-    Timer timer("vkCopyAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CopyAccelerationStructureKHR(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyAccelerationStructureToMemoryKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-    Timer timer("vkCopyAccelerationStructureToMemoryKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyAccelerationStructureToMemoryKHR");
     VkResult result = device_dispatch_table(device)->CopyAccelerationStructureToMemoryKHR(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCopyMemoryToAccelerationStructureKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-    Timer timer("vkCopyMemoryToAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCopyMemoryToAccelerationStructureKHR");
     VkResult result = device_dispatch_table(device)->CopyMemoryToAccelerationStructureKHR(device, deferredOperation, pInfo);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkWriteAccelerationStructuresPropertiesKHR(VkDevice device, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, size_t dataSize, void* pData, size_t stride) {
-    Timer timer("vkWriteAccelerationStructuresPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkWriteAccelerationStructuresPropertiesKHR");
     VkResult result = device_dispatch_table(device)->WriteAccelerationStructuresPropertiesKHR(device, accelerationStructureCount, pAccelerationStructures, queryType, dataSize, pData, stride);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureInfoKHR* pInfo) {
-    Timer timer("vkCmdCopyAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyAccelerationStructureKHR");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureKHR(commandBuffer, pInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyAccelerationStructureToMemoryKHR(VkCommandBuffer commandBuffer, const VkCopyAccelerationStructureToMemoryInfoKHR* pInfo) {
-    Timer timer("vkCmdCopyAccelerationStructureToMemoryKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyAccelerationStructureToMemoryKHR");
     device_dispatch_table(commandBuffer)->CmdCopyAccelerationStructureToMemoryKHR(commandBuffer, pInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdCopyMemoryToAccelerationStructureKHR(VkCommandBuffer commandBuffer, const VkCopyMemoryToAccelerationStructureInfoKHR* pInfo) {
-    Timer timer("vkCmdCopyMemoryToAccelerationStructureKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdCopyMemoryToAccelerationStructureKHR");
     device_dispatch_table(commandBuffer)->CmdCopyMemoryToAccelerationStructureKHR(commandBuffer, pInfo);
 }
 VKAPI_ATTR VkDeviceAddress VKAPI_CALL vkGetAccelerationStructureDeviceAddressKHR(VkDevice device, const VkAccelerationStructureDeviceAddressInfoKHR* pInfo) {
-    Timer timer("vkGetAccelerationStructureDeviceAddressKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAccelerationStructureDeviceAddressKHR");
     VkDeviceAddress result = device_dispatch_table(device)->GetAccelerationStructureDeviceAddressKHR(device, pInfo);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdWriteAccelerationStructuresPropertiesKHR(VkCommandBuffer commandBuffer, uint32_t accelerationStructureCount, const VkAccelerationStructureKHR* pAccelerationStructures, VkQueryType queryType, VkQueryPool queryPool, uint32_t firstQuery) {
-    Timer timer("vkCmdWriteAccelerationStructuresPropertiesKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdWriteAccelerationStructuresPropertiesKHR");
     device_dispatch_table(commandBuffer)->CmdWriteAccelerationStructuresPropertiesKHR(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetDeviceAccelerationStructureCompatibilityKHR(VkDevice device, const VkAccelerationStructureVersionInfoKHR* pVersionInfo, VkAccelerationStructureCompatibilityKHR* pCompatibility) {
-    Timer timer("vkGetDeviceAccelerationStructureCompatibilityKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceAccelerationStructureCompatibilityKHR");
     device_dispatch_table(device)->GetDeviceAccelerationStructureCompatibilityKHR(device, pVersionInfo, pCompatibility);
 }
 VKAPI_ATTR void VKAPI_CALL vkGetAccelerationStructureBuildSizesKHR(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo, const uint32_t* pMaxPrimitiveCounts, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo) {
-    Timer timer("vkGetAccelerationStructureBuildSizesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetAccelerationStructureBuildSizesKHR");
     device_dispatch_table(device)->GetAccelerationStructureBuildSizesKHR(device, buildType, pBuildInfo, pMaxPrimitiveCounts, pSizeInfo);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, uint32_t width, uint32_t height, uint32_t depth) {
-    Timer timer("vkCmdTraceRaysKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdTraceRaysKHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateRayTracingPipelinesKHR(VkDevice device, VkDeferredOperationKHR deferredOperation, VkPipelineCache pipelineCache, uint32_t createInfoCount, const VkRayTracingPipelineCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkPipeline* pPipelines) {
-    Timer timer("vkCreateRayTracingPipelinesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkCreateRayTracingPipelinesKHR");
     VkResult result = device_dispatch_table(device)->CreateRayTracingPipelinesKHR(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     return result;
 }
 VKAPI_ATTR VkResult VKAPI_CALL vkGetRayTracingCaptureReplayShaderGroupHandlesKHR(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData) {
-    Timer timer("vkGetRayTracingCaptureReplayShaderGroupHandlesKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR");
     VkResult result = device_dispatch_table(device)->GetRayTracingCaptureReplayShaderGroupHandlesKHR(device, pipeline, firstGroup, groupCount, dataSize, pData);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdTraceRaysIndirectKHR(VkCommandBuffer commandBuffer, const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable, const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable, VkDeviceAddress indirectDeviceAddress) {
-    Timer timer("vkCmdTraceRaysIndirectKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdTraceRaysIndirectKHR");
     device_dispatch_table(commandBuffer)->CmdTraceRaysIndirectKHR(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 VKAPI_ATTR VkDeviceSize VKAPI_CALL vkGetRayTracingShaderGroupStackSizeKHR(VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader) {
-    Timer timer("vkGetRayTracingShaderGroupStackSizeKHR");
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetRayTracingShaderGroupStackSizeKHR");
     VkDeviceSize result = device_dispatch_table(device)->GetRayTracingShaderGroupStackSizeKHR(device, pipeline, group, groupShader);
     return result;
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdSetRayTracingPipelineStackSizeKHR(VkCommandBuffer commandBuffer, uint32_t pipelineStackSize) {
-    Timer timer("vkCmdSetRayTracingPipelineStackSizeKHR");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdSetRayTracingPipelineStackSizeKHR");
     device_dispatch_table(commandBuffer)->CmdSetRayTracingPipelineStackSizeKHR(commandBuffer, pipelineStackSize);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksEXT(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) {
-    Timer timer("vkCmdDrawMeshTasksEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksEXT(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawMeshTasksIndirectEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksIndirectEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectEXT(commandBuffer, buffer, offset, drawCount, stride);
 }
 VKAPI_ATTR void VKAPI_CALL vkCmdDrawMeshTasksIndirectCountEXT(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride) {
-    Timer timer("vkCmdDrawMeshTasksIndirectCountEXT");
+    Timer timer(CPUTimingCategory::VkCommandBuffer, "vkCmdDrawMeshTasksIndirectCountEXT");
     device_dispatch_table(commandBuffer)->CmdDrawMeshTasksIndirectCountEXT(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL cputiming_known_instance_functions(VkInstance instance, const char* pName) {

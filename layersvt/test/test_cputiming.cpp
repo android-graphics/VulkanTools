@@ -58,7 +58,7 @@ TEST_F(CpuTimingTests, InitLayer) {
 
     // Verify that we saw creating instance timing
     // Expected output format: "vkCreateInstance: <duration> ns"
-    EXPECT_NE(output.find("vkCreateInstance:"), std::string::npos);
+    EXPECT_NE(output.find("CPUTiming/Other vkCreateInstance:"), std::string::npos);
     EXPECT_NE(output.find("ns"), std::string::npos);
     
     // If we found a physical device, we should see enumeration timing too

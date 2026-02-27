@@ -27,6 +27,7 @@
 extern "C" {
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* pName) {
+    Timer timer(CPUTimingCategory::VkInstance, "vkGetInstanceProcAddr");
     PFN_vkVoidFunction instance_func = cputiming_known_instance_functions(instance, pName);
     if (instance_func) return instance_func;
     PFN_vkVoidFunction device_func = cputiming_known_device_functions(NULL, pName);
@@ -39,6 +40,7 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
 }
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* pName) {
+    Timer timer(CPUTimingCategory::VkDevice, "vkGetDeviceProcAddr");
     PFN_vkVoidFunction device_func = cputiming_known_device_functions(device, pName);
     if (device_func) return device_func;
 

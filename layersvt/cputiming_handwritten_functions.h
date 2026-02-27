@@ -44,7 +44,7 @@ extern "C" {
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                                 VkInstance* pInstance) {
     std::call_once(g_perfetto_init_flag, []() { InitializePerfetto(); });
-    Timer timer("vkCreateInstance");
+    Timer timer(CPUTimingCategory::Other, "vkCreateInstance");
 
 
 
@@ -71,7 +71,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
 
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
-    Timer timer("vkCreateDevice");
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkCreateDevice");
 
     // Get the function pointer
     VkLayerDeviceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
@@ -99,11 +99,13 @@ extern "C" {
 EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char* pLayerName,
                                                                                       uint32_t* pPropertyCount,
                                                                                       VkExtensionProperties* pProperties) {
+    Timer timer(CPUTimingCategory::Other, "vkEnumerateInstanceExtensionProperties");
     return util_GetExtensionProperties(0, NULL, pPropertyCount, pProperties);
 }
 
 EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount,
                                                                                   VkLayerProperties* pProperties) {
+    Timer timer(CPUTimingCategory::Other, "vkEnumerateInstanceLayerProperties");
     static const VkLayerProperties layerProperties[] = {{
         "CPUTiming",
         VK_MAKE_VERSION(1, 4, VK_HEADER_VERSION),  // specVersion
@@ -117,6 +119,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerPropertie
 EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice,
                                                                                 uint32_t* pPropertyCount,
                                                                                 VkLayerProperties* pProperties) {
+    Timer timer(CPUTimingCategory::VkPhysicalDevice, "vkEnumerateDeviceLayerProperties");
     static const VkLayerProperties layerProperties[] = {{
         "CPUTiming",
         VK_MAKE_VERSION(1, 4, VK_HEADER_VERSION),
