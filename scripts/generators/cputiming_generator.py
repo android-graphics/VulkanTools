@@ -18,8 +18,21 @@
 #
 
 from base_generator import BaseGenerator
-from vulkan_object import Struct, Command
+from vulkan_object import Command
 
+# These commands are manually implemented in cputiming_handwritten_functions.h
+# or cputiming_handwritten_dispatch.cpp
+MANUALLY_IMPLEMENTED_COMMANDS = [
+    'vkCreateInstance',
+    'vkCreateDevice',
+    'vkEnumerateInstanceExtensionProperties',
+    'vkEnumerateInstanceLayerProperties',
+    'vkEnumerateInstanceVersion',
+    'vkEnumerateDeviceLayerProperties',
+    'vkEnumerateDeviceExtensionProperties',
+    'vkGetInstanceProcAddr',
+    'vkGetDeviceProcAddr',
+]
 
 class PlatformGuardHelper():
     """Used to elide platform guards together, so redundant #endif then #ifdefs are removed
@@ -47,10 +60,6 @@ def command_param_usage_text(command : Command):
 class CpuTimingGenerator(BaseGenerator):
     def __init__(self):
         BaseGenerator.__init__(self)
-        self.aliases = {}
-        self.return_types = set()
-        self.vulkan_defined_types = set()
-        self.only_use_as_pointer_types = set()
 
     def generate(self):
         self.generate_copyright()
@@ -97,19 +106,10 @@ class CpuTimingGenerator(BaseGenerator):
             ''')
 
         protect = PlatformGuardHelper()
-        for command in  [x for x in self.vk.commands.values() if x.instance]:
-            if command.name in ['vkCreateInstance',
-                                'vkCreateDevice',
-                                'vkEnumerateInstanceExtensionProperties',
-                                'vkEnumerateInstanceLayerProperties',
-                                'vkEnumerateInstanceVersion',
-                                'vkEnumerateDeviceLayerProperties',
-                                'vkEnumerateDeviceExtensionProperties',
-                                'vkGetInstanceProcAddr',
-                                'vkGetDeviceProcAddr']:
+        for command in [x for x in self.vk.commands.values() if x.instance]:
+            if command.name in MANUALLY_IMPLEMENTED_COMMANDS:
                 continue
             protect.add_guard(self, command.protect)
-            # self.write('template<ApiDumpFormat Format>')
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
             self.write(f'Timer timer("{command.name}");')
@@ -137,13 +137,9 @@ class CpuTimingGenerator(BaseGenerator):
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}instance_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
 
-
-            # if command.name in TRACKED_STATE:
-            #     self.write(TRACKED_STATE[command.name])
-
             if command.name == 'vkEnumeratePhysicalDevices':
                 self.write('''
-                    if (pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
+                    if ((result == VK_SUCCESS || result == VK_INCOMPLETE) && pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
                         for (uint32_t i = 0; i < *pPhysicalDeviceCount; i++) {
                             CpuTiming::Get().SetVkInstance(pPhysicalDevices[i], instance);
                         }
@@ -166,21 +162,12 @@ class CpuTimingGenerator(BaseGenerator):
 
         self.write('\n// Autogen device functions\n')
 
-        for command in [x for x in self.vk.commands.values() if x.device and x.name not in ['vkCreateInstance',
-                                'vkCreateDevice',
-                                'vkEnumerateInstanceExtensionProperties',
-                                'vkEnumerateInstanceLayerProperties',
-                                'vkEnumerateInstanceVersion',
-                                'vkEnumerateDeviceLayerProperties',
-                                'vkEnumerateDeviceExtensionProperties',
-                                'vkGetInstanceProcAddr',
-                                'vkGetDeviceProcAddr']]:
-            if command.name in ['vkGetDeviceProcAddr']:
+        for command in [x for x in self.vk.commands.values() if x.device and x.name not in MANUALLY_IMPLEMENTED_COMMANDS]:
+            if command.name in MANUALLY_IMPLEMENTED_COMMANDS: # Double check, although list comprehension filters most
                 continue
 
             protect.add_guard(self, command.protect)
 
-            # self.write('template<ApiDumpFormat Format>')
             self.write(f'VKAPI_ATTR {command.returnType} VKAPI_CALL {command.name}({command_param_declaration_text(command)})')
             self.write('{')
 
@@ -189,23 +176,14 @@ class CpuTimingGenerator(BaseGenerator):
             return_str = f'{command.returnType} result = ' if command.returnType != 'void' else ''
             self.write(f'{return_str}device_dispatch_table({command.params[0].name})->{command.name[2:]}({command_param_usage_text(command)});')
 
-
-            # if command.name in TRACKED_STATE:
-            #     self.write('' + TRACKED_STATE[command.name])
-
             if command.name == 'vkDestroyDevice':
                 self.write('destroy_device_dispatch_table(get_dispatch_key(device));')
 
-
-
-            # if command.name == 'vkQueuePresentKHR':
-            #     self.write('ApiDumpInstance::current().nextFrame();')
             if command.returnType != 'void':
                 self.write('return result;')
             self.write('}')
         protect.add_guard(self, None)
 
-        # self.write('\ntemplate<ApiDumpFormat Format>')
         self.write('VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL cputiming_known_instance_functions(VkInstance instance, const char* pName)')
         self.write('{\n')
         for command in self.vk.commands.values():
@@ -213,24 +191,17 @@ class CpuTimingGenerator(BaseGenerator):
                 continue
             protect.add_guard(self, command.protect)
             self.write(f'if(strcmp(pName, "{command.name}") == 0)')
-            if True: # command.name in NON_TEMPLATEDTED_FUNCTIONS:
-                self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name});')
-            # else:
-            #     self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name}<Format>);')
+            self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name});')
         protect.add_guard(self, None)
         self.write('\n    return nullptr;')
         self.write('}')
 
-        # self.write('\ntemplate<ApiDumpFormat Format>')
         self.write('VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL cputiming_known_device_functions(VkDevice device, const char* pName)')
         self.write('{\n')
         for command in [x for x in self.vk.commands.values() if x.device ]:
             protect.add_guard(self, command.protect)
             self.write(f'if(strcmp(pName, "{command.name}") == 0 && (!device || device_dispatch_table(device)->{command.name[2:]}))')
-            if True: # command.name in NON_TEMPLATEDTED_FUNCTIONS:
-                self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name});')
-            # else:
-            #     self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name}<Format>);')
+            self.write(f'return reinterpret_cast<PFN_vkVoidFunction>({command.name});')
         protect.add_guard(self, None)
 
         self.write('\n    return nullptr;')

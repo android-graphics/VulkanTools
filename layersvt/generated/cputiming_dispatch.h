@@ -39,7 +39,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, u
     Timer timer("vkEnumeratePhysicalDevices");
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
 
-    if (pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
+    if ((result == VK_SUCCESS || result == VK_INCOMPLETE) && pPhysicalDeviceCount != nullptr && pPhysicalDevices != nullptr) {
         for (uint32_t i = 0; i < *pPhysicalDeviceCount; i++) {
             CpuTiming::Get().SetVkInstance(pPhysicalDevices[i], instance);
         }
