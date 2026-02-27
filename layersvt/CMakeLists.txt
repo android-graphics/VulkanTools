@@ -68,6 +68,8 @@ if(BUILD_APIDUMP)
         api_dump_layer.md
         json/VkLayer_api_dump.json.in
         ../scripts/generators/api_dump_generator.py
+        perfetto/perfetto.cc
+        perfetto/perfetto_helpers.cpp
     )
 
     target_include_directories(VkLayer_api_dump PRIVATE
@@ -128,6 +130,8 @@ if(BUILD_CPUTIMING)
         generated/cputiming_implementation.h
         api_dump.h
         cputiming_handwritten_functions.h
+        perfetto/perfetto.cc
+        perfetto/perfetto_helpers.cpp
         ../scripts/generators/api_dump_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
@@ -164,7 +168,7 @@ foreach(layer ${TOOL_LAYERS})
     target_link_Libraries(${layer} PRIVATE Vulkan::Headers Vulkan::UtilityHeaders Vulkan::LayerSettings)
 
     if (ANDROID)
-        target_link_Libraries(${layer} PRIVATE log android)
+        target_link_Libraries(${layer} PRIVATE log android atomic)
     endif()
 
     target_include_directories(${layer} PRIVATE .)

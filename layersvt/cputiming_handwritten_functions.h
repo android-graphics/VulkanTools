@@ -27,11 +27,17 @@
 
 #include "generated/cputiming_implementation.h"
 #include "timer.h"
+#include "perfetto/perfetto_helpers.h"
+
+#include <mutex>
+
+static std::once_flag g_perfetto_init_flag;
 
 extern "C" {
 
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                                 VkInstance* pInstance) {
+    std::call_once(g_perfetto_init_flag, []() { InitializePerfetto(); });
     Timer timer("vkCreateInstance");
 #if defined(_WIN32) && defined(_CRTDBG_MODE_FILE)
 #if !defined(NDEBUG)

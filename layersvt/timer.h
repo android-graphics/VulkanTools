@@ -17,31 +17,38 @@
 #ifndef LAYERSVT_TIMER_H
 #define LAYERSVT_TIMER_H
 
+#include "perfetto/perfetto_helpers.h"
+
 #include <chrono>
 #include <iostream>
-#include <string>
 
-#ifdef __ANDROID__
-#include <android/log.h>
-#endif
 
 class Timer {
   public:
-    explicit Timer(const char* name) : name_(name), start_(std::chrono::high_resolution_clock::now()) {}
+    explicit Timer(const char* name) {
+#ifndef __ANDROID__
+        name_ = name;
+        start_ = std::chrono::high_resolution_clock::now();
+#endif
+        TRACE_EVENT_BEGIN("CPUTiming", perfetto::StaticString(name));
+    }
 
     ~Timer() {
+        TRACE_EVENT_END("CPUTiming");
+#ifndef __ANDROID__
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start_).count();
-#ifdef __ANDROID__
-        __android_log_print(ANDROID_LOG_ERROR, "CPUTiming", "%s: %lld ns", name_.c_str(), (long long)duration);
-#else
         std::cout << name_ << ": " << duration << " ns" << std::endl;
 #endif
     }
 
   private:
-    std::string name_;
+#ifndef __ANDROID__
+    const char* name_;
+#endif
+#ifndef __ANDROID__
     std::chrono::time_point<std::chrono::high_resolution_clock> start_;
+#endif
 };
 
 #endif // LAYERSVT_TIMER_H
