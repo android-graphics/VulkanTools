@@ -68,8 +68,6 @@ if(BUILD_APIDUMP)
         api_dump_layer.md
         json/VkLayer_api_dump.json.in
         ../scripts/generators/api_dump_generator.py
-        perfetto/perfetto.cc
-        perfetto/perfetto_helpers.cpp
     )
 
     target_include_directories(VkLayer_api_dump PRIVATE
@@ -127,12 +125,12 @@ if(BUILD_CPUTIMING)
         cputiming_handwritten_dispatch.cpp
         generated/cputiming_dispatch.h
         generated/cputiming_implementation.h
-        generated/cputiming_implementation.h
-        api_dump.h
         cputiming_handwritten_functions.h
+        cputiming.h
+        cputiming.cpp
         perfetto/perfetto.cc
         perfetto/perfetto_helpers.cpp
-        ../scripts/generators/api_dump_generator.py
+        ../scripts/generators/cputiming_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
         json/VkLayer_CPUTiming.json.in

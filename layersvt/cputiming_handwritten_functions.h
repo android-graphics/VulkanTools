@@ -27,7 +27,17 @@
 
 #include "generated/cputiming_implementation.h"
 #include "timer.h"
+#include "cputiming.h"
 #include "perfetto/perfetto_helpers.h"
+#include "vk_layer_table.h"
+
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define EXPORT_FUNCTION __attribute__((visibility("default")))
+#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x590)
+#define EXPORT_FUNCTION __attribute__((visibility("default")))
+#else
+#define EXPORT_FUNCTION
+#endif
 
 #include <mutex>
 
@@ -51,8 +61,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
     _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 #endif
 
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
-    ApiDumpInstance::current().initLayerSettings(pCreateInfo, pAllocator);
 
     // Get the function pointer
     VkLayerInstanceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
@@ -75,18 +83,16 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
 }
 }
 
-template <ApiDumpFormat Format>
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     Timer timer("vkCreateDevice");
-    std::lock_guard<std::mutex> lg(ApiDumpInstance::current().outputMutex());
 
     // Get the function pointer
     VkLayerDeviceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
     assert(chain_info->u.pLayerInfo != 0);
     PFN_vkGetInstanceProcAddr fpGetInstanceProcAddr = chain_info->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     PFN_vkGetDeviceProcAddr fpGetDeviceProcAddr = chain_info->u.pLayerInfo->pfnNextGetDeviceProcAddr;
-    VkInstance vk_instance = ApiDumpInstance::current().get_vk_instance(physicalDevice);
+    VkInstance vk_instance = CpuTiming::Get().GetVkInstance(physicalDevice);
     PFN_vkCreateDevice fpCreateDevice = (PFN_vkCreateDevice)fpGetInstanceProcAddr(vk_instance, "vkCreateDevice");
     if (fpCreateDevice == NULL) {
         return VK_ERROR_INITIALIZATION_FAILED;

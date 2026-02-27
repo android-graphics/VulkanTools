@@ -58,6 +58,7 @@ def RunGenerators(api: str, registry: str, video_registry: str, directory: str, 
 
     from base_generator import BaseGeneratorOptions
     from generators.api_dump_generator import ApiDumpGenerator
+    from generators.cputiming_generator import CpuTimingGenerator
 
     # These set fields that are needed by both OutputGenerator and BaseGenerator,
     # but are uniform and don't need to be set at a per-generated file level
@@ -77,11 +78,11 @@ def RunGenerators(api: str, registry: str, video_registry: str, directory: str, 
             'genCombined': True,
         },
         'cputiming_dispatch.h' : {
-            'generator' : ApiDumpGenerator,
+            'generator' : CpuTimingGenerator,
             'genCombined': True,
         },
         'cputiming_implementation.h' : {
-            'generator' : ApiDumpGenerator,
+            'generator' : CpuTimingGenerator,
             'genCombined': True,
         },
     }
