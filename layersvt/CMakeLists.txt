@@ -7,7 +7,7 @@ if(WIN32)
     add_compile_definitions(NOMINMAX WIN32_LEAN_AND_MEAN)
 elseif(ANDROID)
     add_compile_definitions(VK_USE_PLATFORM_ANDROID_KHR)
-    option(BUILD_CPUTIMING "Build CPUTiming layer" ON)
+
 elseif(APPLE)
     if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         add_compile_definitions(VK_USE_PLATFORM_MACOS_MVK)
@@ -18,7 +18,7 @@ elseif(APPLE)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|DragonFly|GNU")
     option(BUILD_WSI_XCB_SUPPORT "Build XCB WSI support" ON)
     option(BUILD_WSI_WAYLAND_SUPPORT "Build WAYLAND WSI support" ON)
-    option(BUILD_CPUTIMING "Build CPUTiming layer" ON)
+
 
     find_package(PkgConfig REQUIRED)
 
