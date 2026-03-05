@@ -39,27 +39,27 @@ class Timer {
         // helper function here since it would not be a compile-time constexpr.
         switch (cat_) {
             case CPUTimingCategory::VkInstance: {
-                TRACE_EVENT_BEGIN("CPUTiming/VkInstance", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/VkInstance", perfetto::StaticString(name));
                 break;
             }
             case CPUTimingCategory::VkPhysicalDevice: {
-                TRACE_EVENT_BEGIN("CPUTiming/VkPhysicalDevice", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/VkPhysicalDevice", perfetto::StaticString(name));
                 break;
             }
             case CPUTimingCategory::VkDevice: {
-                TRACE_EVENT_BEGIN("CPUTiming/VkDevice", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/VkDevice", perfetto::StaticString(name));
                 break;
             }
             case CPUTimingCategory::VkQueue: {
-                TRACE_EVENT_BEGIN("CPUTiming/VkQueue", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/VkQueue", perfetto::StaticString(name));
                 break;
             }
             case CPUTimingCategory::VkCommandBuffer: {
-                TRACE_EVENT_BEGIN("CPUTiming/VkCommandBuffer", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/VkCommandBuffer", perfetto::StaticString(name));
                 break;
             }
             default: {
-                TRACE_EVENT_BEGIN("CPUTiming/Other", perfetto::StaticString(name));
+                TRACE_EVENT_BEGIN("VulkanCPUTiming/Other", perfetto::StaticString(name));
                 break;
             }
         }
@@ -68,40 +68,40 @@ class Timer {
     ~Timer() {
         switch (cat_) {
             case CPUTimingCategory::VkInstance: {
-                TRACE_EVENT_END("CPUTiming/VkInstance");
+                TRACE_EVENT_END("VulkanCPUTiming/VkInstance");
                 break;
             }
             case CPUTimingCategory::VkPhysicalDevice: {
-                TRACE_EVENT_END("CPUTiming/VkPhysicalDevice");
+                TRACE_EVENT_END("VulkanCPUTiming/VkPhysicalDevice");
                 break;
             }
             case CPUTimingCategory::VkDevice: {
-                TRACE_EVENT_END("CPUTiming/VkDevice");
+                TRACE_EVENT_END("VulkanCPUTiming/VkDevice");
                 break;
             }
             case CPUTimingCategory::VkQueue: {
-                TRACE_EVENT_END("CPUTiming/VkQueue");
+                TRACE_EVENT_END("VulkanCPUTiming/VkQueue");
                 break;
             }
             case CPUTimingCategory::VkCommandBuffer: {
-                TRACE_EVENT_END("CPUTiming/VkCommandBuffer");
+                TRACE_EVENT_END("VulkanCPUTiming/VkCommandBuffer");
                 break;
             }
             default: {
-                TRACE_EVENT_END("CPUTiming/Other");
+                TRACE_EVENT_END("VulkanCPUTiming/Other");
                 break;
             }
         }
 #ifndef __ANDROID__
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start_).count();
-        const char* cat_str = "CPUTiming/Other";
+        const char* cat_str = "VulkanCPUTiming/Other";
         switch (cat_) {
-            case CPUTimingCategory::VkInstance: cat_str = "CPUTiming/VkInstance"; break;
-            case CPUTimingCategory::VkPhysicalDevice: cat_str = "CPUTiming/VkPhysicalDevice"; break;
-            case CPUTimingCategory::VkDevice: cat_str = "CPUTiming/VkDevice"; break;
-            case CPUTimingCategory::VkQueue: cat_str = "CPUTiming/VkQueue"; break;
-            case CPUTimingCategory::VkCommandBuffer: cat_str = "CPUTiming/VkCommandBuffer"; break;
+            case CPUTimingCategory::VkInstance: cat_str = "VulkanCPUTiming/VkInstance"; break;
+            case CPUTimingCategory::VkPhysicalDevice: cat_str = "VulkanCPUTiming/VkPhysicalDevice"; break;
+            case CPUTimingCategory::VkDevice: cat_str = "VulkanCPUTiming/VkDevice"; break;
+            case CPUTimingCategory::VkQueue: cat_str = "VulkanCPUTiming/VkQueue"; break;
+            case CPUTimingCategory::VkCommandBuffer: cat_str = "VulkanCPUTiming/VkCommandBuffer"; break;
             default: break;
         }
         std::cout << cat_str << " " << name_ << ": " << duration << " ns" << std::endl;
