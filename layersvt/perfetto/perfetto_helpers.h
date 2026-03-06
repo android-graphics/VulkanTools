@@ -6,12 +6,12 @@
 // Define categories used for Perfetto tracing.
 // These static strings are registered with Perfetto at initialization time.
 PERFETTO_DEFINE_CATEGORIES(
-    perfetto::Category("CPUTiming/VkInstance").SetDescription("Instance Level Commands"),
-    perfetto::Category("CPUTiming/VkPhysicalDevice").SetDescription("Physical Device Level Commands"),
-    perfetto::Category("CPUTiming/VkDevice").SetDescription("Device Level Commands"),
-    perfetto::Category("CPUTiming/VkQueue").SetDescription("Queue Level Commands"),
-    perfetto::Category("CPUTiming/VkCommandBuffer").SetDescription("Command Buffer Level Commands"),
-    perfetto::Category("CPUTiming/Other").SetDescription("Other Commands")
+    perfetto::Category("VulkanCPUTiming/VkInstance").SetDescription("Instance Level Commands"),
+    perfetto::Category("VulkanCPUTiming/VkPhysicalDevice").SetDescription("Physical Device Level Commands"),
+    perfetto::Category("VulkanCPUTiming/VkDevice").SetDescription("Device Level Commands"),
+    perfetto::Category("VulkanCPUTiming/VkQueue").SetDescription("Queue Level Commands"),
+    perfetto::Category("VulkanCPUTiming/VkCommandBuffer").SetDescription("Command Buffer Level Commands"),
+    perfetto::Category("VulkanCPUTiming/Other").SetDescription("Other Commands")
 );
 
 // Enum matching the Perfetto categories above.
