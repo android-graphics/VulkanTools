@@ -17,6 +17,18 @@
 
 #include "cputiming.h"
 
+#if defined(__ANDROID__)
+#include <android/log.h>
+
+__attribute__((constructor)) static void cputiming_layer_init() {
+    __android_log_print(ANDROID_LOG_WARN, "CPUTiming", "dlopen: CPUTiming library");
+}
+
+__attribute__((destructor)) static void cputiming_layer_finish() {
+    __android_log_print(ANDROID_LOG_WARN, "CPUTiming", "dlclose: CPUTiming library");
+}
+#endif
+
 CpuTiming& CpuTiming::Get() {
     static CpuTiming instance;
     return instance;

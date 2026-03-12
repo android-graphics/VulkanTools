@@ -133,6 +133,7 @@ if(BUILD_CPUTIMING)
         ../scripts/generators/cputiming_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
+        layer_keep_alive.cpp
         json/VkLayer_CPUTiming.json.in
     )
 
