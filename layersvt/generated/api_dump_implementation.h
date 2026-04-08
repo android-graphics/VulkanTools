@@ -41669,6 +41669,7 @@ void dump_VkIndirectExecutionSetInfoEXT(const VkIndirectExecutionSetInfoEXT& obj
 template <ApiDumpFormat Format>
 void dump_VkIndirectExecutionSetCreateInfoEXT(const VkIndirectExecutionSetCreateInfoEXT& object, const ApiDumpSettings& settings, const char* type_name, const char* var_name, int indents, const void* address = nullptr) {
     dump_start<Format>(settings, OutputConstruct::api_struct, type_name, var_name, indents, address);
+    ApiDumpInstance::current().setIndirectExecutionSetInfoType(object.type);
     dump_VkStructureType<Format>(object.sType, settings, "VkStructureType", "sType", indents + (Format == ApiDumpFormat::Json ? 2 : 1));
     dump_separate_members<Format>(settings);
     dump_pNext<Format>(object.pNext, settings, "const void*", "pNext", indents + (Format == ApiDumpFormat::Json ? 2 : 1));
