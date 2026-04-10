@@ -86,8 +86,9 @@ static inline VkObjectType getVkObjectType(VkDebugReportObjectTypeEXT vk_debug_r
 
 extern "C" {
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                                 VkInstance* pInstance) {
+    printf("Inside vkCreateInstance\n");
     std::call_once(g_perfetto_init_flag, []() { InitializeDebugMarkerPerfetto(); });
 
     // Get the function pointer
@@ -108,6 +109,8 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstance
         
         // Eagerly enumerate physical devices and map them to the instance.
         // This ensures we have the mapping even if the app bypasses our enumeration hooks.
+        // Disabled for testing to avoid deadlock.
+        /*
         PFN_vkEnumeratePhysicalDevices fpEnumeratePhysicalDevices = (PFN_vkEnumeratePhysicalDevices)fpGetInstanceProcAddr(*pInstance, "vkEnumeratePhysicalDevices");
         if (fpEnumeratePhysicalDevices) {
             uint32_t count = 0;
@@ -120,12 +123,13 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstance
                 }
             }
         }
+        */
     }
 
     return result;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) {
+VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) {
     if (instance_dispatch_table(instance)->EnumeratePhysicalDevices == NULL) {
         return VK_ERROR_INITIALIZATION_FAILED;
     }
@@ -140,7 +144,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInst
     return result;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
+VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
     if (instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroups == NULL) {
         return VK_ERROR_INITIALIZATION_FAILED;
     }
@@ -157,7 +161,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(V
     return result;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     // Get the function pointer
     VkLayerDeviceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
@@ -260,25 +264,25 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
 
 // Debug Marker Functions
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerBeginEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     if (device_dispatch_table(commandBuffer)->CmdDebugMarkerBeginEXT) {
         device_dispatch_table(commandBuffer)->CmdDebugMarkerBeginEXT(commandBuffer, pMarkerInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
+VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerEndEXT(VkCommandBuffer commandBuffer) {
     if (device_dispatch_table(commandBuffer)->CmdDebugMarkerEndEXT) {
         device_dispatch_table(commandBuffer)->CmdDebugMarkerEndEXT(commandBuffer);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
+VKAPI_ATTR void VKAPI_CALL vkCmdDebugMarkerInsertEXT(VkCommandBuffer commandBuffer, const VkDebugMarkerMarkerInfoEXT* pMarkerInfo) {
     if (device_dispatch_table(commandBuffer)->CmdDebugMarkerInsertEXT) {
         device_dispatch_table(commandBuffer)->CmdDebugMarkerInsertEXT(commandBuffer, pMarkerInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
+VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectNameEXT(VkDevice device, const VkDebugMarkerObjectNameInfoEXT* pNameInfo) {
     DebugMarker::Get().AddDebugMarker((uint64_t)device, (int32_t)getVkObjectType(pNameInfo->objectType), pNameInfo->object, pNameInfo->pObjectName);
     if (device_dispatch_table(device)->DebugMarkerSetObjectNameEXT) {
         VkResult result = device_dispatch_table(device)->DebugMarkerSetObjectNameEXT(device, pNameInfo);
@@ -287,7 +291,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectNameEXT(VkD
     return VK_SUCCESS;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo) {
+VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectTagEXT(VkDevice device, const VkDebugMarkerObjectTagInfoEXT* pTagInfo) {
     if (device_dispatch_table(device)->DebugMarkerSetObjectTagEXT) {
         return device_dispatch_table(device)->DebugMarkerSetObjectTagEXT(device, pTagInfo);
     }
@@ -296,25 +300,25 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkDebugMarkerSetObjectTagEXT(VkDe
 
 // Debug Utils Functions
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
+VKAPI_ATTR void VKAPI_CALL vkCmdBeginDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
     if (device_dispatch_table(commandBuffer)->CmdBeginDebugUtilsLabelEXT) {
         device_dispatch_table(commandBuffer)->CmdBeginDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
+VKAPI_ATTR void VKAPI_CALL vkCmdEndDebugUtilsLabelEXT(VkCommandBuffer commandBuffer) {
     if (device_dispatch_table(commandBuffer)->CmdEndDebugUtilsLabelEXT) {
         device_dispatch_table(commandBuffer)->CmdEndDebugUtilsLabelEXT(commandBuffer);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
+VKAPI_ATTR void VKAPI_CALL vkCmdInsertDebugUtilsLabelEXT(VkCommandBuffer commandBuffer, const VkDebugUtilsLabelEXT* pLabelInfo) {
     if (device_dispatch_table(commandBuffer)->CmdInsertDebugUtilsLabelEXT) {
         device_dispatch_table(commandBuffer)->CmdInsertDebugUtilsLabelEXT(commandBuffer, pLabelInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
+VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectNameEXT(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo) {
     DebugMarker::Get().AddDebugMarker((uint64_t)device, (int32_t)pNameInfo->objectType, pNameInfo->objectHandle, pNameInfo->pObjectName);
     if (device_dispatch_table(device)->SetDebugUtilsObjectNameEXT) {
         VkResult result = device_dispatch_table(device)->SetDebugUtilsObjectNameEXT(device, pNameInfo);
@@ -323,45 +327,45 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectNameEXT(VkDe
     return VK_SUCCESS;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) {
+VKAPI_ATTR VkResult VKAPI_CALL vkSetDebugUtilsObjectTagEXT(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo) {
     if (device_dispatch_table(device)->SetDebugUtilsObjectTagEXT) {
         return device_dispatch_table(device)->SetDebugUtilsObjectTagEXT(device, pTagInfo);
     }
     return VK_SUCCESS;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkQueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
+VKAPI_ATTR void VKAPI_CALL vkQueueBeginDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
     if (device_dispatch_table(queue)->QueueBeginDebugUtilsLabelEXT) {
         device_dispatch_table(queue)->QueueBeginDebugUtilsLabelEXT(queue, pLabelInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkQueueEndDebugUtilsLabelEXT(VkQueue queue) {
+VKAPI_ATTR void VKAPI_CALL vkQueueEndDebugUtilsLabelEXT(VkQueue queue) {
     if (device_dispatch_table(queue)->QueueEndDebugUtilsLabelEXT) {
         device_dispatch_table(queue)->QueueEndDebugUtilsLabelEXT(queue);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkQueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
+VKAPI_ATTR void VKAPI_CALL vkQueueInsertDebugUtilsLabelEXT(VkQueue queue, const VkDebugUtilsLabelEXT* pLabelInfo) {
     if (device_dispatch_table(queue)->QueueInsertDebugUtilsLabelEXT) {
         device_dispatch_table(queue)->QueueInsertDebugUtilsLabelEXT(queue, pLabelInfo);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pMessenger) {
     if (instance_dispatch_table(instance)->CreateDebugUtilsMessengerEXT) {
         return instance_dispatch_table(instance)->CreateDebugUtilsMessengerEXT(instance, pCreateInfo, pAllocator, pMessenger);
     }
     return VK_SUCCESS;
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) {
+VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator) {
     if (instance_dispatch_table(instance)->DestroyDebugUtilsMessengerEXT) {
         instance_dispatch_table(instance)->DestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
     }
 }
 
-EXPORT_FUNCTION VKAPI_ATTR void VKAPI_CALL vkSubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) {
+VKAPI_ATTR void VKAPI_CALL vkSubmitDebugUtilsMessageEXT(VkInstance instance, VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData) {
     if (instance_dispatch_table(instance)->SubmitDebugUtilsMessageEXT) {
         instance_dispatch_table(instance)->SubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, pCallbackData);
     }

@@ -42,6 +42,7 @@ class DebugMarker {
 
     void AddDebugMarker(uint64_t device, int32_t type, uint64_t handle, const char* name);
     void EmitAllDebugMarkers();
+    void Clear();
 
    private:
     std::mutex map_mutex_;

@@ -70,3 +70,9 @@ void DebugMarker::EmitAllDebugMarkers() {
         });
     }
 }
+
+void DebugMarker::Clear() {
+    std::lock_guard<std::mutex> lock(map_mutex_);
+    vk_instance_map_.clear();
+    debug_markers_.clear();
+}
