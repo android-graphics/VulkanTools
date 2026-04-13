@@ -14,6 +14,8 @@
  */
 
 #include "debug_marker_handwritten_functions.h"
+#include "debug_marker_handwritten_functions_vk_ext_debug_marker.h"
+#include "debug_marker_handwritten_functions_vk_ext_debug_utils.h"
 #include "vk_layer_table.h"
 #include <string.h>
 
@@ -36,14 +38,14 @@ static PFN_vkVoidFunction debug_marker_known_device_functions(const char* pName)
     if (strcmp(pName, "vkEnumerateDeviceLayerProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateDeviceLayerProperties);
     if (strcmp(pName, "vkEnumerateDeviceExtensionProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateDeviceExtensionProperties);
     
-    // Debug Marker
+    // VK_EXT_debug_marker
     if (strcmp(pName, "vkCmdDebugMarkerBeginEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdDebugMarkerBeginEXT);
     if (strcmp(pName, "vkCmdDebugMarkerEndEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdDebugMarkerEndEXT);
     if (strcmp(pName, "vkCmdDebugMarkerInsertEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdDebugMarkerInsertEXT);
     if (strcmp(pName, "vkDebugMarkerSetObjectNameEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDebugMarkerSetObjectNameEXT);
     if (strcmp(pName, "vkDebugMarkerSetObjectTagEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDebugMarkerSetObjectTagEXT);
 
-    // Debug Utils
+    // VK_EXT_debug_utils
     if (strcmp(pName, "vkCmdBeginDebugUtilsLabelEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdBeginDebugUtilsLabelEXT);
     if (strcmp(pName, "vkCmdEndDebugUtilsLabelEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdEndDebugUtilsLabelEXT);
     if (strcmp(pName, "vkCmdInsertDebugUtilsLabelEXT") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCmdInsertDebugUtilsLabelEXT);

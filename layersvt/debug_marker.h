@@ -22,30 +22,69 @@
 #include <map>
 #include <string>
 
-struct DebugMarkerInfo {
-    uint64_t vk_device;
-    int32_t object_type;
-    uint64_t handle;
-    std::string name;
 
-    DebugMarkerInfo() = default;
-    DebugMarkerInfo(uint64_t dev, int32_t type, uint64_t h, const char* n)
-        : vk_device(dev), object_type(type), handle(h), name(n) {}
-};
 
+/**
+ * The DebugMarker class is responsible for storing and managing debug marker
+ * information associated with Vulkan objects.
+ *
+ * This class is a singleton and provides thread-safe access to its state.
+ */
 class DebugMarker {
    public:
+    /**
+     * @brief Returns the singleton instance of the DebugMarker class.
+     * @return Reference to the DebugMarker singleton.
+     */
     static DebugMarker& Get();
 
-    void SetVkInstance(VkPhysicalDevice phys_dev, VkInstance instance);
-    VkInstance GetVkInstance(VkPhysicalDevice phys_dev);
-
-    void AddDebugMarker(uint64_t device, int32_t type, uint64_t handle, const char* name);
+    /**
+     * @brief Sets or updates the name associated with a Vulkan object.
+     * @param device The handle of the Vulkan device that owns the object.
+     * @param type The type of the Vulkan object (represented as int32_t).
+     * @param handle The handle of the Vulkan object.
+     * @param name The name to associate with the object.
+     */
+    void SetDebugObjectName(uint64_t device, int32_t type, uint64_t handle, const char* name);
+    
+    /**
+     * @brief Emits all stored debug markers to the tracing system.
+     */
     void EmitAllDebugMarkers();
+
+    /**
+     * @brief Clears all stored debug markers and instance mappings.
+     */
     void Clear();
 
+    /**
+     * @brief Associates a Vulkan physical device with its corresponding instance.
+     * @param phys_dev The Vulkan physical device.
+     * @param instance The Vulkan instance.
+     */
+    void SetVkInstance(VkPhysicalDevice phys_dev, VkInstance instance);
+
+    /**
+     * @brief Retrieves the Vulkan instance associated with a given physical device.
+     * @param phys_dev The Vulkan physical device.
+     * @return The associated Vulkan instance.
+     */
+    VkInstance GetVkInstance(VkPhysicalDevice phys_dev);
+
+
    private:
+    struct DebugObjectName {
+        uint64_t vk_device;
+        int32_t object_type;
+        uint64_t handle;
+        std::string name;
+
+        DebugObjectName() = default;
+        DebugObjectName(uint64_t dev, int32_t type, uint64_t h, const std::string& n)
+            : vk_device(dev), object_type(type), handle(h), name(n) {}
+    };
+
     std::mutex map_mutex_;
     std::unordered_map<VkPhysicalDevice, VkInstance> vk_instance_map_;
-    std::map<std::pair<int32_t, uint64_t>, DebugMarkerInfo> debug_markers_;
+    std::map<std::pair<int32_t, uint64_t>, DebugObjectName> debug_object_names_;
 };

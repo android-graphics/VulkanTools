@@ -160,6 +160,8 @@ if(BUILD_DEBUGMARKER)
     target_sources(VkLayer_DebugMarker PRIVATE
         debug_marker_handwritten_dispatch.cpp
         debug_marker_handwritten_functions.h
+        debug_marker_handwritten_functions_vk_ext_debug_marker.h
+        debug_marker_handwritten_functions_vk_ext_debug_utils.h
         debug_marker.h
         debug_marker.cpp
         debug_marker_perfetto.h

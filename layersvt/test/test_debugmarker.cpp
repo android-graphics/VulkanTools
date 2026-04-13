@@ -56,3 +56,18 @@ TEST_F(DebugMarkerTests, CombinedTest) {
     }
     EXPECT_NE(phys_dev, nullptr);
 }
+
+#if defined(__linux__) && !defined(__ANDROID__)
+TEST_F(DebugMarkerTests, SetDebugObjectNameStdout) {
+    TEST_DESCRIPTION("Test SetDebugObjectName output to stdout on Linux");
+
+    DebugMarker::Get().Clear();
+    
+    testing::internal::CaptureStdout();
+    DebugMarker::Get().SetDebugObjectName(0x1234, VK_OBJECT_TYPE_DEVICE, 0x5678, "TestObject");
+    std::string output = testing::internal::GetCapturedStdout();
+
+    EXPECT_NE(output.find("VulkanDebugMarker SetDebugObjectName:"), std::string::npos);
+    EXPECT_NE(output.find("TestObject"), std::string::npos);
+}
+#endif
