@@ -15,7 +15,6 @@
 
 #include "debug_marker_perfetto.h"
 #include "debug_marker.h"
-#include <mutex>
 
 PERFETTO_TRACK_EVENT_STATIC_STORAGE();
 
@@ -29,13 +28,10 @@ class MarkerSessionObserver : public perfetto::TrackEventSessionObserver {
 static MarkerSessionObserver g_marker_session_observer;
 
 void InitializeDebugMarkerPerfetto() {
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        perfetto::TracingInitArgs args;
-        args.backends = perfetto::kSystemBackend;
+    perfetto::TracingInitArgs args;
+    args.backends = perfetto::kSystemBackend;
 
-        perfetto::Tracing::Initialize(args);
-        perfetto::TrackEvent::Register();
-        perfetto::TrackEvent::AddSessionObserver(&g_marker_session_observer);
-    });
+    perfetto::Tracing::Initialize(args);
+    perfetto::TrackEvent::Register();
+    perfetto::TrackEvent::AddSessionObserver(&g_marker_session_observer);
 }
