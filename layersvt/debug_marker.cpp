@@ -16,7 +16,6 @@
 #include "debug_marker.h"
 #include "debug_marker_perfetto.h"
 #include "perfetto/perfetto.h"
-#include <stdio.h>
 
 DebugMarker& DebugMarker::Get() {
     static DebugMarker instance;
@@ -41,10 +40,6 @@ void DebugMarker::SetDebugObjectName(uint64_t device, int32_t type, uint64_t han
     std::string name_str = name ? name : "NULL";
     debug_object_names_[std::make_pair(type, handle)] = DebugObjectName(device, type, handle, name_str);
 
-#if defined(__linux__) && !defined(__ANDROID__)
-    printf("VulkanDebugMarker SetDebugObjectName: device=%llu, type=%d, handle=%llu, name=%s\n", 
-           (unsigned long long)device, type, (unsigned long long)handle, name_str.c_str());
-#else
     perfetto::TrackEvent::Trace([device, type, handle, name_str](perfetto::TrackEvent::TraceContext ctx) {
         auto packet = ctx.NewTracePacket();
         auto event = packet->set_vulkan_api_event()->set_vk_debug_utils_object_name();
@@ -53,7 +48,6 @@ void DebugMarker::SetDebugObjectName(uint64_t device, int32_t type, uint64_t han
         event->set_object(handle);
         event->set_object_name(name_str.c_str());
     });
-#endif
 }
 
 void DebugMarker::EmitAllDebugMarkers() {
@@ -80,4 +74,11 @@ void DebugMarker::Clear() {
     std::lock_guard<std::mutex> lock(mutex_);
     vk_instance_map_.clear();
     debug_object_names_.clear();
+}
+
+bool DebugMarker::HasDebugObjectName(int32_t type, uint64_t handle, const std::string& name) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = debug_object_names_.find(std::make_pair(type, handle));
+    if (it == debug_object_names_.end()) return false;
+    return it->second.name == name;
 }

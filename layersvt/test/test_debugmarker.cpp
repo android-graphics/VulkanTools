@@ -48,26 +48,17 @@ TEST_F(DebugMarkerTests, CombinedTest) {
     PFN_vkVoidFunction pfnCmdDebugMarkerBeginEXT = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT");
     EXPECT_NE(pfnCmdDebugMarkerBeginEXT, nullptr);
 
-    VkPhysicalDevice phys_dev;
-    err = inst_builder.GetPhysicalDevice(&phys_dev);
-    if (err != VK_SUCCESS) {
-        GTEST_SKIP() << "No physical devices found, skipping physical device test.";
-        return;
-    }
-    EXPECT_NE(phys_dev, nullptr);
-}
+    // 1. Set instance name
+    DebugMarker::Get().SetDebugObjectName(0, VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstance");
 
-#if defined(__linux__) && !defined(__ANDROID__)
-TEST_F(DebugMarkerTests, SetDebugObjectNameStdout) {
-    TEST_DESCRIPTION("Test SetDebugObjectName output to stdout on Linux");
+    EXPECT_TRUE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstance"));
 
+    // 2. Override new name
+    DebugMarker::Get().SetDebugObjectName(0, VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstanceRenamed");
+    EXPECT_TRUE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstanceRenamed"));
+    EXPECT_FALSE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstance"));
+
+    // 3. Clear
     DebugMarker::Get().Clear();
-    
-    testing::internal::CaptureStdout();
-    DebugMarker::Get().SetDebugObjectName(0x1234, VK_OBJECT_TYPE_DEVICE, 0x5678, "TestObject");
-    std::string output = testing::internal::GetCapturedStdout();
-
-    EXPECT_NE(output.find("VulkanDebugMarker SetDebugObjectName:"), std::string::npos);
-    EXPECT_NE(output.find("TestObject"), std::string::npos);
+    EXPECT_FALSE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_INSTANCE, (uint64_t)instance, "MyInstanceRenamed"));
 }
-#endif

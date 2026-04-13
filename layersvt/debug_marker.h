@@ -56,6 +56,11 @@ class DebugMarker {
      * @brief Clears all stored debug markers and instance mappings.
      */
     void Clear();
+    
+    /**
+     * @brief Checks if a debug name is stored for a given object.
+     */
+    bool HasDebugObjectName(int32_t type, uint64_t handle, const std::string& name);
 
     /**
      * @brief Associates a Vulkan physical device with its corresponding instance.
