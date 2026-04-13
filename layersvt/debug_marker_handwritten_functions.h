@@ -24,7 +24,17 @@
 #include "debug_marker.h"
 #include "debug_marker_perfetto.h"
 
-
+// This file contains handwritten implementations for core Vulkan functions
+// (instance/device creation and physical device enumeration) required for the layer's
+// infrastructure and state management:
+//
+// - vkCreateInstance: Initializes Perfetto tracing, the instance dispatch table, and performs eager physical device enumeration.
+// - vkEnumeratePhysicalDevices / vkEnumeratePhysicalDeviceGroups: Tracks the mapping
+//   between physical devices and instances to support dispatch table lookups.
+// - vkCreateDevice: Initializes the device dispatch table for intercepted devices.
+//
+// Extension-specific functions (e.g., VK_EXT_debug_marker, VK_EXT_debug_utils)
+// are located in separate dedicated header files.
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
