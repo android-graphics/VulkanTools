@@ -22,11 +22,32 @@
 #include <map>
 #include <string>
 
-
-
 /**
  * The DebugMarker class is responsible for storing and managing debug marker
- * information associated with Vulkan objects.
+ * information associated with Vulkan objects and emitting them to Perfetto traces.
+ *
+ * Currently, it primarily supports tracking and emitting object names.
+ *
+ * How it works:
+ * We do not store a history of events for setting object names. Instead, we store
+ * only the current name for each object (one name per object). This keeps the memory
+ * footprint small for most applications (proportional to the name size multiplied by
+ * the number of unique objects).
+ *
+ * Perfetto Session Support:
+ * This solution supports:
+ * - Starting a Perfetto session before the application starts.
+ * - Starting a Perfetto session after the application is already running.
+ * - Running multiple Perfetto sessions during a single application run.
+ *
+ * To support late-attach and multiple sessions, when a Perfetto session starts,
+ * we write all currently known object names to the trace. We retain the names in memory
+ * because a user might start another Perfetto session later, requiring us to emit
+ * all object names again.
+ *
+ * A potential issue exists if an application constantly creates and destroys
+ * objects without bound, as we currently do not remove names for destroyed objects.
+ * Support for removing names on object destruction can be added later if needed.
  *
  * This class is a singleton and provides thread-safe access to its state.
  */
