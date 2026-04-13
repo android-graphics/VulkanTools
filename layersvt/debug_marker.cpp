@@ -24,19 +24,19 @@ DebugMarker& DebugMarker::Get() {
 }
 
 void DebugMarker::SetVkInstance(VkPhysicalDevice phys_dev, VkInstance instance) {
-    std::lock_guard<std::mutex> lock(map_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     vk_instance_map_[phys_dev] = instance;
 }
 
 VkInstance DebugMarker::GetVkInstance(VkPhysicalDevice phys_dev) {
-    std::lock_guard<std::mutex> lock(map_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     auto it = vk_instance_map_.find(phys_dev);
     if (it != vk_instance_map_.end()) return it->second;
     return VK_NULL_HANDLE;
 }
 
 void DebugMarker::SetDebugObjectName(uint64_t device, int32_t type, uint64_t handle, const char* name) {
-    std::lock_guard<std::mutex> lock(map_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
 
     std::string name_str = name ? name : "NULL";
     debug_object_names_[std::make_pair(type, handle)] = DebugObjectName(device, type, handle, name_str);
@@ -57,7 +57,7 @@ void DebugMarker::SetDebugObjectName(uint64_t device, int32_t type, uint64_t han
 }
 
 void DebugMarker::EmitAllDebugMarkers() {
-    std::lock_guard<std::mutex> lock(map_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto& entry : debug_object_names_) {
         const auto& marker = entry.second;
         uint64_t device = marker.vk_device;
@@ -77,7 +77,7 @@ void DebugMarker::EmitAllDebugMarkers() {
 }
 
 void DebugMarker::Clear() {
-    std::lock_guard<std::mutex> lock(map_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     vk_instance_map_.clear();
     debug_object_names_.clear();
 }

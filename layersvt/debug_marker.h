@@ -84,7 +84,14 @@ class DebugMarker {
             : vk_device(dev), object_type(type), handle(h), name(n) {}
     };
 
-    std::mutex map_mutex_;
+    std::mutex mutex_;
+    /**
+     * @brief Maps a physical device handle to its corresponding Vulkan instance handle.
+     */
     std::unordered_map<VkPhysicalDevice, VkInstance> vk_instance_map_;
+    /**
+     * @brief Maps a pair of (object_type, object_handle) to its debug name information.
+     * We use a pair as the key because handles are not guaranteed to be unique across different object types.
+     */
     std::map<std::pair<int32_t, uint64_t>, DebugObjectName> debug_object_names_;
 };
