@@ -40,16 +40,6 @@ function(LayerTest NAME)
     target_compile_definitions(${TEST_NAME} PUBLIC LAYER_BINARY_PATH="$<TARGET_FILE_DIR:VkLayer_${NAME}>")
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
-    if (${NAME} STREQUAL "DebugMarker")
-        set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT
-            "VK_LAYER_PATH=$<TARGET_FILE_DIR:VkLayer_${NAME}>;NODEVICE_SELECT=1"
-        )
-    else()
-        set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT
-            "VK_LAYER_PATH=$<TARGET_FILE_DIR:VkLayer_${NAME}>"
-        )
-    endif()
-
     set_target_properties(${TEST_NAME} PROPERTIES FOLDER "layers/${NAME}/Test")
 
     if(WIN32 AND (QT_TARGET_TYPE STREQUAL STATIC_LIBRARY))
