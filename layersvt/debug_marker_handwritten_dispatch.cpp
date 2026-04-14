@@ -23,6 +23,7 @@ extern "C" {
 
 static PFN_vkVoidFunction debug_marker_known_instance_functions(const char* pName) {
     if (strcmp(pName, "vkCreateInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateInstance);
+    if (strcmp(pName, "vkDestroyInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyInstance);
     if (strcmp(pName, "vkEnumeratePhysicalDevices") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumeratePhysicalDevices);
     if (strcmp(pName, "vkEnumeratePhysicalDeviceGroups") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumeratePhysicalDeviceGroups);
     if (strcmp(pName, "vkEnumerateInstanceExtensionProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateInstanceExtensionProperties);
@@ -74,11 +75,16 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
         return nullptr;
     }
 
-    if (instance_dispatch_table(instance)->GetInstanceProcAddr == NULL) {
+    auto table = instance_dispatch_table(instance);
+    if (table == NULL) {
         return nullptr;
     }
     
-    return instance_dispatch_table(instance)->GetInstanceProcAddr(instance, pName);
+    if (table->GetInstanceProcAddr == NULL) {
+        return nullptr;
+    }
+
+    return table->GetInstanceProcAddr(instance, pName);
 }
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* pName) {

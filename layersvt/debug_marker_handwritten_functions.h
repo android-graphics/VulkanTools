@@ -122,6 +122,12 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instan
     return result;
 }
 
+VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator) {
+    dispatch_key key = get_dispatch_key(instance);
+    instance_dispatch_table(instance)->DestroyInstance(instance, pAllocator);
+    destroy_instance_dispatch_table(key);
+}
+
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     // Get the function pointer
