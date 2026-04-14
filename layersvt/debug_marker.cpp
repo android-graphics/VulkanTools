@@ -42,6 +42,7 @@ void DebugMarker::SetDebugObjectName(uint64_t device, int32_t type, uint64_t han
 
     perfetto::TrackEvent::Trace([device, type, handle, name_str](perfetto::TrackEvent::TraceContext ctx) {
         auto packet = ctx.NewTracePacket();
+        packet->set_timestamp(perfetto::base::GetBootTimeNs().count());
         auto event = packet->set_vulkan_api_event()->set_vk_debug_utils_object_name();
         event->set_vk_device(device);
         event->set_object_type(type);
@@ -61,6 +62,7 @@ void DebugMarker::EmitAllDebugMarkers() {
         
         perfetto::TrackEvent::Trace([device, type, handle, name_str](perfetto::TrackEvent::TraceContext ctx) {
             auto packet = ctx.NewTracePacket();
+            packet->set_timestamp(perfetto::base::GetBootTimeNs().count());
             auto event = packet->set_vulkan_api_event()->set_vk_debug_utils_object_name();
             event->set_vk_device(device);
             event->set_object_type(type);
