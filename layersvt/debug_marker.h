@@ -75,11 +75,13 @@ class DebugMarker {
 
     /**
      * @brief Clears all stored debug markers and instance mappings.
+     * @note This function is for testing only.
      */
     void Clear();
     
     /**
      * @brief Checks if a debug name is stored for a given object.
+     * @note This function is for testing only.
      */
     bool HasDebugObjectName(int32_t type, uint64_t handle, const std::string& name);
 
