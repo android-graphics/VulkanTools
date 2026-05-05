@@ -1667,7 +1667,7 @@ VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainImagesKHR(VkDevice device, VkSwapchai
 void screenshotWriterThreadFunc() {
 #if defined(__ANDROID__) || defined(__linux__)
     char buf[16] = {};
-    strncpy(buf, "Vulkan screenshots", 18);
+    snprintf(buf, sizeof(buf), "VkScreenshot");
     pthread_setname_np(pthread_self(), buf);
 #endif
 
