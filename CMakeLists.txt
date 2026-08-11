@@ -48,6 +48,7 @@ if (BUILD_WERROR)
 endif()
 
 option(BUILD_TESTS "Build tests")
+option(BUILD_DEVICEMEMORYREPORT "Build DeviceMemoryReport layer" ON)
 option(RUN_ON_CI "Build only tests that can run on C.I." ON)
 
 if(BUILD_TESTS)
