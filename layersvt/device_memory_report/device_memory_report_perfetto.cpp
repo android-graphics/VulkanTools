@@ -29,5 +29,6 @@ void InitializeDeviceMemoryReportPerfetto() {
 }
 
 perfetto::CounterTrack GetCounterTrack(const char* name) {
-    return perfetto::CounterTrack(perfetto::DynamicString(name));
+    return perfetto::CounterTrack(perfetto::DynamicString(name))
+        .set_unit(perfetto::CounterTrack::Unit::UNIT_SIZE_BYTES);
 }
