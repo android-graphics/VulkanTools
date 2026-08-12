@@ -40,10 +40,20 @@ static PFN_vkVoidFunction devmemreport_known_device_functions(const char* pName)
     if (strcmp(pName, "vkFreeMemory") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkFreeMemory);
     if (strcmp(pName, "vkBindBufferMemory") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory);
     if (strcmp(pName, "vkBindImageMemory") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory);
+    if (strcmp(pName, "vkBindBufferMemory2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory2);
+    if (strcmp(pName, "vkBindImageMemory2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory2);
+    if (strcmp(pName, "vkBindBufferMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory2KHR);
+    if (strcmp(pName, "vkBindImageMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory2KHR);
     if (strcmp(pName, "vkCreateImage") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateImage);
     if (strcmp(pName, "vkDestroyImage") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyImage);
     if (strcmp(pName, "vkCreateBuffer") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateBuffer);
     if (strcmp(pName, "vkDestroyBuffer") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyBuffer);
+    if (strcmp(pName, "vkGetImageMemoryRequirements") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements);
+    if (strcmp(pName, "vkGetImageMemoryRequirements2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements2);
+    if (strcmp(pName, "vkGetImageMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements2KHR);
+    if (strcmp(pName, "vkGetBufferMemoryRequirements") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements);
+    if (strcmp(pName, "vkGetBufferMemoryRequirements2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements2);
+    if (strcmp(pName, "vkGetBufferMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements2KHR);
     return nullptr;
 }
 
@@ -72,11 +82,6 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
 }
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* pName) {
-    PFN_vkVoidFunction func = devmemreport_known_device_functions(pName);
-    if (func) {
-        return func;
-    }
-
     if (device == nullptr) {
         return nullptr;
     }
@@ -85,7 +90,21 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkD
         return nullptr;
     }
     
-    return device_dispatch_table(device)->GetDeviceProcAddr(device, pName);
+    // We must verify that the underlying device actually supports the function.
+    // Returning an interceptor for an unsupported function violates the Vulkan spec and can cause
+    // applications to erroneously think an extension is supported, leading to crashes when called.
+    PFN_vkVoidFunction down_func = device_dispatch_table(device)->GetDeviceProcAddr(device, pName);
+    if (down_func == nullptr) {
+        return nullptr;
+    }
+
+    // Only return the intercepted function if the device supports the command.
+    PFN_vkVoidFunction func = devmemreport_known_device_functions(pName);
+    if (func) {
+        return func;
+    }
+
+    return down_func;
 }
 
 } // extern "C"

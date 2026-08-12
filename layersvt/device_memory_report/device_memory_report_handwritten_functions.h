@@ -69,9 +69,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
     PFN_vkGetInstanceProcAddr fpGetInstanceProcAddr = chain_info->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     assert(fpGetInstanceProcAddr != 0);
     PFN_vkCreateInstance fpCreateInstance = (PFN_vkCreateInstance)fpGetInstanceProcAddr(NULL, "vkCreateInstance");
-    if (fpCreateInstance == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
 
     // Call the function and create the dispatch table
     chain_info->u.pLayerInfo = chain_info->u.pLayerInfo->pNext;
@@ -85,9 +82,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
 
 // Intercept physical device enumeration to store physical device to instance mapping.
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices) {
-    if (instance_dispatch_table(instance)->EnumeratePhysicalDevices == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
     
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices);
     
@@ -101,9 +95,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDevices(VkInstance instance, u
 
 // Intercept physical device group enumeration to store physical device to instance mapping.
 VKAPI_ATTR VkResult VKAPI_CALL vkEnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* pPhysicalDeviceGroupCount, VkPhysicalDeviceGroupProperties* pPhysicalDeviceGroupProperties) {
-    if (instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroups == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
     
     VkResult result = instance_dispatch_table(instance)->EnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties);
     
@@ -134,9 +125,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
     PFN_vkGetDeviceProcAddr fpGetDeviceProcAddr = chain_info->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     VkInstance vk_instance = DeviceMemoryReport::Get().GetVkInstance(physicalDevice);
     PFN_vkCreateDevice fpCreateDevice = (PFN_vkCreateDevice)fpGetInstanceProcAddr(vk_instance, "vkCreateDevice");
-    if (fpCreateDevice == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
 
     // Call the function and create the dispatch table
     chain_info->u.pLayerInfo = chain_info->u.pLayerInfo->pNext;
@@ -206,9 +194,6 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(VkDevice device, const VkAllocationCa
 VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryAllocateInfo* pAllocateInfo,
                                                 const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory) {
     PFN_vkAllocateMemory fpAllocateMemory = (PFN_vkAllocateMemory)device_dispatch_table(device)->AllocateMemory;
-    if (fpAllocateMemory == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
     VkResult result = fpAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     if (result == VK_SUCCESS && pAllocateInfo != nullptr && pMemory != nullptr && *pMemory != VK_NULL_HANDLE) {
         DeviceMemoryReport::Get().OnAllocateMemory(device, *pMemory, pAllocateInfo->allocationSize);
@@ -332,35 +317,89 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
 
 // Intercept memory binding to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    if (buffer != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(buffer), reinterpret_cast<uint64_t>(memory));
+    VkResult result = device_dispatch_table(device)->BindBufferMemory(device, buffer, memory, memoryOffset);
+    if (result == VK_SUCCESS && buffer != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
+        DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(buffer), reinterpret_cast<uint64_t>(memory), memoryOffset);
     }
-    if (device_dispatch_table(device)->BindBufferMemory) {
-        return device_dispatch_table(device)->BindBufferMemory(device, buffer, memory, memoryOffset);
-    }
-    return VK_SUCCESS;
+    return result;
 }
 
 // Intercept memory binding to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    if (image != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(image), reinterpret_cast<uint64_t>(memory));
+    VkResult result = device_dispatch_table(device)->BindImageMemory(device, image, memory, memoryOffset);
+    if (result == VK_SUCCESS && image != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
+        DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(image), reinterpret_cast<uint64_t>(memory), memoryOffset);
     }
-    if (device_dispatch_table(device)->BindImageMemory) {
-        return device_dispatch_table(device)->BindImageMemory(device, image, memory, memoryOffset);
+    return result;
+}
+
+static void RecordBufferBindings(uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
+    for (uint32_t i = 0; i < bindInfoCount; ++i) {
+        if (pBindInfos[i].buffer != VK_NULL_HANDLE && pBindInfos[i].memory != VK_NULL_HANDLE) {
+            DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
+        }
     }
-    return VK_SUCCESS;
+}
+
+// Intercept memory binding via vkBindBufferMemory2 to correlate buffer object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
+    VkResult result = device_dispatch_table(device)->BindBufferMemory2(device, bindInfoCount, pBindInfos);
+    if (result == VK_SUCCESS && pBindInfos != nullptr) {
+        RecordBufferBindings(bindInfoCount, pBindInfos);
+    }
+    return result;
+}
+
+// Intercept memory binding via vkBindBufferMemory2KHR to correlate buffer object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
+    VkResult result = device_dispatch_table(device)->BindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
+    if (result == VK_SUCCESS && pBindInfos != nullptr) {
+        RecordBufferBindings(bindInfoCount, pBindInfos);
+    }
+    return result;
+}
+
+static void RecordImageBinds(uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
+    for (uint32_t i = 0; i < bindInfoCount; ++i) {
+        if (pBindInfos[i].image != VK_NULL_HANDLE && pBindInfos[i].memory != VK_NULL_HANDLE) {
+            DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(pBindInfos[i].image), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
+        }
+    }
+}
+
+// Intercept memory binding via vkBindImageMemory2 to correlate image object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
+    VkResult result = device_dispatch_table(device)->BindImageMemory2(device, bindInfoCount, pBindInfos);
+    if (result == VK_SUCCESS && pBindInfos != nullptr) {
+        RecordImageBinds(bindInfoCount, pBindInfos);
+    }
+    return result;
+}
+
+// Intercept memory binding via vkBindImageMemory2KHR to correlate image object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
+    VkResult result = device_dispatch_table(device)->BindImageMemory2KHR(device, bindInfoCount, pBindInfos);
+    if (result == VK_SUCCESS && pBindInfos != nullptr) {
+        RecordImageBinds(bindInfoCount, pBindInfos);
+    }
+    return result;
 }
 
 // Intercept image creation to track image usage category flags.
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkImage* pImage) {
     PFN_vkCreateImage fpCreateImage = (PFN_vkCreateImage)device_dispatch_table(device)->CreateImage;
-    if (fpCreateImage == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
     VkResult result = fpCreateImage(device, pCreateInfo, pAllocator, pImage);
     if (result == VK_SUCCESS && pCreateInfo != nullptr && pImage != nullptr && *pImage != VK_NULL_HANDLE) {
         DeviceMemoryReport::Get().OnCreateImage(reinterpret_cast<uint64_t>(*pImage), pCreateInfo->usage);
+        
+        // Query and record memory requirements right after creation. 
+        // This is needed because Vulkan 1.3 applications might use vkGetDeviceImageMemoryRequirements 
+        // *before* creation, and subsequently skip calling vkGetImageMemoryRequirements, which would leave the tracked size as 0.
+        if (device_dispatch_table(device)->GetImageMemoryRequirements && (pCreateInfo->flags & VK_IMAGE_CREATE_DISJOINT_BIT) == 0) {
+            VkMemoryRequirements mem_reqs;
+            device_dispatch_table(device)->GetImageMemoryRequirements(device, *pImage, &mem_reqs);
+            DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(*pImage), mem_reqs.size);
+        }
     }
     return result;
 }
@@ -376,15 +415,20 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const 
     }
 }
 
-// Intercept buffer creation to track buffer usage category flags.
+// Intercept buffer creation to track buffer usage category flags and requested size.
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer) {
     PFN_vkCreateBuffer fpCreateBuffer = (PFN_vkCreateBuffer)device_dispatch_table(device)->CreateBuffer;
-    if (fpCreateBuffer == NULL) {
-        return VK_ERROR_INITIALIZATION_FAILED;
-    }
     VkResult result = fpCreateBuffer(device, pCreateInfo, pAllocator, pBuffer);
     if (result == VK_SUCCESS && pCreateInfo != nullptr && pBuffer != nullptr && *pBuffer != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnCreateBuffer(reinterpret_cast<uint64_t>(*pBuffer), pCreateInfo->usage);
+        DeviceMemoryReport::Get().OnCreateBuffer(reinterpret_cast<uint64_t>(*pBuffer), pCreateInfo->usage, pCreateInfo->size);
+        
+        // Query buffer memory requirements to record accurate actual bound size,
+        // in case the app relies on vkGetDeviceBufferMemoryRequirements.
+        if (device_dispatch_table(device)->GetBufferMemoryRequirements) {
+            VkMemoryRequirements mem_reqs;
+            device_dispatch_table(device)->GetBufferMemoryRequirements(device, *pBuffer, &mem_reqs);
+            DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(*pBuffer), mem_reqs.size);
+        }
     }
     return result;
 }
@@ -397,6 +441,70 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, con
     PFN_vkDestroyBuffer fpDestroyBuffer = (PFN_vkDestroyBuffer)device_dispatch_table(device)->DestroyBuffer;
     if (fpDestroyBuffer != NULL) {
         fpDestroyBuffer(device, buffer, pAllocator);
+    }
+}
+
+// Intercept image memory requirements query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetImageMemoryRequirements) {
+        device_dispatch_table(device)->GetImageMemoryRequirements(device, image, pMemoryRequirements);
+        if (image != VK_NULL_HANDLE && pMemoryRequirements != nullptr) {
+            DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(image), pMemoryRequirements->size);
+        }
+    }
+}
+
+static void RecordImageRequirements(const VkImageMemoryRequirementsInfo2* pInfo, const VkMemoryRequirements2* pMemoryRequirements) {
+    if (pInfo != nullptr && pInfo->image != VK_NULL_HANDLE && pMemoryRequirements != nullptr) {
+        DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pInfo->image), pMemoryRequirements->memoryRequirements.size);
+    }
+}
+
+// Intercept image memory requirements 2 query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetImageMemoryRequirements2) {
+        device_dispatch_table(device)->GetImageMemoryRequirements2(device, pInfo, pMemoryRequirements);
+        RecordImageRequirements(pInfo, pMemoryRequirements);
+    }
+}
+
+// Intercept image memory requirements 2 KHR query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetImageMemoryRequirements2KHR(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetImageMemoryRequirements2KHR) {
+        device_dispatch_table(device)->GetImageMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
+        RecordImageRequirements(pInfo, pMemoryRequirements);
+    }
+}
+
+// Intercept buffer memory requirements query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetBufferMemoryRequirements) {
+        device_dispatch_table(device)->GetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
+        if (buffer != VK_NULL_HANDLE && pMemoryRequirements != nullptr) {
+            DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(buffer), pMemoryRequirements->size);
+        }
+    }
+}
+
+static void RecordBufferRequirements2(const VkBufferMemoryRequirementsInfo2* pInfo, const VkMemoryRequirements2* pMemoryRequirements) {
+    if (pInfo != nullptr && pInfo->buffer != VK_NULL_HANDLE && pMemoryRequirements != nullptr) {
+        DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pInfo->buffer), pMemoryRequirements->memoryRequirements.size);
+    }
+}
+
+// Intercept buffer memory requirements 2 query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetBufferMemoryRequirements2) {
+        device_dispatch_table(device)->GetBufferMemoryRequirements2(device, pInfo, pMemoryRequirements);
+        RecordBufferRequirements2(pInfo, pMemoryRequirements);
+    }
+}
+
+// Intercept buffer memory requirements 2 KHR query to record virtual resource size.
+VKAPI_ATTR void VKAPI_CALL vkGetBufferMemoryRequirements2KHR(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, VkMemoryRequirements2* pMemoryRequirements) {
+    if (device_dispatch_table(device)->GetBufferMemoryRequirements2KHR) {
+        device_dispatch_table(device)->GetBufferMemoryRequirements2KHR(device, pInfo, pMemoryRequirements);
+        RecordBufferRequirements2(pInfo, pMemoryRequirements);
     }
 }
 

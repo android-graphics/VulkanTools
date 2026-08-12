@@ -19,6 +19,7 @@
 #include <mutex>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #ifndef VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT
 #define VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT 0x00000001
@@ -35,7 +36,7 @@
  * The layer intercepts Vulkan memory allocation and object creation events, using either
  * VK_EXT_device_memory_report callbacks (when supported by the underlying driver) or falling back
  * to direct allocation intercepts (vkAllocateMemory/vkFreeMemory).
- * Object bindings (vkBindBufferMemory, vkBindImageMemory) are tracked to attribute memory allocations to usage categories.
+ * Object bindings (vkBindBufferMemory, vkBindImageMemory, vkBindBufferMemory2, vkBindImageMemory2) are tracked to attribute memory allocations to usage categories.
  *
  * Track Categories:
  * Memory usage counters are reported to Perfetto under:
@@ -105,15 +106,31 @@ class DeviceMemoryReport {
      * @brief Tracks binding of buffer memory to correlate buffer usage with memory allocations.
      * @param buffer_handle The 64-bit handle of the Vulkan buffer.
      * @param memory_handle The 64-bit handle of the Vulkan device memory.
+     * @param memory_offset Offset into device memory where buffer is bound.
      */
-    void OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle);
+    void OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle, VkDeviceSize memory_offset);
 
     /**
      * @brief Tracks binding of image memory to correlate image usage with memory allocations.
      * @param image_handle The 64-bit handle of the Vulkan image.
      * @param memory_handle The 64-bit handle of the Vulkan device memory.
+     * @param memory_offset Offset into device memory where image is bound.
      */
-    void OnBindImageMemory(uint64_t image_handle, uint64_t memory_handle);
+    void OnBindImageMemory(uint64_t image_handle, uint64_t memory_handle, VkDeviceSize memory_offset);
+
+    /**
+     * @brief Records the size of a virtual resource (buffer or image) in bytes.
+     * @param resource_handle The 64-bit handle of the Vulkan object.
+     * @param size Size in bytes from memory requirements or create info.
+     */
+    void OnRecordResourceSize(uint64_t resource_handle, VkDeviceSize size);
+
+    /**
+     * @brief Retrieves the recorded size of a virtual resource (for testing).
+     * @param resource_handle The 64-bit handle of the Vulkan object.
+     * @return Size in bytes, or 0 if not tracked.
+     */
+    VkDeviceSize GetRecordedResourceSize(uint64_t resource_handle);
 
     /**
      * @brief Tracks creation of a Vulkan image and its usage flags.
@@ -123,11 +140,12 @@ class DeviceMemoryReport {
     void OnCreateImage(uint64_t image_handle, VkImageUsageFlags usage);
 
     /**
-     * @brief Tracks creation of a Vulkan buffer and its usage flags.
+     * @brief Tracks creation of a Vulkan buffer, its usage flags, and requested size.
      * @param buffer_handle The 64-bit handle of the Vulkan buffer.
      * @param usage Usage flags for the created buffer.
+     * @param size Size in bytes of the buffer allocation.
      */
-    void OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFlags usage);
+    void OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFlags usage, VkDeviceSize size);
 
     /**
      * @brief Handles destruction of a Vulkan object, cleaning up tracked usage state.
@@ -137,18 +155,50 @@ class DeviceMemoryReport {
 
    private:
     /**
-     * @brief Applies a usage category track counter update for an object allocation handle.
-     * @param handle The 64-bit handle of the object or memory allocation.
-     * @param usage_str The usage category string.
+     * @brief Represents a sub-allocation of a Vulkan resource (buffer or image) bound within a physical memory allocation.
      */
-    void ApplyUsageToHandle(uint64_t handle, const std::string& usage_str);
+    struct SubAllocation {
+        uint64_t resource_handle;  /**< Handle of the bound Vulkan resource (buffer or image). */
+        VkDeviceSize offset;       /**< Offset in bytes within the physical memory allocation where the resource is bound. */
+        VkDeviceSize size;         /**< Size in bytes of the sub-allocated resource. */
+        std::string usage_track;   /**< Name of the memory usage trace counter category for this sub-allocation. */
+    };
 
     /**
-     * @brief Removes a usage category track counter update for a freed object allocation handle.
-     * @param handle The 64-bit handle of the object or memory allocation.
-     * @param free_size The number of bytes being freed.
+     * @brief Tracks state and sub-allocations for a physical device memory allocation.
      */
-    void RemoveUsageFromHandle(uint64_t handle, uint64_t free_size);
+    struct MemoryAllocation {
+        VkDeviceSize total_size = 0;
+        VkDeviceSize applied_unbound_bytes = 0;
+        bool is_driver = false;
+        std::vector<SubAllocation> sub_allocations;
+        std::string unbound_usage_track;
+        uint64_t object_handle = 0;
+    };
+
+    /**
+     * @brief Tracks metadata for a virtual resource (buffer or image).
+     */
+    struct Resource {
+        std::string usage;
+        VkDeviceSize size = 0;
+    };
+
+    /**
+     * @brief Updates unbound memory category counter for a physical memory slab.
+     * Unbound memory is allocated device memory not currently bound to any active resource (e.g. buffer or image).
+     */
+    void UpdateAllocationUnboundCounter(uint64_t memory_handle);
+
+    /**
+     * @brief Removes a sub-allocation of a resource from a physical memory slab if bound.
+     */
+    void RemoveResourceBinding(uint64_t resource_handle);
+
+    /**
+     * @brief Removes all sub-allocations and tracking for a memory slab being freed.
+     */
+    void RemoveAllocationTracking(uint64_t memory_handle);
 
     /**
      * @brief Increments trace counter for a memory track.
@@ -181,29 +231,19 @@ class DeviceMemoryReport {
     std::unordered_map<VkDevice, bool> has_callback_map_;
 
     /**
-     * @brief Maps a device memory handle to its allocation size in bytes for fallback tracking.
+     * @brief Maps a virtual resource handle to its metadata.
      */
-    std::unordered_map<VkDeviceMemory, VkDeviceSize> memory_size_map_;
+    std::unordered_map<uint64_t, Resource> resources_;
 
     /**
-     * @brief Maps an object handle to its total allocated memory size in bytes.
+     * @brief Maps a virtual resource handle to the physical memory handle it is bound to.
      */
-    std::unordered_map<uint64_t, uint64_t> object_alloc_size_map_;
+    std::unordered_map<uint64_t, uint64_t> resource_to_memory_map_;
 
     /**
-     * @brief Maps an object handle to a boolean indicating if it is a driver-internal allocation.
+     * @brief Maps a physical memory handle to its allocation details and sub-allocations.
      */
-    std::unordered_map<uint64_t, bool> object_is_driver_map_;
-
-    /**
-     * @brief Maps an object handle to its determined usage category string.
-     */
-    std::unordered_map<uint64_t, std::string> object_usage_map_;
-
-    /**
-     * @brief Maps an object handle to the usage track string currently applied to it.
-     */
-    std::unordered_map<uint64_t, std::string> object_usage_applied_map_;
+    std::unordered_map<uint64_t, MemoryAllocation> memory_allocations_;
 
     /**
      * @brief Maps a usage track name to its current total memory usage in bytes.
