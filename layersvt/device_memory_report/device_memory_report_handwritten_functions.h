@@ -144,6 +144,9 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
     PFN_vkGetDeviceProcAddr fpGetDeviceProcAddr = chain_info->u.pLayerInfo->pfnNextGetDeviceProcAddr;
     VkInstance vk_instance = DeviceMemoryReport::Get().GetVkInstance(physicalDevice);
     PFN_vkCreateDevice fpCreateDevice = (PFN_vkCreateDevice)fpGetInstanceProcAddr(vk_instance, "vkCreateDevice");
+    if (fpCreateDevice == NULL) {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
 
     // Call the function and create the dispatch table
     chain_info->u.pLayerInfo = chain_info->u.pLayerInfo->pNext;
@@ -151,10 +154,10 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
     // Check if the underlying driver supports VK_EXT_device_memory_report
     bool supports_memory_report = false;
     uint32_t ext_count = 0;
-    if (vk_instance != VK_NULL_HANDLE && instance_dispatch_table(vk_instance)->EnumerateDeviceExtensionProperties) {
-        if (instance_dispatch_table(vk_instance)->EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &ext_count, nullptr) == VK_SUCCESS && ext_count > 0) {
+    if (instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties) {
+        if (instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &ext_count, nullptr) == VK_SUCCESS && ext_count > 0) {
             std::vector<VkExtensionProperties> exts(ext_count);
-            if (instance_dispatch_table(vk_instance)->EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &ext_count, exts.data()) == VK_SUCCESS) {
+            if (instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, nullptr, &ext_count, exts.data()) == VK_SUCCESS) {
                 for (const auto& ext : exts) {
                     if (strcmp(ext.extensionName, VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME) == 0) {
                         supports_memory_report = true;
@@ -278,15 +281,10 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
         return VK_SUCCESS;
     }
 
-    VkInstance vk_instance = DeviceMemoryReport::Get().GetVkInstance(physicalDevice);
-    if (vk_instance == VK_NULL_HANDLE) {
-        return VK_SUCCESS;
-    }
-
     // Manually append device extension.  This should not be necessary, but the Android Vulkan
     // loader does not expose extensions from implicit layer.
     if (pProperties == nullptr) {
-        VkResult res = instance_dispatch_table(vk_instance)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
+        VkResult res = instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
         if (res == VK_SUCCESS) {
             (*pPropertyCount) += ARRAY_SIZE(deviceExtensions);
         }
@@ -295,7 +293,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
     
     if (*pPropertyCount > 0) {
         uint32_t requestedCount = *pPropertyCount;
-        VkResult res = instance_dispatch_table(vk_instance)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
+        VkResult res = instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
         if (res == VK_SUCCESS) {
             uint32_t originalCount = *pPropertyCount;
             uint32_t additionalCount = 0;
