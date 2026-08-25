@@ -34,11 +34,12 @@
 // - vkCreateDevice / vkDestroyDevice: Initializes/destroys device dispatch tables and
 //   injects VK_EXT_device_memory_report callback registration into device creation.
 //
-// Memory tracking & debugging intercepts:
+// Memory tracking & resource tracking intercepts:
 // - vkAllocateMemory / vkFreeMemory: Tracks direct allocations/frees as fallbacks.
-// - vkBindBufferMemory / vkBindImageMemory: Associates buffer/image handles with memory.
-// - vkSetDebugUtilsObjectNameEXT / vkDebugMarkerSetObjectNameEXT: Associates debug names
-//   and markers with object handles for labeled memory reporting.
+// - vkBindBufferMemory* / vkBindImageMemory*: Associates buffer/image handles with memory allocations.
+// - vkCreateBuffer / vkDestroyBuffer: Tracks buffer creation, usage flags, and requested sizes.
+// - vkCreateImage / vkDestroyImage: Tracks image creation and usage flags.
+// - vkGetBufferMemoryRequirements* / vkGetImageMemoryRequirements*: Tracks resource memory requirements.
 // - vkEnumerate*ExtensionProperties / vkEnumerate*LayerProperties: Advertises the layer
 //   and support for the VK_EXT_device_memory_report extension.
 
@@ -233,14 +234,6 @@ VKAPI_ATTR void VKAPI_CALL vkFreeMemory(VkDevice device, VkDeviceMemory memory, 
 EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(const char* pLayerName,
                                                                                        uint32_t* pPropertyCount,
                                                                                        VkExtensionProperties* pProperties) {
-    static const VkExtensionProperties instanceExtensions[] = {
-        {VK_EXT_DEBUG_UTILS_EXTENSION_NAME, VK_EXT_DEBUG_UTILS_SPEC_VERSION},
-    };
-
-    if (pLayerName != nullptr && strcmp(pLayerName, LAYER_NAME) == 0) {
-        return util_GetExtensionProperties(ARRAY_SIZE(instanceExtensions), instanceExtensions, pPropertyCount, pProperties);
-    }
-
     return util_GetExtensionProperties(0, nullptr, pPropertyCount, pProperties);
 }
 
@@ -275,7 +268,6 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
                                                                                     VkExtensionProperties* pProperties) {
     static const VkExtensionProperties deviceExtensions[] = {
         {VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME, VK_EXT_DEVICE_MEMORY_REPORT_SPEC_VERSION},
-        {VK_EXT_DEBUG_MARKER_EXTENSION_NAME, VK_EXT_DEBUG_MARKER_SPEC_VERSION},
     };
 
     if (pLayerName != nullptr && strcmp(pLayerName, LAYER_NAME) == 0) {

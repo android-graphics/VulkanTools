@@ -63,6 +63,42 @@ TEST_F(DeviceMemoryReportTests, EagerPhysicalDeviceEnumeration) {
     inst_builder.Reset();
 }
 
+TEST_F(DeviceMemoryReportTests, ExtensionProperties) {
+    TEST_DESCRIPTION("Test extension enumeration for instance and device");
+
+    layer_test::VulkanInstanceBuilder inst_builder;
+    VkResult err = inst_builder.Init(kLayerName);
+    EXPECT_EQ(err, VK_SUCCESS);
+
+    VkInstance instance = inst_builder.GetInstance();
+    EXPECT_NE(instance, VK_NULL_HANDLE);
+
+    // Test instance extension properties advertised by the layer
+    uint32_t inst_ext_count = 0;
+    EXPECT_EQ(vkEnumerateInstanceExtensionProperties(kLayerName, &inst_ext_count, nullptr), VK_SUCCESS);
+    EXPECT_EQ(inst_ext_count, 0u);
+
+    VkPhysicalDevice phys_dev = VK_NULL_HANDLE;
+    inst_builder.GetPhysicalDevice(&phys_dev);
+    if (phys_dev != VK_NULL_HANDLE) {
+        // Test device extension properties advertised by the layer
+        uint32_t dev_ext_count = 0;
+        EXPECT_EQ(vkEnumerateDeviceExtensionProperties(phys_dev, kLayerName, &dev_ext_count, nullptr), VK_SUCCESS);
+        EXPECT_GE(dev_ext_count, 1u);
+        std::vector<VkExtensionProperties> dev_exts(dev_ext_count);
+        EXPECT_EQ(vkEnumerateDeviceExtensionProperties(phys_dev, kLayerName, &dev_ext_count, dev_exts.data()), VK_SUCCESS);
+        bool found_mem_report = false;
+        for (const auto& ext : dev_exts) {
+            if (strcmp(ext.extensionName, VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME) == 0) {
+                found_mem_report = true;
+            }
+        }
+        EXPECT_TRUE(found_mem_report);
+    }
+
+    inst_builder.Reset();
+}
+
 TEST_F(DeviceMemoryReportTests, EmitEventsAndSubCounters) {
     TEST_DESCRIPTION("Test calling OnMemoryReportEvent with object types and allocating/freeing memory");
 
