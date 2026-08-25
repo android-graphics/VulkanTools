@@ -44,6 +44,25 @@ TEST_F(DeviceMemoryReportTests, InitLayer) {
     inst_builder.Reset();
 }
 
+TEST_F(DeviceMemoryReportTests, EagerPhysicalDeviceEnumeration) {
+    TEST_DESCRIPTION("Test eager physical device mapping on instance creation");
+
+    layer_test::VulkanInstanceBuilder inst_builder;
+    VkResult err = inst_builder.Init(kLayerName);
+    EXPECT_EQ(err, VK_SUCCESS);
+
+    VkInstance instance = inst_builder.GetInstance();
+    EXPECT_NE(instance, VK_NULL_HANDLE);
+
+    VkPhysicalDevice phys_dev = VK_NULL_HANDLE;
+    inst_builder.GetPhysicalDevice(&phys_dev);
+    if (phys_dev != VK_NULL_HANDLE) {
+        EXPECT_EQ(DeviceMemoryReport::Get().GetVkInstance(phys_dev), instance);
+    }
+
+    inst_builder.Reset();
+}
+
 TEST_F(DeviceMemoryReportTests, EmitEventsAndSubCounters) {
     TEST_DESCRIPTION("Test calling OnMemoryReportEvent with object types and allocating/freeing memory");
 

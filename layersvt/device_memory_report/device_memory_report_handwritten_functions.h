@@ -28,7 +28,7 @@
 // the VK_LAYER_GOOGLE_DeviceMemoryReport layer:
 //
 // Core infrastructure & lifecycle:
-// - vkCreateInstance: Initializes Perfetto tracing and the instance dispatch table.
+// - vkCreateInstance: Initializes Perfetto tracing, the instance dispatch table, and performs eager physical device enumeration.
 // - vkEnumeratePhysicalDevices / vkEnumeratePhysicalDeviceGroups: Tracks the mapping
 //   between physical devices and instances to support dispatch table lookups.
 // - vkCreateDevice / vkDestroyDevice: Initializes/destroys device dispatch tables and
@@ -69,12 +69,30 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
     PFN_vkGetInstanceProcAddr fpGetInstanceProcAddr = chain_info->u.pLayerInfo->pfnNextGetInstanceProcAddr;
     assert(fpGetInstanceProcAddr != 0);
     PFN_vkCreateInstance fpCreateInstance = (PFN_vkCreateInstance)fpGetInstanceProcAddr(NULL, "vkCreateInstance");
+    if (fpCreateInstance == NULL) {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
 
     // Call the function and create the dispatch table
     chain_info->u.pLayerInfo = chain_info->u.pLayerInfo->pNext;
     VkResult result = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
     if (result == VK_SUCCESS) {
         initInstanceTable(*pInstance, fpGetInstanceProcAddr);
+
+        // Eagerly enumerate physical devices and map them to the instance.
+        // This ensures we have the mapping even if the app bypasses our enumeration hooks.
+        PFN_vkEnumeratePhysicalDevices fpEnumeratePhysicalDevices = (PFN_vkEnumeratePhysicalDevices)fpGetInstanceProcAddr(*pInstance, "vkEnumeratePhysicalDevices");
+        if (fpEnumeratePhysicalDevices) {
+            uint32_t count = 0;
+            fpEnumeratePhysicalDevices(*pInstance, &count, nullptr);
+            if (count > 0) {
+                std::vector<VkPhysicalDevice> devices(count);
+                fpEnumeratePhysicalDevices(*pInstance, &count, devices.data());
+                for (uint32_t i = 0; i < count; ++i) {
+                    DeviceMemoryReport::Get().SetVkInstance(devices[i], *pInstance);
+                }
+            }
+        }
     }
 
     return result;
