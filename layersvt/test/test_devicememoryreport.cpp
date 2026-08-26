@@ -187,11 +187,15 @@ TEST_F(DeviceMemoryReportTests, UsageTypeBreakdown) {
     uint64_t color_img = 0xA001;
     uint64_t depth_img = 0xA002;
     uint64_t sampled_img = 0xA005;
+    uint64_t storage_img = 0xA006;
+    uint64_t transient_img = 0xA007;
 
     uint64_t vtx_buf = 0xB001;
     uint64_t idx_buf = 0xB002;
     uint64_t ubo_buf = 0xB003;
     uint64_t staging_buf = 0xB006;
+    uint64_t storage_buf = 0xB007;
+    uint64_t indirect_buf = 0xB008;
 
     uint64_t mem_handle = 0xC001;
 
@@ -199,36 +203,47 @@ TEST_F(DeviceMemoryReportTests, UsageTypeBreakdown) {
     DeviceMemoryReport::Get().OnCreateImage(color_img, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
     DeviceMemoryReport::Get().OnCreateImage(depth_img, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     DeviceMemoryReport::Get().OnCreateImage(sampled_img, VK_IMAGE_USAGE_SAMPLED_BIT);
+    DeviceMemoryReport::Get().OnCreateImage(storage_img, VK_IMAGE_USAGE_STORAGE_BIT);
+    DeviceMemoryReport::Get().OnCreateImage(transient_img, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
 
     DeviceMemoryReport::Get().OnRecordResourceSize(color_img, 65536);
     DeviceMemoryReport::Get().OnRecordResourceSize(depth_img, 65536);
     DeviceMemoryReport::Get().OnRecordResourceSize(sampled_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(storage_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(transient_img, 65536);
 
     // Register buffers
     DeviceMemoryReport::Get().OnCreateBuffer(vtx_buf, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
     DeviceMemoryReport::Get().OnCreateBuffer(idx_buf, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 4096);
     DeviceMemoryReport::Get().OnCreateBuffer(ubo_buf, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 4096);
     DeviceMemoryReport::Get().OnCreateBuffer(staging_buf, VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 4096);
+    DeviceMemoryReport::Get().OnCreateBuffer(storage_buf, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 4096);
+    DeviceMemoryReport::Get().OnCreateBuffer(indirect_buf, VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, 4096);
 
     VkDeviceMemoryReportCallbackDataEXT cb_data = {};
     cb_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
     cb_data.flags = 0;
     cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
     cb_data.memoryObjectId = 0x5000;
-    cb_data.size = 1048576;
+    cb_data.size = 2097152;
     cb_data.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
     cb_data.objectHandle = mem_handle;
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    DeviceMemoryReport::Get().SetAllocationMemoryProperties(mem_handle, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     // Bind images and buffers to test usage categorization and track transitions
     DeviceMemoryReport::Get().OnBindImageMemory(color_img, mem_handle, 0);
     DeviceMemoryReport::Get().OnBindImageMemory(depth_img, mem_handle, 65536);
     DeviceMemoryReport::Get().OnBindImageMemory(sampled_img, mem_handle, 131072);
+    DeviceMemoryReport::Get().OnBindImageMemory(storage_img, mem_handle, 196608);
+    DeviceMemoryReport::Get().OnBindImageMemory(transient_img, mem_handle, 262144);
 
-    DeviceMemoryReport::Get().OnBindBufferMemory(vtx_buf, mem_handle, 196608);
-    DeviceMemoryReport::Get().OnBindBufferMemory(idx_buf, mem_handle, 200704);
-    DeviceMemoryReport::Get().OnBindBufferMemory(ubo_buf, mem_handle, 204800);
-    DeviceMemoryReport::Get().OnBindBufferMemory(staging_buf, mem_handle, 208896);
+    DeviceMemoryReport::Get().OnBindBufferMemory(vtx_buf, mem_handle, 327680);
+    DeviceMemoryReport::Get().OnBindBufferMemory(idx_buf, mem_handle, 331776);
+    DeviceMemoryReport::Get().OnBindBufferMemory(ubo_buf, mem_handle, 335872);
+    DeviceMemoryReport::Get().OnBindBufferMemory(staging_buf, mem_handle, 339968);
+    DeviceMemoryReport::Get().OnBindBufferMemory(storage_buf, mem_handle, 344064);
+    DeviceMemoryReport::Get().OnBindBufferMemory(indirect_buf, mem_handle, 348160);
 
     // Free memory
     cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
@@ -238,11 +253,15 @@ TEST_F(DeviceMemoryReportTests, UsageTypeBreakdown) {
     DeviceMemoryReport::Get().OnDestroyObject(color_img);
     DeviceMemoryReport::Get().OnDestroyObject(depth_img);
     DeviceMemoryReport::Get().OnDestroyObject(sampled_img);
+    DeviceMemoryReport::Get().OnDestroyObject(storage_img);
+    DeviceMemoryReport::Get().OnDestroyObject(transient_img);
 
     DeviceMemoryReport::Get().OnDestroyObject(vtx_buf);
     DeviceMemoryReport::Get().OnDestroyObject(idx_buf);
     DeviceMemoryReport::Get().OnDestroyObject(ubo_buf);
     DeviceMemoryReport::Get().OnDestroyObject(staging_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(storage_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(indirect_buf);
 
     EXPECT_TRUE(true);
 }
@@ -269,7 +288,7 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
 
     // Step 2: Bind Resource A (Color Attachment Image) to range [0, 4000) (size = 4000 B).
-    // - vulkan.mem.app.usage.color_attachment += 4,000 B
+    // - vulkan.mem.app.usage.color_render_target += 4,000 B
     // - Merged intervals: [0, 4000) -> bound_size = 4,000 B, unbound_memory = 6,000 B
     DeviceMemoryReport::Get().OnCreateImage(image_a, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
     DeviceMemoryReport::Get().OnRecordResourceSize(image_a, 4000);
@@ -278,7 +297,7 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     // Step 3: Bind Resource B (Sampled Texture Image) to range [2000, 6000) (size = 4000 B).
     // This overlaps / aliases Resource A on the physical sub-range [2000, 4000).
     // - Each virtual resource adds its full virtual size to its specific category track:
-    //   vulkan.mem.app.usage.texture += 4,000 B (both A and B report active virtual capacity).
+    //   vulkan.mem.app.usage.static_texture += 4,000 B (both A and B report active virtual capacity).
     // - Overlapping intervals [0, 4000) and [2000, 6000) are merged into union [0, 6000).
     // - Physical slab bound_size = 6,000 B (overlapping physical region is NOT double-counted).
     // - Remaining unbound headroom: unbound_memory = 10,000 - 6,000 = 4,000 B.
@@ -287,14 +306,14 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     DeviceMemoryReport::Get().OnBindImageMemory(image_b, mem_handle, 2000);
 
     // Step 4: Bind Resource C (Vertex Buffer) to disjoint range [8000, 9500) (size = 1500 B).
-    // - vulkan.mem.app.usage.vertex_buffer += 1,500 B
+    // - vulkan.mem.app.usage.geometry_mesh += 1,500 B
     // - Interval union: [0, 6000) U [8000, 9500) -> bound_size = 6,000 + 1,500 = 7,500 B.
     // - Remaining unbound headroom: unbound_memory = 10,000 - 7,500 = 2,500 B.
     DeviceMemoryReport::Get().OnCreateBuffer(buffer_c, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 1500);
     DeviceMemoryReport::Get().OnBindBufferMemory(buffer_c, mem_handle, 8000);
 
     // Step 5: Destroy Resource A.
-    // - vulkan.mem.app.usage.color_attachment -= 4,000 B
+    // - vulkan.mem.app.usage.color_render_target -= 4,000 B
     // - Interval [0, 4000) is removed. Remaining intervals: [2000, 6000) U [8000, 9500).
     // - Recalculated bound_size = 4,000 + 1,500 = 5,500 B.
     // - Updated unbound headroom: unbound_memory = 10,000 - 5,500 = 4,500 B.
@@ -310,82 +329,6 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     DeviceMemoryReport::Get().OnDestroyObject(buffer_c);
 
     EXPECT_TRUE(true);
-}
-
-TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
-    TEST_DESCRIPTION("Test that the layer proactively queries memory requirements when creating images and buffers");
-
-    layer_test::VulkanInstanceBuilder inst_builder;
-    VkResult err = inst_builder.Init(kLayerName);
-    EXPECT_EQ(err, VK_SUCCESS);
-
-    VkPhysicalDevice phys_dev = VK_NULL_HANDLE;
-    inst_builder.GetPhysicalDevice(&phys_dev);
-    if (phys_dev == VK_NULL_HANDLE) {
-        GTEST_SKIP() << "No physical device found, skipping test.";
-    }
-
-    // Create a logical device
-    float queue_priority = 1.0f;
-    VkDeviceQueueCreateInfo queue_info = {};
-    queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queue_info.queueFamilyIndex = 0;
-    queue_info.queueCount = 1;
-    queue_info.pQueuePriorities = &queue_priority;
-
-    VkDeviceCreateInfo dev_info = {};
-    dev_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    dev_info.queueCreateInfoCount = 1;
-    dev_info.pQueueCreateInfos = &queue_info;
-    dev_info.enabledExtensionCount = 0;
-
-    VkDevice device = VK_NULL_HANDLE;
-    err = vkCreateDevice(phys_dev, &dev_info, nullptr, &device);
-    if (err != VK_SUCCESS) {
-        GTEST_SKIP() << "Failed to create logical device, skipping test.";
-    }
-
-    // Create an image
-    VkImageCreateInfo img_info = {};
-    img_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    img_info.imageType = VK_IMAGE_TYPE_2D;
-    img_info.format = VK_FORMAT_R8G8B8A8_UNORM;
-    img_info.extent = {64, 64, 1};
-    img_info.mipLevels = 1;
-    img_info.arrayLayers = 1;
-    img_info.samples = VK_SAMPLE_COUNT_1_BIT;
-    img_info.tiling = VK_IMAGE_TILING_OPTIMAL;
-    img_info.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
-    img_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    img_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-    VkImage image = VK_NULL_HANDLE;
-    err = vkCreateImage(device, &img_info, nullptr, &image);
-    ASSERT_EQ(err, VK_SUCCESS);
-
-    // The interceptor should have called OnRecordResourceSize.
-    // Verify that the recorded size is > 0.
-    VkDeviceSize img_size = DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image));
-    EXPECT_GT(img_size, 0);
-
-    // Create a buffer
-    VkBufferCreateInfo buf_info = {};
-    buf_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    buf_info.size = 1024;
-    buf_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    buf_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-    VkBuffer buffer = VK_NULL_HANDLE;
-    err = vkCreateBuffer(device, &buf_info, nullptr, &buffer);
-    ASSERT_EQ(err, VK_SUCCESS);
-
-    // The interceptor should have called OnRecordResourceSize.
-    VkDeviceSize buf_size = DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer));
-    EXPECT_GT(buf_size, 0);
-
-    vkDestroyImage(device, image, nullptr);
-    vkDestroyBuffer(device, buffer, nullptr);
-    vkDestroyDevice(device, nullptr);
 }
 
 TEST_F(DeviceMemoryReportTests, ClusterClassificationFunctions) {
@@ -479,4 +422,80 @@ TEST_F(DeviceMemoryReportTests, StaticCounterTrackLookup) {
     perfetto::CounterTrack dynamic_track_again = GetCounterTrack("vulkan.mem.app.custom_track");
     EXPECT_EQ(dynamic_track.uuid, dynamic_track_again.uuid);
     EXPECT_EQ(dynamic_track_again.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+}
+
+TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
+    TEST_DESCRIPTION("Test that the layer proactively queries memory requirements when creating images and buffers");
+
+    layer_test::VulkanInstanceBuilder inst_builder;
+    VkResult err = inst_builder.Init(kLayerName);
+    EXPECT_EQ(err, VK_SUCCESS);
+
+    VkPhysicalDevice phys_dev = VK_NULL_HANDLE;
+    inst_builder.GetPhysicalDevice(&phys_dev);
+    if (phys_dev == VK_NULL_HANDLE) {
+        GTEST_SKIP() << "No physical device found, skipping test.";
+    }
+
+    // Create a logical device
+    float queue_priority = 1.0f;
+    VkDeviceQueueCreateInfo queue_info = {};
+    queue_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queue_info.queueFamilyIndex = 0;
+    queue_info.queueCount = 1;
+    queue_info.pQueuePriorities = &queue_priority;
+
+    VkDeviceCreateInfo dev_info = {};
+    dev_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    dev_info.queueCreateInfoCount = 1;
+    dev_info.pQueueCreateInfos = &queue_info;
+    dev_info.enabledExtensionCount = 0;
+
+    VkDevice device = VK_NULL_HANDLE;
+    err = vkCreateDevice(phys_dev, &dev_info, nullptr, &device);
+    if (err != VK_SUCCESS) {
+        GTEST_SKIP() << "Failed to create logical device, skipping test.";
+    }
+
+    // Create an image
+    VkImageCreateInfo img_info = {};
+    img_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    img_info.imageType = VK_IMAGE_TYPE_2D;
+    img_info.format = VK_FORMAT_R8G8B8A8_UNORM;
+    img_info.extent = {64, 64, 1};
+    img_info.mipLevels = 1;
+    img_info.arrayLayers = 1;
+    img_info.samples = VK_SAMPLE_COUNT_1_BIT;
+    img_info.tiling = VK_IMAGE_TILING_OPTIMAL;
+    img_info.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+    img_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    img_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    VkImage image = VK_NULL_HANDLE;
+    err = vkCreateImage(device, &img_info, nullptr, &image);
+    ASSERT_EQ(err, VK_SUCCESS);
+
+    // The interceptor should have called OnRecordResourceSize.
+    // Verify that the recorded size is > 0.
+    VkDeviceSize img_size = DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image));
+    EXPECT_GT(img_size, 0);
+
+    // Create a buffer
+    VkBufferCreateInfo buf_info = {};
+    buf_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    buf_info.size = 1024;
+    buf_info.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+    buf_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VkBuffer buffer = VK_NULL_HANDLE;
+    err = vkCreateBuffer(device, &buf_info, nullptr, &buffer);
+    ASSERT_EQ(err, VK_SUCCESS);
+
+    // The interceptor should have called OnRecordResourceSize.
+    VkDeviceSize buf_size = DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer));
+    EXPECT_GT(buf_size, 0);
+
+    vkDestroyImage(device, image, nullptr);
+    vkDestroyBuffer(device, buffer, nullptr);
+    vkDestroyDevice(device, nullptr);
 }

@@ -84,6 +84,26 @@ class DeviceMemoryReport {
     VkInstance GetVkInstance(VkPhysicalDevice phys_dev);
 
     /**
+     * @brief Stores physical device memory properties for a logical device.
+     * @param device The Vulkan device handle.
+     * @param props The memory properties of the physical device.
+     */
+    void SetDeviceMemoryProperties(VkDevice device, const VkPhysicalDeviceMemoryProperties& props);
+
+    /**
+     * @brief Explicitly sets memory property flags for an allocation handle (useful for testing or overrides).
+     * @param memory_handle The 64-bit handle of the Vulkan device memory.
+     * @param property_flags The memory property flags.
+     */
+    void SetAllocationMemoryProperties(uint64_t memory_handle, VkMemoryPropertyFlags property_flags);
+
+    /**
+     * @brief Cleans up device-specific tracking state upon device destruction.
+     * @param device The Vulkan device handle.
+     */
+    void OnDestroyDevice(VkDevice device);
+
+    /**
      * @brief Static callback invoked by the VK_EXT_device_memory_report extension.
      * @param pCallbackData Pointer to the memory report callback data structure.
      * @param pUserData User data pointer (unused).
@@ -108,8 +128,10 @@ class DeviceMemoryReport {
      * @param device The Vulkan device handle.
      * @param memory The VkDeviceMemory handle being allocated.
      * @param size The size of the allocation in bytes.
+     * @param memory_type_index The memory type index from VkMemoryAllocateInfo.
+     * @param property_flags Optional explicit memory property flags (for testing or overrides).
      */
-    void OnAllocateMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize size);
+    void OnAllocateMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize size, uint32_t memory_type_index = UINT32_MAX, VkMemoryPropertyFlags property_flags = 0);
 
     /**
      * @brief Handles fallback memory free tracking when driver callback is unavailable.
@@ -187,6 +209,7 @@ class DeviceMemoryReport {
         VkDeviceSize total_size = 0;
         VkDeviceSize applied_unbound_bytes = 0;
         bool is_driver = false;
+        VkMemoryPropertyFlags mem_flags = 0;
         std::vector<SubAllocation> sub_allocations;
         std::string unbound_usage_track;
         uint64_t object_handle = 0;
@@ -196,9 +219,23 @@ class DeviceMemoryReport {
      * @brief Tracks metadata for a virtual resource (buffer or image).
      */
     struct Resource {
-        std::string usage;
+        bool is_image = false;
+        VkImageUsageFlags image_usage = 0;
+        VkBufferUsageFlags buffer_usage = 0;
         VkDeviceSize size = 0;
+
+        const char* GetCluster(VkMemoryPropertyFlags mem_flags) const {
+            if (is_image) {
+                return GetImageCluster(image_usage, mem_flags);
+            }
+            return GetBufferCluster(buffer_usage, mem_flags);
+        }
     };
+
+    /**
+     * @brief Helper to bind resource memory (buffers and images).
+     */
+    void BindResourceMemory(uint64_t resource_handle, uint64_t memory_handle, VkDeviceSize memory_offset);
 
     /**
      * @brief Updates unbound memory category counter for a physical memory slab.
@@ -245,6 +282,11 @@ class DeviceMemoryReport {
      * @brief Maps a Vulkan device handle to a boolean indicating if driver memory report callback is active.
      */
     std::unordered_map<VkDevice, bool> has_callback_map_;
+
+    /**
+     * @brief Maps a Vulkan device handle to its physical device memory properties.
+     */
+    std::unordered_map<VkDevice, VkPhysicalDeviceMemoryProperties> device_memory_properties_map_;
 
     /**
      * @brief Maps a virtual resource handle to its metadata.

@@ -198,12 +198,19 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
     if (result == VK_SUCCESS) {
         initDeviceTable(*pDevice, fpGetDeviceProcAddr);
         DeviceMemoryReport::Get().SetHasMemoryReportCallback(*pDevice, supports_memory_report);
+
+        VkPhysicalDeviceMemoryProperties mem_props = {};
+        if (instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties) {
+            instance_dispatch_table(physicalDevice)->GetPhysicalDeviceMemoryProperties(physicalDevice, &mem_props);
+            DeviceMemoryReport::Get().SetDeviceMemoryProperties(*pDevice, mem_props);
+        }
     }
 
     return result;
 }
 
 VKAPI_ATTR void VKAPI_CALL vkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator) {
+    DeviceMemoryReport::Get().OnDestroyDevice(device);
     dispatch_key key = get_dispatch_key(device);
     device_dispatch_table(device)->DestroyDevice(device, pAllocator);
     destroy_device_dispatch_table(key);
@@ -215,7 +222,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkAllocateMemory(VkDevice device, const VkMemoryA
     PFN_vkAllocateMemory fpAllocateMemory = (PFN_vkAllocateMemory)device_dispatch_table(device)->AllocateMemory;
     VkResult result = fpAllocateMemory(device, pAllocateInfo, pAllocator, pMemory);
     if (result == VK_SUCCESS && pAllocateInfo != nullptr && pMemory != nullptr && *pMemory != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnAllocateMemory(device, *pMemory, pAllocateInfo->allocationSize);
+        DeviceMemoryReport::Get().OnAllocateMemory(device, *pMemory, pAllocateInfo->allocationSize, pAllocateInfo->memoryTypeIndex);
     }
     return result;
 }

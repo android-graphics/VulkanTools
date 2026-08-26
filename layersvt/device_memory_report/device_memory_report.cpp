@@ -32,10 +32,48 @@ void DeviceMemoryReport::SetVkInstance(VkPhysicalDevice phys_dev, VkInstance ins
 }
 
 VkInstance DeviceMemoryReport::GetVkInstance(VkPhysicalDevice phys_dev) {
+    if (phys_dev == VK_NULL_HANDLE) return VK_NULL_HANDLE;
     std::lock_guard<std::mutex> lock(map_mutex_);
     auto it = vk_instance_map_.find(phys_dev);
     if (it != vk_instance_map_.end()) return it->second;
+
+    struct LoaderPhysDevTramp {
+        void* disp;
+        void* this_instance;
+        uint64_t magic;
+        VkPhysicalDevice unwrapped_phys_dev;
+    };
+    const uint64_t kPhysTrampMagicNumber = 0x10ADED020210ADEDUL;
+    auto* tramp = reinterpret_cast<const LoaderPhysDevTramp*>(phys_dev);
+    if (tramp && tramp->magic == kPhysTrampMagicNumber) {
+        auto it_unwrapped = vk_instance_map_.find(tramp->unwrapped_phys_dev);
+        if (it_unwrapped != vk_instance_map_.end()) return it_unwrapped->second;
+    }
+
+    if (vk_instance_map_.size() == 1) {
+        return vk_instance_map_.begin()->second;
+    }
     return VK_NULL_HANDLE;
+}
+
+void DeviceMemoryReport::SetDeviceMemoryProperties(VkDevice device, const VkPhysicalDeviceMemoryProperties& props) {
+    std::lock_guard<std::mutex> lock(counter_mutex_);
+    device_memory_properties_map_[device] = props;
+}
+
+void DeviceMemoryReport::SetAllocationMemoryProperties(uint64_t memory_handle, VkMemoryPropertyFlags property_flags) {
+    std::lock_guard<std::mutex> lock(counter_mutex_);
+    auto& allocation = memory_allocations_[memory_handle];
+    allocation.mem_flags = property_flags;
+    if (allocation.total_size > 0) {
+        UpdateAllocationUnboundCounter(memory_handle);
+    }
+}
+
+void DeviceMemoryReport::OnDestroyDevice(VkDevice device) {
+    std::lock_guard<std::mutex> lock(counter_mutex_);
+    has_callback_map_.erase(device);
+    device_memory_properties_map_.erase(device);
 }
 
 void VKAPI_PTR DeviceMemoryReport::MemoryReportCallback(const VkDeviceMemoryReportCallbackDataEXT* pCallbackData, void* pUserData) {
@@ -118,22 +156,6 @@ const char* GetImageCluster(VkImageUsageFlags usage, VkMemoryPropertyFlags memFl
     return "general_image";
 }
 
-// Maps Vulkan image or buffer usage flags to a Perfetto memory track usage category name.
-static const char* GetUsageCategoryName(bool is_image, uint32_t usage_flags) {
-    if (is_image) {
-        if (usage_flags & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) return "depth_stencil_attachment";
-        if (usage_flags & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) return "color_attachment";
-        if (usage_flags & VK_IMAGE_USAGE_SAMPLED_BIT) return "texture";
-        if (usage_flags & (VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT)) return "transfer_image";
-        return "image";
-    }
-    if (usage_flags & VK_BUFFER_USAGE_VERTEX_BUFFER_BIT) return "vertex_buffer";
-    if (usage_flags & VK_BUFFER_USAGE_INDEX_BUFFER_BIT) return "index_buffer";
-    if (usage_flags & VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT) return "uniform_buffer";
-    if (usage_flags & (VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT)) return "staging_buffer";
-    return "buffer";
-}
-
 // Construct a Perfetto track name for visualizing memory usage by category in the UI.
 static std::string GetUsageTrackName(bool is_driver, std::string_view usage) {
     std::string track = is_driver ? "vulkan.mem.driver.usage." : "vulkan.mem.app.usage.";
@@ -144,13 +166,13 @@ static std::string GetUsageTrackName(bool is_driver, std::string_view usage) {
 void DeviceMemoryReport::AddCounterBytes(const std::string& track, uint64_t size) {
     uint64_t& bytes = usage_memory_bytes_[track];
     bytes += size;
-    TRACE_COUNTER("vulkan", GetCounterTrack(track.c_str()), bytes);
+    TRACE_COUNTER("vulkan", GetCounterTrack(track), bytes);
 }
 
 void DeviceMemoryReport::SubtractCounterBytes(const std::string& track, uint64_t size) {
     uint64_t& bytes = usage_memory_bytes_[track];
     bytes = (bytes >= size) ? (bytes - size) : 0;
-    TRACE_COUNTER("vulkan", GetCounterTrack(track.c_str()), bytes);
+    TRACE_COUNTER("vulkan", GetCounterTrack(track), bytes);
 }
 
 void DeviceMemoryReport::UpdateAllocationUnboundCounter(uint64_t memory_handle) {
@@ -193,8 +215,8 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(uint64_t memory_handle) 
     std::string track_name = "unbound_memory";
     auto res_it = resources_.find(allocation.object_handle);
     // If the memory object has an associated resource with a specific usage, use it as the track name.
-    if (res_it != resources_.end() && !res_it->second.usage.empty()) {
-        track_name = res_it->second.usage;
+    if (res_it != resources_.end()) {
+        track_name = res_it->second.GetCluster(allocation.mem_flags);
     }
     std::string new_unbound_track = GetUsageTrackName(allocation.is_driver, track_name);
 
@@ -236,27 +258,35 @@ void DeviceMemoryReport::RemoveResourceBinding(uint64_t resource_handle) {
     }
 }
 
-void DeviceMemoryReport::OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
+void DeviceMemoryReport::BindResourceMemory(uint64_t resource_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
-    auto res_it = resources_.find(buffer_handle);
-    if (res_it == resources_.end() || res_it->second.usage.empty() || res_it->second.size == 0) return;
+    auto res_it = resources_.find(resource_handle);
+    if (res_it == resources_.end() || res_it->second.size == 0) return;
 
     // If the same resource handle is passed more than once, remove stale bindings first.
-    RemoveResourceBinding(buffer_handle);
+    RemoveResourceBinding(resource_handle);
 
     auto& allocation = memory_allocations_[memory_handle];
     VkDeviceSize res_size = res_it->second.size;
-    std::string new_usage_track = GetUsageTrackName(allocation.is_driver, res_it->second.usage);
+    std::string new_usage_track = GetUsageTrackName(allocation.is_driver, res_it->second.GetCluster(allocation.mem_flags));
 
     // Suballocations represent individual resources (like buffers or images) that are bound 
     // to specific offset regions within a single large memory allocation. 
     // We add a record here to track this specific resource's footprint within the larger memory block.
-    allocation.sub_allocations.push_back({ buffer_handle, memory_offset, res_size, new_usage_track });
-    resource_to_memory_map_[buffer_handle] = memory_handle;
+    allocation.sub_allocations.push_back({ resource_handle, memory_offset, res_size, new_usage_track });
+    resource_to_memory_map_[resource_handle] = memory_handle;
 
     // Each distinct virtual resource handle adds its virtual size to its specific category track upon binding.
     AddCounterBytes(new_usage_track, res_size);
     UpdateAllocationUnboundCounter(memory_handle);
+}
+
+void DeviceMemoryReport::OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
+    BindResourceMemory(buffer_handle, memory_handle, memory_offset);
+}
+
+void DeviceMemoryReport::OnBindImageMemory(uint64_t image_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
+    BindResourceMemory(image_handle, memory_handle, memory_offset);
 }
 
 void DeviceMemoryReport::RemoveAllocationTracking(uint64_t memory_handle) {
@@ -274,10 +304,6 @@ void DeviceMemoryReport::RemoveAllocationTracking(uint64_t memory_handle) {
     memory_allocations_.erase(allocation_it);
 }
 
-void DeviceMemoryReport::OnBindImageMemory(uint64_t image_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
-    OnBindBufferMemory(image_handle, memory_handle, memory_offset);
-}
-
 void DeviceMemoryReport::OnRecordResourceSize(uint64_t resource_handle, VkDeviceSize size) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     resources_[resource_handle].size = size;
@@ -291,7 +317,9 @@ VkDeviceSize DeviceMemoryReport::GetRecordedResourceSize(uint64_t resource_handl
 
 void DeviceMemoryReport::OnCreateImage(uint64_t image_handle, VkImageUsageFlags usage) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
-    resources_[image_handle].usage = GetUsageCategoryName(true, usage);
+    auto& res = resources_[image_handle];
+    res.is_image = true;
+    res.image_usage = usage;
     for (const auto& pair : memory_allocations_) {
         if (pair.second.object_handle == image_handle) {
             UpdateAllocationUnboundCounter(pair.first);
@@ -301,7 +329,10 @@ void DeviceMemoryReport::OnCreateImage(uint64_t image_handle, VkImageUsageFlags 
 
 void DeviceMemoryReport::OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFlags usage, VkDeviceSize size) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
-    resources_[buffer_handle] = { GetUsageCategoryName(false, usage), size };
+    auto& res = resources_[buffer_handle];
+    res.is_image = false;
+    res.buffer_usage = usage;
+    res.size = size;
     for (const auto& pair : memory_allocations_) {
         if (pair.second.object_handle == buffer_handle) {
             UpdateAllocationUnboundCounter(pair.first);
@@ -340,14 +371,30 @@ void DeviceMemoryReport::SetHasMemoryReportCallback(VkDevice device, bool has_ca
     has_callback_map_[device] = has_callback;
 }
 
-void DeviceMemoryReport::OnAllocateMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize size) {
+void DeviceMemoryReport::OnAllocateMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize size, uint32_t memory_type_index, VkMemoryPropertyFlags property_flags) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
-    if (has_callback_map_[device]) return;
     uint64_t handle = reinterpret_cast<uint64_t>(memory);
     auto& allocation = memory_allocations_[handle];
-    allocation.total_size = size;
-    allocation.is_driver = false;
-    UpdateAllocationUnboundCounter(handle);
+
+    VkMemoryPropertyFlags mem_flags = property_flags;
+    if (mem_flags == 0 && memory_type_index != UINT32_MAX) {
+        auto prop_it = device_memory_properties_map_.find(device);
+        if (prop_it != device_memory_properties_map_.end() && memory_type_index < prop_it->second.memoryTypeCount) {
+            mem_flags = prop_it->second.memoryTypes[memory_type_index].propertyFlags;
+        }
+    }
+    bool mem_flags_changed = (allocation.mem_flags != mem_flags);
+    allocation.mem_flags = mem_flags;
+
+    if (has_callback_map_[device]) {
+        if (mem_flags_changed && allocation.total_size > 0) {
+            UpdateAllocationUnboundCounter(handle);
+        }
+    } else {
+        allocation.total_size = size;
+        allocation.is_driver = false;
+        UpdateAllocationUnboundCounter(handle);
+    }
 }
 
 void DeviceMemoryReport::OnFreeMemory(VkDevice device, VkDeviceMemory memory) {
