@@ -387,3 +387,28 @@ TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
     vkDestroyBuffer(device, buffer, nullptr);
     vkDestroyDevice(device, nullptr);
 }
+
+TEST_F(DeviceMemoryReportTests, StaticCounterTrackLookup) {
+    TEST_DESCRIPTION("Test static counter track lookup and dynamic fallback track creation");
+
+    perfetto::CounterTrack track_staging = GetCounterTrack("vulkan.mem.app.usage.staging_transfer");
+    EXPECT_EQ(track_staging.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+    EXPECT_NE(track_staging.uuid, 0u);
+
+    perfetto::CounterTrack track_storage = GetCounterTrack("vulkan.mem.app.usage.compute_storage");
+    EXPECT_EQ(track_storage.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+    EXPECT_NE(track_storage.uuid, 0u);
+
+    perfetto::CounterTrack track_unbound = GetCounterTrack("vulkan.mem.driver.usage.unbound_memory");
+    EXPECT_EQ(track_unbound.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+    EXPECT_NE(track_unbound.uuid, 0u);
+
+    perfetto::CounterTrack dynamic_track = GetCounterTrack("vulkan.mem.app.custom_track");
+    EXPECT_EQ(dynamic_track.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+    EXPECT_NE(dynamic_track.uuid, 0u);
+
+    // Re-query the dynamic track to ensure persistent registry returns consistent track
+    perfetto::CounterTrack dynamic_track_again = GetCounterTrack("vulkan.mem.app.custom_track");
+    EXPECT_EQ(dynamic_track.uuid, dynamic_track_again.uuid);
+    EXPECT_EQ(dynamic_track_again.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
+}

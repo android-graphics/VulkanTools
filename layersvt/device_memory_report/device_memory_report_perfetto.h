@@ -17,6 +17,7 @@
 #define LAYERSVT_DEVICE_MEMORY_REPORT_PERFETTO_H
 
 #include "perfetto/perfetto.h"
+#include <string_view>
 
 // Define categories used for Perfetto tracing in DeviceMemoryReport layer.
 PERFETTO_DEFINE_CATEGORIES(
@@ -24,6 +25,6 @@ PERFETTO_DEFINE_CATEGORIES(
 );
 
 void InitializeDeviceMemoryReportPerfetto();
-perfetto::CounterTrack GetCounterTrack(const char* name);
+perfetto::CounterTrack GetCounterTrack(std::string_view name);
 
 #endif // LAYERSVT_DEVICE_MEMORY_REPORT_PERFETTO_H
