@@ -79,7 +79,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
         initInstanceTable(*pInstance, fpGetInstanceProcAddr);
 
         // Eagerly enumerate physical devices and map them to the instance.
-        // This ensures we have the mapping even if the app bypasses our enumeration hooks.
         PFN_vkEnumeratePhysicalDevices fpEnumeratePhysicalDevices = (PFN_vkEnumeratePhysicalDevices)fpGetInstanceProcAddr(*pInstance, "vkEnumeratePhysicalDevices");
         if (fpEnumeratePhysicalDevices) {
             uint32_t count = 0;
@@ -263,63 +262,6 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
     return util_GetLayerProperties(ARRAY_SIZE(layerProperties), layerProperties, pPropertyCount, pProperties);
 }
 
-EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice,
-                                                                                    const char* pLayerName,
-                                                                                    uint32_t* pPropertyCount,
-                                                                                    VkExtensionProperties* pProperties) {
-    static const VkExtensionProperties deviceExtensions[] = {
-        {VK_EXT_DEVICE_MEMORY_REPORT_EXTENSION_NAME, VK_EXT_DEVICE_MEMORY_REPORT_SPEC_VERSION},
-    };
-
-    if (pLayerName != nullptr && strcmp(pLayerName, LAYER_NAME) == 0) {
-        return util_GetExtensionProperties(ARRAY_SIZE(deviceExtensions), deviceExtensions, pPropertyCount, pProperties);
-    }
-
-    if (physicalDevice == nullptr) {
-        return VK_SUCCESS;
-    }
-
-    // Manually append device extension.  This should not be necessary, but the Android Vulkan
-    // loader does not expose extensions from implicit layer.
-    if (pProperties == nullptr) {
-        VkResult res = instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-        if (res == VK_SUCCESS) {
-            (*pPropertyCount) += ARRAY_SIZE(deviceExtensions);
-        }
-        return res;
-    }
-    
-    if (*pPropertyCount > 0) {
-        uint32_t requestedCount = *pPropertyCount;
-        VkResult res = instance_dispatch_table(physicalDevice)->EnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties);
-        if (res == VK_SUCCESS) {
-            uint32_t originalCount = *pPropertyCount;
-            uint32_t additionalCount = 0;
-            
-            for (uint32_t i = 0; i < ARRAY_SIZE(deviceExtensions); ++i) {
-                bool found = false;
-                for (uint32_t j = 0; j < originalCount; ++j) {
-                    if (strcmp(pProperties[j].extensionName, deviceExtensions[i].extensionName) == 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    if (originalCount + additionalCount < requestedCount) {
-                        pProperties[originalCount + additionalCount] = deviceExtensions[i];
-                    }
-                    additionalCount++;
-                }
-            }
-            *pPropertyCount = originalCount + additionalCount;
-            if (*pPropertyCount > requestedCount) {
-                *pPropertyCount = requestedCount;
-            }
-        }
-        return res;
-    }
-    return VK_SUCCESS;
-}
 
 // Intercept memory binding to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
