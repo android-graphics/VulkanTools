@@ -388,6 +388,74 @@ TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
     vkDestroyDevice(device, nullptr);
 }
 
+TEST_F(DeviceMemoryReportTests, ClusterClassificationFunctions) {
+    TEST_DESCRIPTION("Test cluster classification for buffer and image usages with memory properties");
+
+    // Buffer clusters
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "staging_transfer");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT), "staging_transfer");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "staging_transfer");
+    // Staging without host-visible property falls through to general_buffer
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 0), "general_buffer");
+    // Host-visible functional buffers should NOT be misclassified as staging
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "geometry_mesh");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "geometry_mesh");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "uniform_constants");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "uniform_constants");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "compute_storage");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "compute_storage");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT), "indirect_gpu_driven");
+
+    // Ray tracing
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR, 0), "ray_tracing");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR, 0), "ray_tracing");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR, 0), "ray_tracing");
+
+    // Indirect GPU driven
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT, 0), "indirect_gpu_driven");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT, 0), "indirect_gpu_driven");
+
+    // Compute storage
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 0), "compute_storage");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT, 0), "compute_storage");
+
+    // Uniform constants
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 0), "uniform_constants");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, 0), "uniform_constants");
+
+    // Geometry mesh
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 0), "geometry_mesh");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 0), "geometry_mesh");
+
+    // Transform feedback
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT, 0), "transform_feedback");
+    EXPECT_STREQ(GetBufferCluster(VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT, 0), "transform_feedback");
+
+    // General buffer
+    EXPECT_STREQ(GetBufferCluster(0, 0), "general_buffer");
+
+    // Image clusters
+    // Transient memoryless
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT, 0), "transient_memoryless");
+    EXPECT_STREQ(GetImageCluster(0, VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT), "transient_memoryless");
+
+    // Storage compute image
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_STORAGE_BIT, 0), "storage_compute_image");
+
+    // Depth stencil target
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 0), "depth_stencil_target");
+
+    // Color render target
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 0), "color_render_target");
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, 0), "color_render_target");
+
+    // Static texture
+    EXPECT_STREQ(GetImageCluster(VK_IMAGE_USAGE_SAMPLED_BIT, 0), "static_texture");
+
+    // General image
+    EXPECT_STREQ(GetImageCluster(0, 0), "general_image");
+}
+
 TEST_F(DeviceMemoryReportTests, StaticCounterTrackLookup) {
     TEST_DESCRIPTION("Test static counter track lookup and dynamic fallback track creation");
 

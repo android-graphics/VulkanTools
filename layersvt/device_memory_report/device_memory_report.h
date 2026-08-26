@@ -26,6 +26,22 @@
 #endif
 
 /**
+ * @brief Categorizes buffer usage flags and memory property flags into a cluster category name.
+ * @param usage The Vulkan buffer usage flags.
+ * @param memFlags The physical memory property flags.
+ * @return The name of the cluster category for buffer memory tracking.
+ */
+const char* GetBufferCluster(VkBufferUsageFlags usage, VkMemoryPropertyFlags memFlags = 0);
+
+/**
+ * @brief Categorizes image usage flags and memory property flags into a cluster category name.
+ * @param usage The Vulkan image usage flags.
+ * @param memFlags The physical memory property flags.
+ * @return The name of the cluster category for image memory tracking.
+ */
+const char* GetImageCluster(VkImageUsageFlags usage, VkMemoryPropertyFlags memFlags = 0);
+
+/**
  * The DeviceMemoryReport class is responsible for tracking Vulkan device memory
  * allocations and object associations, sending live memory usage counters to Perfetto traces.
  *

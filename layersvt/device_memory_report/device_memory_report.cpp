@@ -42,6 +42,82 @@ void VKAPI_PTR DeviceMemoryReport::MemoryReportCallback(const VkDeviceMemoryRepo
     DeviceMemoryReport::Get().OnMemoryReportEvent(pCallbackData);
 }
 
+const char* GetBufferCluster(VkBufferUsageFlags usage, VkMemoryPropertyFlags memFlags) {
+    const VkBufferUsageFlags kFunctionalBufferUsageFlags =
+        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+        VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
+        VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+        VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT |
+        VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT |
+        VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT |
+        VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+        VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR |
+        VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR |
+        VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT |
+        VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT |
+        VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT;
+
+    // 1. Host staging: Must be host-visible and not a primary GPU functional buffer
+    if ((memFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) &&
+        (usage & (VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT)) &&
+        !(usage & kFunctionalBufferUsageFlags)) {
+        return "staging_transfer";
+    }
+    // 2. Ray tracing acceleration structures & shader binding tables
+    if (usage & (VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+                 VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR |
+                 VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR)) {
+        return "ray_tracing";
+    }
+    // 3. Indirect draw / dispatch commands & conditional rendering
+    if (usage & (VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_CONDITIONAL_RENDERING_BIT_EXT)) {
+        return "indirect_gpu_driven";
+    }
+    // 4. Compute storage buffers (SSBOs & Storage Texel Buffers)
+    if (usage & (VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT)) {
+        return "compute_storage";
+    }
+    // 5. Uniform buffers & uniform texel buffers
+    if (usage & (VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT)) {
+        return "uniform_constants";
+    }
+    // 6. Geometry & mesh data (Vertex + Index)
+    if (usage & (VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT)) {
+        return "geometry_mesh";
+    }
+    // 7. Transform feedback stream-out
+    if (usage & (VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT | VK_BUFFER_USAGE_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT)) {
+        return "transform_feedback";
+    }
+    return "general_buffer";
+}
+
+const char* GetImageCluster(VkImageUsageFlags usage, VkMemoryPropertyFlags memFlags) {
+    // 1. Mobile TBDR on-chip tile memoryless attachments
+    if ((usage & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) || 
+        (memFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)) {
+        return "transient_memoryless";
+    }
+    // 2. Compute storage write targets (UAVs)
+    if (usage & VK_IMAGE_USAGE_STORAGE_BIT) {
+        return "storage_compute_image";
+    }
+    // 3. Depth / stencil render targets
+    if (usage & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) {
+        return "depth_stencil_target";
+    }
+    // 4. Color render targets
+    if (usage & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) {
+        return "color_render_target";
+    }
+    // 5. Sampled textures
+    if (usage & VK_IMAGE_USAGE_SAMPLED_BIT) {
+        return "static_texture";
+    }
+    return "general_image";
+}
+
 // Maps Vulkan image or buffer usage flags to a Perfetto memory track usage category name.
 static const char* GetUsageCategoryName(bool is_image, uint32_t usage_flags) {
     if (is_image) {
