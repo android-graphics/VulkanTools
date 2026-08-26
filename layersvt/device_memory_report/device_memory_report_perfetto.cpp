@@ -18,14 +18,13 @@
 PERFETTO_TRACK_EVENT_STATIC_STORAGE();
 
 void InitializeDeviceMemoryReportPerfetto() {
-    static bool initialized = false;
-    if (initialized) return;
-    initialized = true;
-
-    perfetto::TracingInitArgs args;
-    args.backends = perfetto::kSystemBackend;
-    perfetto::Tracing::Initialize(args);
-    perfetto::TrackEvent::Register();
+    static std::once_flag init_flag;
+    std::call_once(init_flag, []() {
+        perfetto::TracingInitArgs args;
+        args.backends = perfetto::kSystemBackend;
+        perfetto::Tracing::Initialize(args);
+        perfetto::TrackEvent::Register();
+    });
 }
 
 perfetto::CounterTrack GetCounterTrack(const char* name) {

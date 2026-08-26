@@ -56,13 +56,11 @@
 #define LAYER_NAME "VK_LAYER_GOOGLE_DeviceMemoryReport"
 #define LAYER_DESCRIPTION "Vulkan Device Memory Report Layer"
 
-static std::once_flag g_perfetto_init_flag;
-
 extern "C" {
 
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator,
                                                 VkInstance* pInstance) {
-    std::call_once(g_perfetto_init_flag, []() { InitializeDeviceMemoryReportPerfetto(); });
+    InitializeDeviceMemoryReportPerfetto();
 
     // Get the function pointer
     VkLayerInstanceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
@@ -135,7 +133,7 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, const VkAlloca
 
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
-    std::call_once(g_perfetto_init_flag, []() { InitializeDeviceMemoryReportPerfetto(); });
+    InitializeDeviceMemoryReportPerfetto();
 
     // Get the function pointer
     VkLayerDeviceCreateInfo* chain_info = get_chain_info(pCreateInfo, VK_LAYER_LINK_INFO);
