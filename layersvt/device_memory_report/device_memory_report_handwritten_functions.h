@@ -28,7 +28,7 @@
 // the VK_LAYER_GOOGLE_DeviceMemoryReport layer:
 //
 // Core infrastructure & lifecycle:
-// - vkCreateInstance: Initializes Perfetto tracing, the instance dispatch table, and performs eager physical device enumeration.
+// - vkCreateInstance: Initializes Perfetto tracing and the instance dispatch table.
 // - vkEnumeratePhysicalDevices / vkEnumeratePhysicalDeviceGroups: Tracks the mapping
 //   between physical devices and instances to support dispatch table lookups.
 // - vkCreateDevice / vkDestroyDevice: Initializes/destroys device dispatch tables and
@@ -77,20 +77,6 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateInstance(const VkInstanceCreateInfo* pCre
     VkResult result = fpCreateInstance(pCreateInfo, pAllocator, pInstance);
     if (result == VK_SUCCESS) {
         initInstanceTable(*pInstance, fpGetInstanceProcAddr);
-
-        // Eagerly enumerate physical devices and map them to the instance.
-        PFN_vkEnumeratePhysicalDevices fpEnumeratePhysicalDevices = (PFN_vkEnumeratePhysicalDevices)fpGetInstanceProcAddr(*pInstance, "vkEnumeratePhysicalDevices");
-        if (fpEnumeratePhysicalDevices) {
-            uint32_t count = 0;
-            fpEnumeratePhysicalDevices(*pInstance, &count, nullptr);
-            if (count > 0) {
-                std::vector<VkPhysicalDevice> devices(count);
-                fpEnumeratePhysicalDevices(*pInstance, &count, devices.data());
-                for (uint32_t i = 0; i < count; ++i) {
-                    DeviceMemoryReport::Get().SetVkInstance(devices[i], *pInstance);
-                }
-            }
-        }
     }
 
     return result;

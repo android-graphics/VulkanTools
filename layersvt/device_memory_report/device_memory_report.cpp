@@ -37,25 +37,6 @@ VkInstance DeviceMemoryReport::GetVkInstance(VkPhysicalDevice phys_dev) {
     auto it = vk_instance_map_.find(phys_dev);
     if (it != vk_instance_map_.end()) return it->second;
 
-    // In Vulkan, physical device handles may be passed to layers either as unwrapped ICD handles
-    // or wrapped in a loader trampoline object (struct loader_phys_dev_tramp in loader.h).
-    // When physical devices are enumerated during instance creation, the handles stored in
-    // vk_instance_map_ may be the unwrapped handles. If vkCreateDevice later receives a loader
-    // trampoline handle, we inspect the trampoline structure to safely extract the underlying
-    // unwrapped VkPhysicalDevice handle.
-    struct LoaderPhysDevTramp {
-        void* disp;
-        void* this_instance;
-        uint64_t magic;  // LOADER_PHYS_DEV_TRAMP_MAGIC
-        VkPhysicalDevice unwrapped_phys_dev;
-    };
-    const uint64_t kPhysTrampMagicNumber = 0x10ADED020210ADEDUL;  // "LOADED" in hex speak
-    auto* tramp = reinterpret_cast<const LoaderPhysDevTramp*>(phys_dev);
-    if (tramp && tramp->magic == kPhysTrampMagicNumber) {
-        auto it_unwrapped = vk_instance_map_.find(tramp->unwrapped_phys_dev);
-        if (it_unwrapped != vk_instance_map_.end()) return it_unwrapped->second;
-    }
-
     // Fallback: If only a single VkInstance exists in the process, any valid physical device
     // must belong to that instance.
     if (vk_instance_map_.size() == 1) {

@@ -44,8 +44,8 @@ TEST_F(DeviceMemoryReportTests, InitLayer) {
     inst_builder.Reset();
 }
 
-TEST_F(DeviceMemoryReportTests, EagerPhysicalDeviceEnumeration) {
-    TEST_DESCRIPTION("Test eager physical device mapping on instance creation");
+TEST_F(DeviceMemoryReportTests, PhysicalDeviceEnumeration) {
+    TEST_DESCRIPTION("Test physical device to instance mapping");
 
     layer_test::VulkanInstanceBuilder inst_builder;
     VkResult err = inst_builder.Init(kLayerName);
@@ -54,11 +54,9 @@ TEST_F(DeviceMemoryReportTests, EagerPhysicalDeviceEnumeration) {
     VkInstance instance = inst_builder.GetInstance();
     EXPECT_NE(instance, VK_NULL_HANDLE);
 
-    VkPhysicalDevice phys_dev = VK_NULL_HANDLE;
-    inst_builder.GetPhysicalDevice(&phys_dev);
-    if (phys_dev != VK_NULL_HANDLE) {
-        EXPECT_EQ(DeviceMemoryReport::Get().GetVkInstance(phys_dev), instance);
-    }
+    VkPhysicalDevice phys_dev = reinterpret_cast<VkPhysicalDevice>(0x1234);
+    DeviceMemoryReport::Get().SetVkInstance(phys_dev, instance);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetVkInstance(phys_dev), instance);
 
     inst_builder.Reset();
 }
