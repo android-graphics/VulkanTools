@@ -73,6 +73,14 @@ void DeviceMemoryReport::SetAllocationMemoryProperties(uint64_t memory_handle, V
     std::lock_guard<std::mutex> lock(counter_mutex_);
     auto& allocation = memory_allocations_[memory_handle];
     allocation.mem_flags = property_flags;
+    // An allocation with total_size > 0 represents an active physical memory allocation that
+    // has already been recorded and contributed to Perfetto counter tracks.
+    // Changing its memory property flags (e.g., HOST_VISIBLE or LAZILY_ALLOCATED) can alter
+    // how its unbound memory headroom is classified into usage categories (such as staging
+    // vs general buffer or transient memoryless). We must update the unbound counter to move
+    // the reported bytes from the old usage track to the newly classified track.
+    // If total_size == 0, the allocation has not yet been instantiated (or is being configured
+    // prior to allocation), so no counter bytes have been emitted to Perfetto yet.
     if (allocation.total_size > 0) {
         UpdateAllocationUnboundCounter(memory_handle);
     }
