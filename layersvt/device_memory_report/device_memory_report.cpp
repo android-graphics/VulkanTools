@@ -166,13 +166,13 @@ static std::string GetUsageTrackName(bool is_driver, std::string_view usage) {
 void DeviceMemoryReport::AddCounterBytes(const std::string& track, uint64_t size) {
     uint64_t& bytes = usage_memory_bytes_[track];
     bytes += size;
-    TRACE_COUNTER("vulkan", GetCounterTrack(track), bytes);
+    TRACE_COUNTER("VulkanDeviceMemoryReport", GetCounterTrack(track), bytes);
 }
 
 void DeviceMemoryReport::SubtractCounterBytes(const std::string& track, uint64_t size) {
     uint64_t& bytes = usage_memory_bytes_[track];
     bytes = (bytes >= size) ? (bytes - size) : 0;
-    TRACE_COUNTER("vulkan", GetCounterTrack(track), bytes);
+    TRACE_COUNTER("VulkanDeviceMemoryReport", GetCounterTrack(track), bytes);
 }
 
 void DeviceMemoryReport::UpdateAllocationUnboundCounter(uint64_t memory_handle) {

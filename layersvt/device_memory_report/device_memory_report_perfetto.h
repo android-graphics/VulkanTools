@@ -21,7 +21,7 @@
 
 // Define categories used for Perfetto tracing in DeviceMemoryReport layer.
 PERFETTO_DEFINE_CATEGORIES(
-    perfetto::Category("vulkan").SetDescription("Vulkan Device Memory Report Counters")
+    perfetto::Category("VulkanDeviceMemoryReport").SetDescription("Vulkan Device Memory Report Counters")
 );
 
 void InitializeDeviceMemoryReportPerfetto();
