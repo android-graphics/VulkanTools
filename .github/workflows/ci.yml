@@ -57,7 +57,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.3'
+        version: '6.9.3'
     - name: Clone repository
       uses: actions/checkout@v6
     - run: sudo apt-get -qq update && sudo apt-get install -y libwayland-dev xorg-dev
@@ -74,7 +74,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.8.2'
+          version: '6.9.3'
       - run: cmake -S . -B build -D UPDATE_DEPS=ON -D BUILD_TESTS=ON -D RUN_ON_GITHUB=ON -D CMAKE_BUILD_TYPE=Debug -G Ninja
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build --timeout 10
@@ -107,7 +107,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.8.2'
+          version: '6.9.3'
       - uses: lukka/get-cmake@latest
       - name: Configure
         run: |
