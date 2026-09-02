@@ -13,6 +13,17 @@
  * limitations under the License.
  */
 
-#include "debug_marker.h"
+#pragma once
 
-DEFINE_VK_LAYER_ENTRYPOINTS(DebugMarker)
+namespace layersvt {
+
+/**
+ * @brief Ensures the layer shared library is pinned with RTLD_NODELETE on Android.
+ *
+ * Calling this explicitly guarantees that the dynamic linker does not unload the
+ * layer shared object when dlclose is called, preventing crashes during teardown.
+ * On non-Android platforms, this is a no-op.
+ */
+void EnsureLayerKeepAlive();
+
+}  // namespace layersvt
