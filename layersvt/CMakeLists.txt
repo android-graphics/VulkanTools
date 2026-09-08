@@ -119,7 +119,7 @@ if(BUILD_SCREENSHOT)
         vk_layer_table.cpp
         vk_layer_table.h
         screenshot/screenshot_layer.md
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         screenshot/json/VkLayer_screenshot.json.in
     )
 endif()
@@ -139,7 +139,7 @@ if(BUILD_CPUTIMING)
         ../scripts/generators/cputiming_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         cpu_timing/VkLayer_CPUTiming.json.in
     )
 
@@ -181,7 +181,7 @@ if(BUILD_DEBUGMARKER)
         perfetto/perfetto.cc
         vk_layer_table.cpp
         vk_layer_table.h
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         debug_marker/VkLayer_DebugMarker.json.in
     )
 
@@ -217,7 +217,7 @@ if(BUILD_DEVICEMEMORYREPORT)
         perfetto/perfetto.cc
         vk_layer_table.cpp
         vk_layer_table.h
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         device_memory_report/VkLayer_DeviceMemoryReport.json.in
     )
 
