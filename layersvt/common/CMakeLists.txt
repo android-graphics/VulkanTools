@@ -13,6 +13,8 @@
 # limitations under the License.
 
 add_library(layersvt_common OBJECT
+    device_instance_tracker.h
+    device_instance_tracker.cpp
     dispatch_table_manager.h
     dispatch_table_manager.cpp
 )

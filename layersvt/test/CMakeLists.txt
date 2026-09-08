@@ -63,6 +63,7 @@ foreach(test_item ${LAYER_TEST_FILES})
 endforeach()
 
 add_executable(test_common_layer
+    common/test_device_instance_tracker.cpp
     common/test_dispatch_table_manager.cpp
     layer_test_main.cpp
 )
