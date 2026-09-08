@@ -23,11 +23,11 @@ namespace layersvt {
 
 class LayerBaseTestPeer {
    public:
-    static PFN_vkVoidFunction GetKnownInstanceCommand(const char* name) {
-        return LayerBase::GetKnownInstanceCommand(name);
+    static PFN_vkVoidFunction GetKnownInstanceCommand(const char* command_name) {
+        return LayerBase::GetKnownInstanceCommand(command_name);
     }
-    static PFN_vkVoidFunction GetKnownDeviceCommand(const char* name) {
-        return LayerBase::GetKnownDeviceCommand(name);
+    static PFN_vkVoidFunction GetKnownDeviceCommand(const char* command_name) {
+        return LayerBase::GetKnownDeviceCommand(command_name);
     }
 
     static VkResult EnumeratePhysicalDevices(VkInstance instance, uint32_t* physical_device_count,
@@ -48,6 +48,40 @@ class LayerBaseTestPeer {
         LayerBase::DestroyDevice(device, allocator);
     }
 
+    static VkResult EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
+                                                         VkExtensionProperties* properties) {
+        return LayerBase::EnumerateInstanceExtensionProperties(layer_name, property_count, properties);
+    }
+    static VkResult EnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties) {
+        return LayerBase::EnumerateInstanceLayerProperties(property_count, properties);
+    }
+    static VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
+                                                   VkLayerProperties* properties) {
+        return LayerBase::EnumerateDeviceLayerProperties(physical_device, property_count, properties);
+    }
+    static VkResult EnumerateDeviceExtensionProperties(
+        VkPhysicalDevice physical_device, const char* layer_name, uint32_t* property_count,
+        VkExtensionProperties* properties,
+        PFN_vkEnumerateDeviceExtensionProperties downstream_function = nullptr) {
+        if (downstream_function != nullptr) {
+            return LayerBase::EnumerateDeviceExtensionPropertiesWithDownstream(
+                physical_device, layer_name, property_count, properties, downstream_function);
+        }
+        return LayerBase::EnumerateDeviceExtensionProperties(
+            physical_device, layer_name, property_count, properties);
+    }
+    static VkResult GetPhysicalDeviceToolProperties(
+        VkPhysicalDevice physical_device, uint32_t* tool_count,
+        VkPhysicalDeviceToolPropertiesEXT* tool_properties,
+        PFN_vkGetPhysicalDeviceToolPropertiesEXT downstream_function = nullptr) {
+        if (downstream_function != nullptr) {
+            return LayerBase::GetPhysicalDeviceToolPropertiesWithDownstream(
+                physical_device, tool_count, tool_properties, downstream_function);
+        }
+        return LayerBase::GetPhysicalDeviceToolProperties(
+            physical_device, tool_count, tool_properties);
+    }
+
     static DeviceInstanceTracker& GetDeviceTracker(LayerBase& layer) { return layer.GetDeviceTracker(); }
     static const DeviceInstanceTracker& GetDeviceTracker(const LayerBase& layer) { return layer.GetDeviceTracker(); }
 
@@ -65,11 +99,11 @@ class LayerBaseTestPeer {
 
     static VkuDeviceDispatchTable* GetDeviceDispatchTable(const void* object) { return LayerBase::GetDeviceDispatchTable(object); }
 
-    static PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* name) {
-        return LayerBase::GetInstanceProcAddr(instance, name);
+    static PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* command_name) {
+        return LayerBase::GetInstanceProcAddr(instance, command_name);
     }
-    static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* name) {
-        return LayerBase::GetDeviceProcAddr(device, name);
+    static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* command_name) {
+        return LayerBase::GetDeviceProcAddr(device, command_name);
     }
 
     static VkResult CreateInstance(const VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator,
