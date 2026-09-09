@@ -166,6 +166,43 @@ void LayerBase::DestroyInstance(VkInstance instance, const VkAllocationCallbacks
     layer->dispatch_table_manager_.DestroyInstanceTable(key);
 }
 
+VkResult LayerBase::EnumeratePhysicalDevices(VkInstance instance, uint32_t* physical_device_count,
+                                             VkPhysicalDevice* physical_devices) {
+    VkResult result = DispatchDownstreamOr<&VkuInstanceDispatchTable::EnumeratePhysicalDevices>(
+        VK_ERROR_INITIALIZATION_FAILED, instance, physical_device_count, physical_devices);
+    if ((result == VK_SUCCESS || result == VK_INCOMPLETE) && physical_device_count != nullptr &&
+        physical_devices != nullptr) {
+        LayerBase* layer = Get();
+        for (uint32_t i = 0; i < *physical_device_count; ++i) {
+            layer->device_tracker_.SetVkInstance(physical_devices[i], instance);
+        }
+    }
+    return result;
+}
+
+VkResult LayerBase::EnumeratePhysicalDeviceGroups(VkInstance instance, uint32_t* physical_device_group_count,
+                                                  VkPhysicalDeviceGroupProperties* physical_device_group_properties) {
+    VkResult result = DispatchDownstreamOr<&VkuInstanceDispatchTable::EnumeratePhysicalDeviceGroups>(
+        [&] {
+            return DispatchDownstreamOr<&VkuInstanceDispatchTable::EnumeratePhysicalDeviceGroupsKHR>(
+                VK_ERROR_INITIALIZATION_FAILED, instance, physical_device_group_count,
+                physical_device_group_properties);
+        },
+        instance, physical_device_group_count, physical_device_group_properties);
+    if ((result == VK_SUCCESS || result == VK_INCOMPLETE) && physical_device_group_count != nullptr &&
+        physical_device_group_properties != nullptr) {
+        LayerBase* layer = Get();
+        for (uint32_t i = 0; i < *physical_device_group_count; ++i) {
+            assert(physical_device_group_properties[i].physicalDeviceCount <= VK_MAX_DEVICE_GROUP_SIZE);
+            const uint32_t device_count = physical_device_group_properties[i].physicalDeviceCount;
+            for (uint32_t j = 0; j < device_count; ++j) {
+                layer->device_tracker_.SetVkInstance(physical_device_group_properties[i].physicalDevices[j], instance);
+            }
+        }
+    }
+    return result;
+}
+
 VkResult LayerBase::CreateDevice(VkPhysicalDevice physical_device, const VkDeviceCreateInfo* create_info,
                                  const VkAllocationCallbacks* allocator, VkDevice* device) {
     if (physical_device == VK_NULL_HANDLE || !create_info || !device) {
@@ -252,6 +289,10 @@ PFN_vkVoidFunction LayerBase::GetKnownInstanceCommand(const char* command_name) 
     if (std::strcmp(command_name, "vkGetInstanceProcAddr") == 0) return reinterpret_cast<PFN_vkVoidFunction>(GetInstanceProcAddr);
     if (std::strcmp(command_name, "vkCreateInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(CreateInstance);
     if (std::strcmp(command_name, "vkDestroyInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(DestroyInstance);
+    if (std::strcmp(command_name, "vkEnumeratePhysicalDevices") == 0) return reinterpret_cast<PFN_vkVoidFunction>(EnumeratePhysicalDevices);
+    if (std::strcmp(command_name, "vkEnumeratePhysicalDeviceGroups") == 0 ||
+        std::strcmp(command_name, "vkEnumeratePhysicalDeviceGroupsKHR") == 0)
+        return reinterpret_cast<PFN_vkVoidFunction>(EnumeratePhysicalDeviceGroups);
     if (std::strcmp(command_name, "vkCreateDevice") == 0) return reinterpret_cast<PFN_vkVoidFunction>(CreateDevice);
     return nullptr;
 }
