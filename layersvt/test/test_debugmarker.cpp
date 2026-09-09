@@ -34,6 +34,9 @@ class LayerBaseTestPeer {
     static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* name) {
         return LayerBase::GetDeviceProcAddr(device, name);
     }
+    static void DestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator) {
+        LayerBase::DestroyDevice(device, allocator);
+    }
     static VkResult EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
                                                          VkExtensionProperties* properties) {
         return LayerBase::EnumerateInstanceExtensionProperties(layer_name, property_count, properties);
@@ -165,6 +168,33 @@ TEST_F(DebugMarkerTests, LayerBaseLifecycleAndTrackerTest) {
 
     layer_test::ResetLayer<DebugMarker>();
     EXPECT_EQ(layersvt::LayerBaseTestPeer::GetDeviceTracker(DebugMarker::Get()).GetVkInstance(mock_physical_device), VK_NULL_HANDLE);
+}
+
+TEST_F(DebugMarkerTests, PreDestroyDeviceCleanupTest) {
+    TEST_DESCRIPTION("Verify that DestroyDevice cleans up tracked objects associated with that device");
+
+    layer_test::ResetLayer<DebugMarker>();
+
+    void* mock_dev1_vtable = reinterpret_cast<void*>(0x1000);
+    VkDevice dev1 = reinterpret_cast<VkDevice>(&mock_dev1_vtable);
+    void* mock_dev2_vtable = reinterpret_cast<void*>(0x2000);
+    VkDevice dev2 = reinterpret_cast<VkDevice>(&mock_dev2_vtable);
+
+    DebugMarker::Get().SetDebugObjectName((uint64_t)dev1, VK_OBJECT_TYPE_BUFFER, 0x1111, "Buffer1");
+    DebugMarker::Get().SetDebugObjectName((uint64_t)dev2, VK_OBJECT_TYPE_BUFFER, 0x2222, "Buffer2");
+
+    EXPECT_TRUE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_BUFFER, 0x1111, "Buffer1"));
+    EXPECT_TRUE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_BUFFER, 0x2222, "Buffer2"));
+
+    // Destroy dev1 - should remove Buffer1 but keep Buffer2
+    layersvt::LayerBaseTestPeer::DestroyDevice(dev1, nullptr);
+
+    EXPECT_FALSE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_BUFFER, 0x1111, "Buffer1"));
+    EXPECT_TRUE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_BUFFER, 0x2222, "Buffer2"));
+
+    // Destroy dev2 - should remove Buffer2
+    layersvt::LayerBaseTestPeer::DestroyDevice(dev2, nullptr);
+    EXPECT_FALSE(DebugMarker::Get().HasDebugObjectName(VK_OBJECT_TYPE_BUFFER, 0x2222, "Buffer2"));
 }
 
 TEST_F(DebugMarkerTests, TemplateMethodDispatchTest) {
