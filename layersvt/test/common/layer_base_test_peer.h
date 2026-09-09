@@ -30,6 +30,15 @@ class LayerBaseTestPeer {
         return LayerBase::GetKnownDeviceCommand(name);
     }
 
+    static VkResult CreateDevice(VkPhysicalDevice physical_device, const VkDeviceCreateInfo* create_info,
+                                 const VkAllocationCallbacks* allocator, VkDevice* device) {
+        return LayerBase::CreateDevice(physical_device, create_info, allocator, device);
+    }
+
+    static void DestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator) {
+        LayerBase::DestroyDevice(device, allocator);
+    }
+
     static DeviceInstanceTracker& GetDeviceTracker(LayerBase& layer) { return layer.GetDeviceTracker(); }
     static const DeviceInstanceTracker& GetDeviceTracker(const LayerBase& layer) { return layer.GetDeviceTracker(); }
 
@@ -52,6 +61,15 @@ class LayerBaseTestPeer {
     }
     static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* name) {
         return LayerBase::GetDeviceProcAddr(device, name);
+    }
+
+    static VkResult CreateInstance(const VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator,
+                                   VkInstance* instance) {
+        return LayerBase::CreateInstance(create_info, allocator, instance);
+    }
+
+    static void DestroyInstance(VkInstance instance, const VkAllocationCallbacks* allocator) {
+        LayerBase::DestroyInstance(instance, allocator);
     }
 };
 
