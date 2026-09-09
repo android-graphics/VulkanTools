@@ -17,6 +17,9 @@ add_library(layersvt_common OBJECT
     device_instance_tracker.cpp
     dispatch_table_manager.h
     dispatch_table_manager.cpp
+    layer_base.h
+    layer_base.cpp
+    dispatch_downstream.h
 )
 
 set_target_properties(layersvt_common PROPERTIES
