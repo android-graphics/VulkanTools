@@ -248,18 +248,18 @@ TEST_F(DeviceMemoryReportTests, UsageTypeBreakdown) {
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
 
     // Clean up objects
-    DeviceMemoryReport::Get().OnDestroyObject(color_img);
-    DeviceMemoryReport::Get().OnDestroyObject(depth_img);
-    DeviceMemoryReport::Get().OnDestroyObject(sampled_img);
-    DeviceMemoryReport::Get().OnDestroyObject(storage_img);
-    DeviceMemoryReport::Get().OnDestroyObject(transient_img);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, color_img);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, depth_img);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, sampled_img);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, storage_img);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, transient_img);
 
-    DeviceMemoryReport::Get().OnDestroyObject(vtx_buf);
-    DeviceMemoryReport::Get().OnDestroyObject(idx_buf);
-    DeviceMemoryReport::Get().OnDestroyObject(ubo_buf);
-    DeviceMemoryReport::Get().OnDestroyObject(staging_buf);
-    DeviceMemoryReport::Get().OnDestroyObject(storage_buf);
-    DeviceMemoryReport::Get().OnDestroyObject(indirect_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, vtx_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, idx_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, ubo_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, staging_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, storage_buf);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, indirect_buf);
 
     EXPECT_TRUE(true);
 }
@@ -315,7 +315,7 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     // - Interval [0, 4000) is removed. Remaining intervals: [2000, 6000) U [8000, 9500).
     // - Recalculated bound_size = 4,000 + 1,500 = 5,500 B.
     // - Updated unbound headroom: unbound_memory = 10,000 - 5,500 = 4,500 B.
-    DeviceMemoryReport::Get().OnDestroyObject(image_a);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, image_a);
 
     // Step 6: Free physical memory slab.
     // - All remaining sub-allocations on this slab are cleaned up and unbound counter is reset.
@@ -323,8 +323,8 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
 
     // Step 7: Clean up remaining virtual resource object handles.
-    DeviceMemoryReport::Get().OnDestroyObject(image_b);
-    DeviceMemoryReport::Get().OnDestroyObject(buffer_c);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, image_b);
+    DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, buffer_c);
 
     EXPECT_TRUE(true);
 }

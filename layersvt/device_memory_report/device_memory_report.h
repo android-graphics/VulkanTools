@@ -187,9 +187,10 @@ class DeviceMemoryReport {
 
     /**
      * @brief Handles destruction of a Vulkan object, cleaning up tracked usage state.
+     * @param object_type The type of the destroyed object.
      * @param object_handle The 64-bit handle of the destroyed Vulkan object.
      */
-    void OnDestroyObject(uint64_t object_handle);
+    void OnDestroyObject(VkObjectType object_type, uint64_t object_handle);
 
    private:
     /**
