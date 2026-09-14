@@ -422,6 +422,54 @@ TEST_F(DeviceMemoryReportTests, StaticCounterTrackLookup) {
     EXPECT_EQ(dynamic_track_again.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
 }
 
+TEST_F(DeviceMemoryReportTests, CounterTracksAreScopedToProcessTrack) {
+    TEST_DESCRIPTION(
+        "Test that counter tracks are parented to the process track, so Perfetto scopes them under the traced "
+        "application instead of emitting them as global tracks");
+
+    InitializeDeviceMemoryReportPerfetto();
+
+    // Perfetto only assigns a process uuid once tracing has been initialized. Tracks created before that (for
+    // example during static initialization) are permanently parented to the null/global track.
+    const uint64_t process_uuid = perfetto::ProcessTrack::Current().uuid;
+    ASSERT_NE(process_uuid, 0u) << "Perfetto tracing was not initialized";
+
+    const char* kTrackNames[] = {
+        "vulkan.mem.app.usage.color_render_target",
+        "vulkan.mem.app.usage.unbound_memory",
+        "vulkan.mem.driver.usage.static_texture",
+        "vulkan.mem.driver.usage.unbound_memory",
+        // A name that has never had a pre-registered track.
+        "vulkan.mem.app.usage.brand_new_category",
+    };
+
+    for (const char* name : kTrackNames) {
+        perfetto::CounterTrack track = GetCounterTrack(name);
+
+        EXPECT_NE(track.uuid, 0u) << "track " << name;
+        EXPECT_EQ(track.parent_uuid, process_uuid) << "track " << name << " is not scoped to the process track";
+
+        // The uuid must match what Perfetto derives for a process-scoped track of the same name.
+        EXPECT_EQ(track.uuid, perfetto::CounterTrack(perfetto::DynamicString(name)).uuid) << "track " << name;
+
+        const perfetto::protos::gen::TrackDescriptor descriptor = track.Serialize();
+        EXPECT_EQ(descriptor.uuid(), track.uuid) << "track " << name;
+        EXPECT_EQ(descriptor.parent_uuid(), process_uuid) << "track " << name;
+        EXPECT_EQ(descriptor.counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES)
+            << "track " << name;
+    }
+}
+
+TEST_F(DeviceMemoryReportTests, GetCounterTrackInitializesTracing) {
+    TEST_DESCRIPTION("Test that GetCounterTrack initializes Perfetto itself, so tracks always have process context");
+
+    // No explicit InitializeDeviceMemoryReportPerfetto() call here: GetCounterTrack must do it.
+    perfetto::CounterTrack track = GetCounterTrack("vulkan.mem.app.usage.general_image");
+
+    EXPECT_NE(perfetto::ProcessTrack::Current().uuid, 0u);
+    EXPECT_EQ(track.parent_uuid, perfetto::ProcessTrack::Current().uuid);
+}
+
 TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
     TEST_DESCRIPTION("Test that the layer proactively queries memory requirements when creating images and buffers");
 
