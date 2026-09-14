@@ -30,7 +30,7 @@ static PFN_vkVoidFunction devmemreport_known_instance_functions(const char* pNam
     return nullptr;
 }
 
-static PFN_vkVoidFunction devmemreport_known_device_functions(const char* pName) {
+static PFN_vkVoidFunction devmemreport_known_core_device_functions(const char* pName) {
     if (strcmp(pName, "vkGetDeviceProcAddr") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetDeviceProcAddr);
     if (strcmp(pName, "vkCreateDevice") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateDevice);
     if (strcmp(pName, "vkDestroyDevice") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyDevice);
@@ -56,14 +56,26 @@ static PFN_vkVoidFunction devmemreport_known_device_functions(const char* pName)
     return nullptr;
 }
 
+static PFN_vkVoidFunction devmemreport_known_device_extension_functions(const char* pName) {
+    return nullptr;
+}
+
+static PFN_vkVoidFunction devmemreport_known_device_functions(const char* pName) {
+    PFN_vkVoidFunction func = devmemreport_known_core_device_functions(pName);
+    if (func) {
+        return func;
+    }
+    return devmemreport_known_device_extension_functions(pName);
+}
+
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* pName) {
     PFN_vkVoidFunction func = devmemreport_known_instance_functions(pName);
     if (func) {
         return func;
     }
     
-    // If it's a device function, we can also return it here if we want to support GIPA for device functions.
-    func = devmemreport_known_device_functions(pName);
+    // Core device functions can be returned directly from GIPA.
+    func = devmemreport_known_core_device_functions(pName);
     if (func) {
         return func;
     }
@@ -77,7 +89,18 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
         return nullptr;
     }
 
-    return table->GetInstanceProcAddr(instance, pName);
+    // For extension device commands, verify the underlying chain supports them before returning an interceptor.
+    PFN_vkVoidFunction down_func = table->GetInstanceProcAddr(instance, pName);
+    if (down_func == nullptr) {
+        return nullptr;
+    }
+
+    func = devmemreport_known_device_extension_functions(pName);
+    if (func) {
+        return func;
+    }
+
+    return down_func;
 }
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(VkDevice device, const char* pName) {
