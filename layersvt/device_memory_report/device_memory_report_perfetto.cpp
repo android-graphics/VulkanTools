@@ -48,6 +48,10 @@ void InitializeDeviceMemoryReportPerfetto() {
         perfetto::Tracing::Initialize(args);
         perfetto::TrackEvent::Register();
         perfetto::TrackEvent::AddSessionObserver(&g_session_observer);
+
+        if (TRACE_EVENT_CATEGORY_ENABLED("VulkanDeviceMemoryReport")) {
+            DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
+        }
     });
 }
 
