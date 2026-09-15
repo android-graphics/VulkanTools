@@ -260,7 +260,9 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
     if (!table || !table->BindBufferMemory) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    if (buffer != VK_NULL_HANDLE && DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer)) == 0) {
+    assert(buffer != VK_NULL_HANDLE);
+    assert(memory != VK_NULL_HANDLE);
+    if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer)) == 0) {
         if (table->GetBufferMemoryRequirements) {
             VkMemoryRequirements mem_reqs;
             table->GetBufferMemoryRequirements(device, buffer, &mem_reqs);
@@ -268,7 +270,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buff
         }
     }
     VkResult result = table->BindBufferMemory(device, buffer, memory, memoryOffset);
-    if (result == VK_SUCCESS && buffer != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
+    if (result == VK_SUCCESS) {
         DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(buffer), reinterpret_cast<uint64_t>(memory), memoryOffset);
     }
     return result;
@@ -278,7 +280,9 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buff
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
     if (!table || !table->BindImageMemory) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    if (image != VK_NULL_HANDLE && DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image)) == 0) {
+    assert(image != VK_NULL_HANDLE);
+    assert(memory != VK_NULL_HANDLE);
+    if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image)) == 0) {
         if (table->GetImageMemoryRequirements) {
             VkMemoryRequirements mem_reqs;
             table->GetImageMemoryRequirements(device, image, &mem_reqs);
@@ -286,7 +290,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image,
         }
     }
     VkResult result = table->BindImageMemory(device, image, memory, memoryOffset);
-    if (result == VK_SUCCESS && image != VK_NULL_HANDLE && memory != VK_NULL_HANDLE) {
+    if (result == VK_SUCCESS) {
         DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(image), reinterpret_cast<uint64_t>(memory), memoryOffset);
     }
     return result;
@@ -294,16 +298,16 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image,
 
 static void RecordBufferBindings(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
     for (uint32_t i = 0; i < bindInfoCount; ++i) {
-        if (pBindInfos[i].buffer != VK_NULL_HANDLE && pBindInfos[i].memory != VK_NULL_HANDLE) {
-            if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].buffer)) == 0) {
-                if (device_dispatch_table(device)->GetBufferMemoryRequirements) {
-                    VkMemoryRequirements mem_reqs;
-                    device_dispatch_table(device)->GetBufferMemoryRequirements(device, pBindInfos[i].buffer, &mem_reqs);
-                    DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), mem_reqs.size);
-                }
+        assert(pBindInfos[i].buffer != VK_NULL_HANDLE);
+        assert(pBindInfos[i].memory != VK_NULL_HANDLE);
+        if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].buffer)) == 0) {
+            if (device_dispatch_table(device)->GetBufferMemoryRequirements) {
+                VkMemoryRequirements mem_reqs;
+                device_dispatch_table(device)->GetBufferMemoryRequirements(device, pBindInfos[i].buffer, &mem_reqs);
+                DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), mem_reqs.size);
             }
-            DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
         }
+        DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
     }
 }
 
@@ -329,16 +333,16 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2KHR(VkDevice device, uint32_t 
 
 static void RecordImageBinds(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
     for (uint32_t i = 0; i < bindInfoCount; ++i) {
-        if (pBindInfos[i].image != VK_NULL_HANDLE && pBindInfos[i].memory != VK_NULL_HANDLE) {
-            if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image)) == 0) {
-                if (device_dispatch_table(device)->GetImageMemoryRequirements) {
-                    VkMemoryRequirements mem_reqs;
-                    device_dispatch_table(device)->GetImageMemoryRequirements(device, pBindInfos[i].image, &mem_reqs);
-                    DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image), mem_reqs.size);
-                }
+        assert(pBindInfos[i].image != VK_NULL_HANDLE);
+        assert(pBindInfos[i].memory != VK_NULL_HANDLE);
+        if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image)) == 0) {
+            if (device_dispatch_table(device)->GetImageMemoryRequirements) {
+                VkMemoryRequirements mem_reqs;
+                device_dispatch_table(device)->GetImageMemoryRequirements(device, pBindInfos[i].image, &mem_reqs);
+                DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image), mem_reqs.size);
             }
-            DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(pBindInfos[i].image), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
         }
+        DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(pBindInfos[i].image), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
     }
 }
 
