@@ -258,21 +258,13 @@ void DeviceMemoryReport::RemoveResourceBinding(uint64_t resource_handle) {
 void DeviceMemoryReport::BindResourceMemory(uint64_t resource_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     auto res_it = resources_.find(resource_handle);
-    if (res_it == resources_.end()) {
-        auto& new_res = resources_[resource_handle];
-        new_res.is_image = false;
-        res_it = resources_.find(resource_handle);
-    }
+    if (res_it == resources_.end() || res_it->second.size == 0) return;
 
     // If the same resource handle is passed more than once, remove stale bindings first.
     RemoveResourceBinding(resource_handle);
 
     auto& allocation = memory_allocations_[memory_handle];
     VkDeviceSize res_size = res_it->second.size;
-    if (res_size == 0 && allocation.total_size > 0) {
-        res_size = allocation.total_size;
-    }
-    if (res_size == 0) return;
     std::string new_usage_track = GetUsageTrackName(allocation.is_driver, res_it->second.GetCluster(allocation.mem_flags));
 
     // Suballocations represent individual resources (like buffers or images) that are bound 
@@ -324,6 +316,18 @@ uint64_t DeviceMemoryReport::GetUsageMemoryBytes(const std::string& track) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     auto it = usage_memory_bytes_.find(track);
     return it != usage_memory_bytes_.end() ? it->second : 0;
+}
+
+void DeviceMemoryReport::Reset() {
+    std::lock_guard<std::mutex> lock1(map_mutex_);
+    std::lock_guard<std::mutex> lock2(counter_mutex_);
+    vk_instance_map_.clear();
+    has_callback_map_.clear();
+    device_memory_properties_map_.clear();
+    resources_.clear();
+    resource_to_memory_map_.clear();
+    memory_allocations_.clear();
+    usage_memory_bytes_.clear();
 }
 
 void DeviceMemoryReport::OnCreateImage(uint64_t image_handle, VkImageUsageFlags usage) {
