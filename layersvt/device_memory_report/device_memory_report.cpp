@@ -448,7 +448,6 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         allocation.total_size = pCallbackData->size;
         allocation.is_driver = is_driver;
         allocation.object_handle = pCallbackData->objectHandle;
-        allocation.heap_index = pCallbackData->heapIndex;
         UpdateAllocationUnboundCounter(key);
         op_str = "CREATE";
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
@@ -511,7 +510,6 @@ void DeviceMemoryReport::OnAllocateMemory(VkDevice device, VkDeviceMemory memory
         allocation.total_size = size;
         allocation.is_driver = false;
         allocation.object_handle = handle;
-        allocation.heap_index = (memory_type_index != UINT32_MAX) ? memory_type_index : 0;
         UpdateAllocationUnboundCounter(handle);
 
         TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",

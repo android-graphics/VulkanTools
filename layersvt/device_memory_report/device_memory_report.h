@@ -219,7 +219,6 @@ class DeviceMemoryReport {
         std::vector<SubAllocation> sub_allocations;
         std::string unbound_usage_track;
         uint64_t object_handle = 0;
-        uint32_t heap_index = 0;
     };
 
     /**
