@@ -239,25 +239,25 @@ void DeviceMemoryReport::RemoveResourceBinding(uint64_t resource_handle) {
     uint64_t memory_handle = mem_it->second;
     resource_to_memory_map_.erase(mem_it);
 
-    auto res_it = resources_.find(resource_handle);
-    bool is_img = (res_it != resources_.end()) ? res_it->second.is_image : false;
-    VkDeviceSize sub_size = (res_it != resources_.end()) ? res_it->second.size : 0;
-    VkDeviceSize sub_offset = 0;
-    std::string cluster_name = "unbound_memory";
+    auto resource_iterator = resources_.find(resource_handle);
+    bool is_image = (resource_iterator != resources_.end()) ? resource_iterator->second.is_image : false;
+    VkDeviceSize suballocation_size = (resource_iterator != resources_.end()) ? resource_iterator->second.size : 0;
+    VkDeviceSize suballocation_offset = 0;
+    const char* cluster_name = "unbound_memory";
 
     auto allocation_it = memory_allocations_.find(memory_handle);
     if (allocation_it != memory_allocations_.end()) {
         auto& alloc = allocation_it->second;
-        if (res_it != resources_.end()) {
-            cluster_name = res_it->second.GetCluster(alloc.mem_flags);
+        if (resource_iterator != resources_.end()) {
+            cluster_name = resource_iterator->second.GetCluster(alloc.mem_flags);
         }
         auto& suballocations = alloc.sub_allocations;
         // Search by resource handle to identify which specific suballocation to remove,
         // since a single memory block can have multiple resources bound to it.
         for (auto it = suballocations.begin(); it != suballocations.end(); ++it) {
             if (it->resource_handle == resource_handle) {
-                sub_size = it->size;
-                sub_offset = it->offset;
+                suballocation_size = it->size;
+                suballocation_offset = it->offset;
                 SubtractCounterBytes(it->usage_track, it->size);
                 suballocations.erase(it);
                 break;
@@ -268,10 +268,10 @@ void DeviceMemoryReport::RemoveResourceBinding(uint64_t resource_handle) {
 
     TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
                         "operation", "DESTROY",
-                        "source", is_img ? "IMAGE" : "BUFFER",
+                        "source", is_image ? "IMAGE" : "BUFFER",
                         "memory_object_id", memory_handle,
-                        "size", static_cast<uint64_t>(sub_size),
-                        "offset", static_cast<uint64_t>(sub_offset),
+                        "size", static_cast<uint64_t>(suballocation_size),
+                        "offset", static_cast<uint64_t>(suballocation_offset),
                         "object_handle", resource_handle,
                         "memory_type", cluster_name);
 }
