@@ -186,7 +186,7 @@ class DeviceMemoryReport {
     void OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFlags usage, VkDeviceSize size);
 
     /**
-     * @brief Dumps the current state of counters and allocations to Perfetto.
+     * Dumps the current state of counters and allocations to Perfetto.
      * Invoked when a new Perfetto tracing session starts.
      */
     void DumpCurrentCountersAndAllocations();
