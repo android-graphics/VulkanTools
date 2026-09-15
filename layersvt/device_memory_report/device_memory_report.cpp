@@ -442,6 +442,7 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
 
     bool is_driver = (pCallbackData->flags & VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT) != 0;
     const char* op_str = nullptr;
+    VkMemoryPropertyFlags mem_flags = 0;
     if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT ||
         pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_IMPORT_EXT) {
         auto& allocation = memory_allocations_[key];
@@ -450,34 +451,38 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         allocation.object_handle = pCallbackData->objectHandle;
         UpdateAllocationUnboundCounter(key);
         op_str = "CREATE";
+        mem_flags = allocation.mem_flags;
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
                pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_UNIMPORT_EXT) {
+        auto alloc_it = memory_allocations_.find(key);
+        if (alloc_it != memory_allocations_.end()) {
+            mem_flags = alloc_it->second.mem_flags;
+        }
         RemoveAllocationTracking(key);
         op_str = "DESTROY";
     }
 
     if (op_str != nullptr) {
-        uint64_t mem_obj_id = (pCallbackData->objectType == VK_OBJECT_TYPE_DEVICE_MEMORY) ? pCallbackData->objectHandle : pCallbackData->memoryObjectId;
-        VkDeviceSize mem_size = pCallbackData->size;
-        uint64_t obj_handle = pCallbackData->objectHandle;
-        uint32_t heap_idx = pCallbackData->heapIndex;
+        uint64_t memory_object_id = key;
+        VkDeviceSize memory_size = pCallbackData->size;
+        uint64_t object_handle = pCallbackData->objectHandle;
 
-        const char* src_str = is_driver ? "DRIVER" : (pCallbackData->objectType == VK_OBJECT_TYPE_BUFFER ? "BUFFER" : (pCallbackData->objectType == VK_OBJECT_TYPE_IMAGE ? "IMAGE" : "DEVICE_MEMORY"));
-        std::string mem_type = "unbound_memory";
+        const char* source_name = is_driver ? "DRIVER" : "DEVICE_MEMORY";
+        const char* mem_type = "unbound_memory";
         if (is_driver) {
-            auto res_it = resources_.find(obj_handle);
+            auto res_it = resources_.find(object_handle);
             if (res_it != resources_.end()) {
-                mem_type = res_it->second.GetCluster(0);
+                mem_type = res_it->second.GetCluster(mem_flags);
             }
         }
 
         TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
                             "operation", op_str,
-                            "source", src_str,
-                            "memory_object_id", mem_obj_id,
-                            "size", static_cast<uint64_t>(mem_size),
+                            "source", source_name,
+                            "memory_object_id", memory_object_id,
+                            "size", static_cast<uint64_t>(memory_size),
                             "offset", static_cast<uint64_t>(0),
-                            "object_handle", obj_handle,
+                            "object_handle", object_handle,
                             "memory_type", mem_type);
     }
 }
