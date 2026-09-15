@@ -23,14 +23,22 @@
 
 PERFETTO_TRACK_EVENT_STATIC_STORAGE();
 
+namespace {
+
 class DeviceMemoryReportSessionObserver : public perfetto::TrackEventSessionObserver {
- public:
-  void OnStart(const perfetto::DataSourceBase::StartArgs&) override {
-      DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
-  }
+public:
+    ~DeviceMemoryReportSessionObserver() override {
+        perfetto::TrackEvent::RemoveSessionObserver(this);
+    }
+
+    void OnStart(const perfetto::DataSourceBase::StartArgs&) override {
+        DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
+    }
 };
 
-static DeviceMemoryReportSessionObserver g_session_observer;
+DeviceMemoryReportSessionObserver g_session_observer;
+
+}  // namespace
 
 void InitializeDeviceMemoryReportPerfetto() {
     static std::once_flag init_flag;
