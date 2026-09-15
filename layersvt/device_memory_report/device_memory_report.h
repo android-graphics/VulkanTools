@@ -198,6 +198,8 @@ class DeviceMemoryReport {
     void OnDestroyObject(uint64_t object_handle);
 
    private:
+    friend class DeviceMemoryReportTestPeer;
+
     /**
      * @brief Represents a sub-allocation of a Vulkan resource (buffer or image) bound within a physical memory allocation.
      */

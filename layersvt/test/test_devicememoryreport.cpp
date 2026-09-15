@@ -498,6 +498,27 @@ TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
     vkDestroyDevice(device, nullptr);
 }
 
+class DeviceMemoryReportTestPeer {
+public:
+    static size_t GetAllocationCount() {
+        return DeviceMemoryReport::Get().memory_allocations_.size();
+    }
+
+    static const DeviceMemoryReport::MemoryAllocation* FindAllocation(uint64_t memory_handle) {
+        auto it = DeviceMemoryReport::Get().memory_allocations_.find(memory_handle);
+        return (it != DeviceMemoryReport::Get().memory_allocations_.end()) ? &it->second : nullptr;
+    }
+
+    static const DeviceMemoryReport::Resource* FindResource(uint64_t resource_handle) {
+        auto it = DeviceMemoryReport::Get().resources_.find(resource_handle);
+        return (it != DeviceMemoryReport::Get().resources_.end()) ? &it->second : nullptr;
+    }
+
+    static size_t GetResourceCount() {
+        return DeviceMemoryReport::Get().resources_.size();
+    }
+};
+
 TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
     TEST_DESCRIPTION("Test DumpCurrentCountersAndAllocations state dump and instant event emissions when a trace session begins");
 
@@ -526,6 +547,12 @@ TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
     DeviceMemoryReport::Get().OnRecordResourceSize(image_handle, 4096);
     DeviceMemoryReport::Get().OnBindImageMemory(image_handle, mem_handle, 4096);
 
+    const auto* allocation = DeviceMemoryReportTestPeer::FindAllocation(mem_handle);
+    ASSERT_NE(allocation, nullptr);
+    EXPECT_EQ(allocation->total_size, 16384u);
+    EXPECT_EQ(allocation->sub_allocations.size(), 2u);
+    EXPECT_EQ(allocation->applied_unbound_bytes, 8192u);
+
     // Test dumping the current snapshot of counters, allocations, suballocations, and unbound memory
     DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
 
@@ -536,6 +563,9 @@ TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
     DeviceMemoryReport::Get().OnDestroyObject(buffer_handle);
     DeviceMemoryReport::Get().OnDestroyObject(image_handle);
 
-    EXPECT_TRUE(true);
+    // Verify post-destruction state
+    EXPECT_EQ(DeviceMemoryReportTestPeer::FindAllocation(mem_handle), nullptr);
+    EXPECT_EQ(DeviceMemoryReportTestPeer::FindResource(buffer_handle), nullptr);
+    EXPECT_EQ(DeviceMemoryReportTestPeer::FindResource(image_handle), nullptr);
 }
 
