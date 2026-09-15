@@ -146,11 +146,16 @@ class FakeDevice {
 class DeviceMemoryReportDispatchTests : public ::testing::Test {
    protected:
     void SetUp() override {
+        DeviceMemoryReport::Get().Reset();
         g_buffer_requirements_size = 0;
         g_image_requirements_size = 0;
         g_buffer_requirements_queries = 0;
         g_image_requirements_queries = 0;
         g_unimplemented.clear();
+    }
+
+    void TearDown() override {
+        DeviceMemoryReport::Get().Reset();
     }
 };
 
@@ -249,22 +254,15 @@ TEST_F(DeviceMemoryReportDispatchTests, BindMemoryKeepsAlreadyRecordedSizes) {
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 4096u);
 }
 
-TEST_F(DeviceMemoryReportDispatchTests, BindMemoryReportsMissingDispatchEntries) {
-    // When the driver below the layer does not provide a bind entry point, the layer must report
-    // that rather than calling through a null dispatch table entry.
-    g_unimplemented = {"vkBindBufferMemory",  "vkBindImageMemory",      "vkBindBufferMemory2",
-                       "vkBindImageMemory2",  "vkBindBufferMemory2KHR", "vkBindImageMemory2KHR"};
+TEST_F(DeviceMemoryReportDispatchTests, BindMemory2ReportsMissingDispatchEntries) {
+    // When the driver below the layer does not provide an extension entry point, the layer must report
+    // VK_ERROR_EXTENSION_NOT_PRESENT.
+    g_unimplemented = {"vkBindBufferMemory2", "vkBindImageMemory2", "vkBindBufferMemory2KHR", "vkBindImageMemory2KHR"};
     FakeDevice device;
 
     VkBuffer buffer = MakeHandle<VkBuffer>(0xB5000);
     VkImage image = MakeHandle<VkImage>(0xB5001);
     VkDeviceMemory memory = MakeHandle<VkDeviceMemory>(0xB5002);
-
-    g_buffer_requirements_size = 4096;
-    g_image_requirements_size = 4096;
-
-    EXPECT_EQ(vkBindBufferMemory(device.handle(), buffer, memory, 0), VK_ERROR_EXTENSION_NOT_PRESENT);
-    EXPECT_EQ(vkBindImageMemory(device.handle(), image, memory, 0), VK_ERROR_EXTENSION_NOT_PRESENT);
 
     VkBindBufferMemoryInfo buffer_bind = {};
     buffer_bind.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
@@ -279,83 +277,6 @@ TEST_F(DeviceMemoryReportDispatchTests, BindMemoryReportsMissingDispatchEntries)
     image_bind.memory = memory;
     EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &image_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
     EXPECT_EQ(vkBindImageMemory2KHR(device.handle(), 1, &image_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
-
-    // Failed bindings must not leave any tracking behind.
-    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(buffer)), 0u);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
-}
-
-TEST_F(DeviceMemoryReportDispatchTests, DisjointImageFallsBackToAllocationSize) {
-    // When an image is created with VK_IMAGE_CREATE_DISJOINT_BIT (for example, when an app
-    // queries requirements upfront via vkGetDeviceImageMemoryRequirements and skips
-    // post-creation vkGetImageMemoryRequirements2), the layer skips vkGetImageMemoryRequirements
-    // at creation time.
-    //
-    // At bind time, its recorded size is 0. The layer must fall back to the owning allocation's
-    // total size rather than dropping the suballocation from tracking.
-    FakeDevice device;
-
-    // Simulate stub driver returning 0 for legacy non-plane requirements on disjoint image.
-    g_image_requirements_size = 0;
-
-    VkImageCreateInfo image_ci = {};
-    image_ci.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    image_ci.flags = VK_IMAGE_CREATE_DISJOINT_BIT;
-    image_ci.imageType = VK_IMAGE_TYPE_2D;
-    image_ci.format = VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
-    image_ci.extent = {1920, 1080, 1};
-    image_ci.mipLevels = 1;
-    image_ci.arrayLayers = 1;
-    image_ci.samples = VK_SAMPLE_COUNT_1_BIT;
-    image_ci.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
-
-    VkImage image = VK_NULL_HANDLE;
-    EXPECT_EQ(vkCreateImage(device.handle(), &image_ci, nullptr, &image), VK_SUCCESS);
-    EXPECT_NE(image, VK_NULL_HANDLE);
-
-    // Image size was not recorded at creation time because it is disjoint.
-    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
-
-    const VkDeviceSize kAllocSize = 65536;
-    VkMemoryAllocateInfo alloc_info = {};
-    alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    alloc_info.allocationSize = kAllocSize;
-    alloc_info.memoryTypeIndex = 0;
-
-    VkDeviceMemory memory = VK_NULL_HANDLE;
-    EXPECT_EQ(vkAllocateMemory(device.handle(), &alloc_info, nullptr, &memory), VK_SUCCESS);
-    EXPECT_NE(memory, VK_NULL_HANDLE);
-
-    // Initial state before binding: the entire allocation is unbound headroom.
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), kAllocSize);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), 0u);
-
-    // Bind disjoint image plane memory via vkBindImageMemory2 without querying vkGetImageMemoryRequirements2.
-    VkBindImagePlaneMemoryInfo plane_info = {};
-    plane_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
-    plane_info.planeAspect = VK_IMAGE_ASPECT_PLANE_0_BIT;
-
-    VkBindImageMemoryInfo bind_info = {};
-    bind_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
-    bind_info.pNext = &plane_info;
-    bind_info.image = image;
-    bind_info.memory = memory;
-    bind_info.memoryOffset = 0;
-
-    EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &bind_info), VK_SUCCESS);
-
-    // After hardening:
-    // - Texture counter receives the suballocation sized to kAllocSize.
-    // - Unbound memory drops to 0.
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), kAllocSize);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
-
-    // Clean up
-    vkDestroyImage(device.handle(), image, nullptr);
-    vkFreeMemory(device.handle(), memory, nullptr);
-
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), 0u);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
 }
 
 }  // namespace

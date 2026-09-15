@@ -178,6 +178,11 @@ class DeviceMemoryReport {
     uint64_t GetUsageMemoryBytes(const std::string& track);
 
     /**
+     * @brief Resets all tracked internal state (for testing).
+     */
+    void Reset();
+
+    /**
      * @brief Tracks creation of a Vulkan image and its usage flags.
      * @param image_handle The 64-bit handle of the Vulkan image.
      * @param usage Usage flags for the created image.
