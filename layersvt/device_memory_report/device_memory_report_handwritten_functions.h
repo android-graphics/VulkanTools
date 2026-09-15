@@ -259,7 +259,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 // Intercept memory binding to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
-    if (!table || !table->BindBufferMemory) return VK_ERROR_EXTENSION_NOT_PRESENT;
+    assert(table != nullptr && table->BindBufferMemory != nullptr);
     assert(buffer != VK_NULL_HANDLE);
     assert(memory != VK_NULL_HANDLE);
     if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer)) == 0) {
@@ -279,7 +279,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buff
 // Intercept memory binding to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
-    if (!table || !table->BindImageMemory) return VK_ERROR_EXTENSION_NOT_PRESENT;
+    assert(table != nullptr && table->BindImageMemory != nullptr);
     assert(image != VK_NULL_HANDLE);
     assert(memory != VK_NULL_HANDLE);
     if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image)) == 0) {
@@ -336,7 +336,9 @@ static void RecordImageBinds(VkDevice device, uint32_t bindInfoCount, const VkBi
         assert(pBindInfos[i].image != VK_NULL_HANDLE);
         assert(pBindInfos[i].memory != VK_NULL_HANDLE);
         if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image)) == 0) {
-            if (device_dispatch_table(device)->GetImageMemoryRequirements) {
+            const auto* plane_info = reinterpret_cast<const VkBindImagePlaneMemoryInfo*>(pBindInfos[i].pNext);
+            bool is_plane_bind = (plane_info != nullptr && plane_info->sType == VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO);
+            if (!is_plane_bind && device_dispatch_table(device)->GetImageMemoryRequirements) {
                 VkMemoryRequirements mem_reqs;
                 device_dispatch_table(device)->GetImageMemoryRequirements(device, pBindInfos[i].image, &mem_reqs);
                 DeviceMemoryReport::Get().OnRecordResourceSize(reinterpret_cast<uint64_t>(pBindInfos[i].image), mem_reqs.size);
