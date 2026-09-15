@@ -46,6 +46,36 @@ int g_image_requirements_queries = 0;
 // what the layer sees when the driver (or an ICD without the relevant extension) lacks a command.
 std::set<std::string> g_unimplemented;
 
+template <typename HandleType>
+HandleType MakeHandle(uintptr_t value) {
+    return reinterpret_cast<HandleType>(value);
+}
+
+template <typename HandleType>
+uint64_t AsObjectHandle(HandleType handle) {
+    return reinterpret_cast<uint64_t>(handle);
+}
+
+uintptr_t g_next_handle = 0x10000;
+
+VKAPI_ATTR VkResult VKAPI_CALL StubCreateImage(VkDevice, const VkImageCreateInfo*, const VkAllocationCallbacks*, VkImage* pImage) {
+    if (pImage != nullptr) {
+        *pImage = MakeHandle<VkImage>(++g_next_handle);
+    }
+    return VK_SUCCESS;
+}
+
+VKAPI_ATTR void VKAPI_CALL StubDestroyImage(VkDevice, VkImage, const VkAllocationCallbacks*) {}
+
+VKAPI_ATTR VkResult VKAPI_CALL StubAllocateMemory(VkDevice, const VkMemoryAllocateInfo*, const VkAllocationCallbacks*, VkDeviceMemory* pMemory) {
+    if (pMemory != nullptr) {
+        *pMemory = MakeHandle<VkDeviceMemory>(++g_next_handle);
+    }
+    return VK_SUCCESS;
+}
+
+VKAPI_ATTR void VKAPI_CALL StubFreeMemory(VkDevice, VkDeviceMemory, const VkAllocationCallbacks*) {}
+
 VKAPI_ATTR VkResult VKAPI_CALL StubBindBufferMemory(VkDevice, VkBuffer, VkDeviceMemory, VkDeviceSize) { return VK_SUCCESS; }
 
 VKAPI_ATTR VkResult VKAPI_CALL StubBindImageMemory(VkDevice, VkImage, VkDeviceMemory, VkDeviceSize) { return VK_SUCCESS; }
@@ -73,6 +103,10 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL StubGetDeviceProcAddr(VkDevice, const c
     const std::string name(pName);
     if (g_unimplemented.count(name) != 0) return nullptr;
 
+    if (name == "vkCreateImage") return reinterpret_cast<PFN_vkVoidFunction>(StubCreateImage);
+    if (name == "vkDestroyImage") return reinterpret_cast<PFN_vkVoidFunction>(StubDestroyImage);
+    if (name == "vkAllocateMemory") return reinterpret_cast<PFN_vkVoidFunction>(StubAllocateMemory);
+    if (name == "vkFreeMemory") return reinterpret_cast<PFN_vkVoidFunction>(StubFreeMemory);
     if (name == "vkBindBufferMemory") return reinterpret_cast<PFN_vkVoidFunction>(StubBindBufferMemory);
     if (name == "vkBindImageMemory") return reinterpret_cast<PFN_vkVoidFunction>(StubBindImageMemory);
     if (name == "vkBindBufferMemory2" || name == "vkBindBufferMemory2KHR") {
@@ -108,16 +142,6 @@ class FakeDevice {
    private:
     void* dispatch_key_ = nullptr;
 };
-
-template <typename HandleType>
-HandleType MakeHandle(uintptr_t value) {
-    return reinterpret_cast<HandleType>(value);
-}
-
-template <typename HandleType>
-uint64_t AsObjectHandle(HandleType handle) {
-    return reinterpret_cast<uint64_t>(handle);
-}
 
 class DeviceMemoryReportDispatchTests : public ::testing::Test {
    protected:
@@ -259,6 +283,79 @@ TEST_F(DeviceMemoryReportDispatchTests, BindMemoryReportsMissingDispatchEntries)
     // Failed bindings must not leave any tracking behind.
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(buffer)), 0u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
+}
+
+TEST_F(DeviceMemoryReportDispatchTests, DisjointImageFallsBackToAllocationSize) {
+    // When an image is created with VK_IMAGE_CREATE_DISJOINT_BIT (for example, when an app
+    // queries requirements upfront via vkGetDeviceImageMemoryRequirements and skips
+    // post-creation vkGetImageMemoryRequirements2), the layer skips vkGetImageMemoryRequirements
+    // at creation time.
+    //
+    // At bind time, its recorded size is 0. The layer must fall back to the owning allocation's
+    // total size rather than dropping the suballocation from tracking.
+    FakeDevice device;
+
+    // Simulate stub driver returning 0 for legacy non-plane requirements on disjoint image.
+    g_image_requirements_size = 0;
+
+    VkImageCreateInfo image_ci = {};
+    image_ci.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    image_ci.flags = VK_IMAGE_CREATE_DISJOINT_BIT;
+    image_ci.imageType = VK_IMAGE_TYPE_2D;
+    image_ci.format = VK_FORMAT_G8_B8R8_2PLANE_420_UNORM;
+    image_ci.extent = {1920, 1080, 1};
+    image_ci.mipLevels = 1;
+    image_ci.arrayLayers = 1;
+    image_ci.samples = VK_SAMPLE_COUNT_1_BIT;
+    image_ci.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+
+    VkImage image = VK_NULL_HANDLE;
+    EXPECT_EQ(vkCreateImage(device.handle(), &image_ci, nullptr, &image), VK_SUCCESS);
+    EXPECT_NE(image, VK_NULL_HANDLE);
+
+    // Image size was not recorded at creation time because it is disjoint.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
+
+    const VkDeviceSize kAllocSize = 65536;
+    VkMemoryAllocateInfo alloc_info = {};
+    alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    alloc_info.allocationSize = kAllocSize;
+    alloc_info.memoryTypeIndex = 0;
+
+    VkDeviceMemory memory = VK_NULL_HANDLE;
+    EXPECT_EQ(vkAllocateMemory(device.handle(), &alloc_info, nullptr, &memory), VK_SUCCESS);
+    EXPECT_NE(memory, VK_NULL_HANDLE);
+
+    // Initial state before binding: the entire allocation is unbound headroom.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), kAllocSize);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), 0u);
+
+    // Bind disjoint image plane memory via vkBindImageMemory2 without querying vkGetImageMemoryRequirements2.
+    VkBindImagePlaneMemoryInfo plane_info = {};
+    plane_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+    plane_info.planeAspect = VK_IMAGE_ASPECT_PLANE_0_BIT;
+
+    VkBindImageMemoryInfo bind_info = {};
+    bind_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+    bind_info.pNext = &plane_info;
+    bind_info.image = image;
+    bind_info.memory = memory;
+    bind_info.memoryOffset = 0;
+
+    EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &bind_info), VK_SUCCESS);
+
+    // After hardening:
+    // - Texture counter receives the suballocation sized to kAllocSize.
+    // - Unbound memory drops to 0.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), kAllocSize);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
+
+    // Clean up
+    vkDestroyImage(device.handle(), image, nullptr);
+    vkFreeMemory(device.handle(), memory, nullptr);
+
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.static_texture"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageMemoryBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
 }
 
 }  // namespace

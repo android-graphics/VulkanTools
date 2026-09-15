@@ -320,6 +320,12 @@ VkDeviceSize DeviceMemoryReport::GetRecordedResourceSize(uint64_t resource_handl
     return it != resources_.end() ? it->second.size : 0;
 }
 
+uint64_t DeviceMemoryReport::GetUsageMemoryBytes(const std::string& track) {
+    std::lock_guard<std::mutex> lock(counter_mutex_);
+    auto it = usage_memory_bytes_.find(track);
+    return it != usage_memory_bytes_.end() ? it->second : 0;
+}
+
 void DeviceMemoryReport::OnCreateImage(uint64_t image_handle, VkImageUsageFlags usage) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     auto& res = resources_[image_handle];
