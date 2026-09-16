@@ -171,16 +171,16 @@ class DeviceMemoryReport {
     VkDeviceSize GetRecordedResourceSize(uint64_t resource_handle);
 
     /**
-     * @brief Retrieves the tracked memory bytes for a specific usage track (for testing).
-     * @param track The usage track name.
-     * @return Tracked memory usage in bytes, or 0 if not present.
-     */
-    uint64_t GetUsageMemoryBytes(const std::string& track);
-
-    /**
      * @brief Resets all tracked internal state (for testing).
      */
     void Reset();
+
+    /**
+     * @brief Retrieves the current total memory bytes recorded on a usage track (for testing).
+     * @param track The full usage track name (e.g. "vulkan.mem.app.usage.unbound_memory").
+     * @return Number of bytes currently recorded on the track, or 0 if the track has no counter.
+     */
+    uint64_t GetUsageCounterBytes(const std::string& track);
 
     /**
      * @brief Tracks creation of a Vulkan image and its usage flags.
@@ -221,6 +221,7 @@ class DeviceMemoryReport {
         VkDeviceSize total_size = 0;
         VkDeviceSize applied_unbound_bytes = 0;
         bool is_driver = false;
+        VkObjectType object_type = VK_OBJECT_TYPE_UNKNOWN;
         VkMemoryPropertyFlags mem_flags = 0;
         std::vector<SubAllocation> sub_allocations;
         std::string unbound_usage_track;
