@@ -482,9 +482,9 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
                pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_UNIMPORT_EXT) {
         auto allocation_iterator = memory_allocations_.find(key);
-        if (allocation_iterator != memory_allocations_.end()) {
-            memory_type = is_driver ? allocation_iterator->second.cluster_name : "unbound_memory";
-        }
+        if (allocation_iterator == memory_allocations_.end()) return;
+
+        memory_type = is_driver ? allocation_iterator->second.cluster_name : "unbound_memory";
         RemoveAllocationTracking(key);
         operation_name = "DESTROY";
     }
