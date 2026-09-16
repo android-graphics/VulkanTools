@@ -479,8 +479,34 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
 
     DeviceMemoryReport::Get().OnDestroyObject(shared_handle);
-}
 
+    // Case 3: Driver allocation arrives before OnCreateBuffer (tests re-attribution)
+    uint64_t buffer_handle = 0xF002;
+    VkDeviceMemoryReportCallbackDataEXT buffer_callback_data = {};
+    buffer_callback_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    buffer_callback_data.flags = VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT;
+    buffer_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    buffer_callback_data.memoryObjectId = 0x8003;
+    buffer_callback_data.size = 4096;
+    buffer_callback_data.objectType = VK_OBJECT_TYPE_BUFFER;
+    buffer_callback_data.objectHandle = buffer_handle;
+    DeviceMemoryReport::MemoryReportCallback(&buffer_callback_data, nullptr);
+
+    // Prior to OnCreateBuffer, the driver allocation is counted under unbound_memory
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 4096u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 0u);
+
+    // When the buffer is created, the allocation is re-attributed to the geometry_mesh cluster
+    DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 4096u);
+
+    // Clean up
+    buffer_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    DeviceMemoryReport::MemoryReportCallback(&buffer_callback_data, nullptr);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 0u);
+    DeviceMemoryReport::Get().OnDestroyObject(buffer_handle);
+}
 
 TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
     TEST_DESCRIPTION("Test that the layer proactively queries memory requirements when creating images and buffers");
