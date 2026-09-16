@@ -41,22 +41,22 @@ static PFN_vkVoidFunction devmemreport_known_core_device_functions(const char* p
     if (strcmp(pName, "vkBindImageMemory") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory);
     if (strcmp(pName, "vkBindBufferMemory2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory2);
     if (strcmp(pName, "vkBindImageMemory2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory2);
-    if (strcmp(pName, "vkBindBufferMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory2KHR);
-    if (strcmp(pName, "vkBindImageMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory2KHR);
     if (strcmp(pName, "vkCreateImage") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateImage);
     if (strcmp(pName, "vkDestroyImage") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyImage);
     if (strcmp(pName, "vkCreateBuffer") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateBuffer);
     if (strcmp(pName, "vkDestroyBuffer") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyBuffer);
     if (strcmp(pName, "vkGetImageMemoryRequirements") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements);
     if (strcmp(pName, "vkGetImageMemoryRequirements2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements2);
-    if (strcmp(pName, "vkGetImageMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements2KHR);
     if (strcmp(pName, "vkGetBufferMemoryRequirements") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements);
     if (strcmp(pName, "vkGetBufferMemoryRequirements2") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements2);
-    if (strcmp(pName, "vkGetBufferMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements2KHR);
     return nullptr;
 }
 
 static PFN_vkVoidFunction devmemreport_known_device_extension_functions(const char* pName) {
+    if (strcmp(pName, "vkBindBufferMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindBufferMemory2KHR);
+    if (strcmp(pName, "vkBindImageMemory2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkBindImageMemory2KHR);
+    if (strcmp(pName, "vkGetImageMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetImageMemoryRequirements2KHR);
+    if (strcmp(pName, "vkGetBufferMemoryRequirements2KHR") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetBufferMemoryRequirements2KHR);
     return nullptr;
 }
 
