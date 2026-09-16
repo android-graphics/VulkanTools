@@ -27,6 +27,12 @@ namespace {
 
 class DeviceMemoryReportSessionObserver : public perfetto::TrackEventSessionObserver {
 public:
+    DeviceMemoryReportSessionObserver() {
+        // Touch the singleton during observer construction so DeviceMemoryReport
+        // completes construction first and is destroyed after this observer unregisters.
+        (void)DeviceMemoryReport::Get();
+    }
+
     ~DeviceMemoryReportSessionObserver() override {
         perfetto::TrackEvent::RemoveSessionObserver(this);
     }
@@ -36,18 +42,17 @@ public:
     }
 };
 
-DeviceMemoryReportSessionObserver g_session_observer;
-
 }  // namespace
 
 void InitializeDeviceMemoryReportPerfetto() {
     static std::once_flag init_flag;
     std::call_once(init_flag, []() {
+        static DeviceMemoryReportSessionObserver session_observer;
         perfetto::TracingInitArgs args;
         args.backends = perfetto::kSystemBackend;
         perfetto::Tracing::Initialize(args);
         perfetto::TrackEvent::Register();
-        perfetto::TrackEvent::AddSessionObserver(&g_session_observer);
+        perfetto::TrackEvent::AddSessionObserver(&session_observer);
 
         if (TRACE_EVENT_CATEGORY_ENABLED("VulkanDeviceMemoryReport")) {
             DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
