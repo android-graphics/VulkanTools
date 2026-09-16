@@ -216,6 +216,7 @@ class DeviceMemoryReport {
         VkDeviceSize total_size = 0;
         VkDeviceSize applied_unbound_bytes = 0;
         bool is_driver = false;
+        VkObjectType object_type = VK_OBJECT_TYPE_UNKNOWN;
         VkMemoryPropertyFlags mem_flags = 0;
         std::vector<SubAllocation> sub_allocations;
         std::string unbound_usage_track;

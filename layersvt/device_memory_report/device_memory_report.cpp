@@ -210,7 +210,9 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(uint64_t memory_handle) 
     uint64_t new_unbound = (allocation.total_size > bound_size) ? (allocation.total_size - bound_size) : 0;
     
     std::string track_name = "unbound_memory";
-    if (allocation.is_driver) {
+    if (allocation.is_driver &&
+        (allocation.object_type == VK_OBJECT_TYPE_IMAGE ||
+         allocation.object_type == VK_OBJECT_TYPE_BUFFER)) {
         auto res_it = resources_.find(allocation.object_handle);
         // If the memory object has an associated resource with a specific usage, use it as the track name.
         if (res_it != resources_.end()) {
@@ -326,7 +328,7 @@ void DeviceMemoryReport::OnCreateImage(uint64_t image_handle, VkImageUsageFlags 
     res.is_image = true;
     res.image_usage = usage;
     for (const auto& pair : memory_allocations_) {
-        if (pair.second.is_driver && pair.second.object_handle == image_handle) {
+        if (pair.second.is_driver && pair.second.object_type == VK_OBJECT_TYPE_IMAGE && pair.second.object_handle == image_handle) {
             UpdateAllocationUnboundCounter(pair.first);
         }
     }
@@ -339,7 +341,7 @@ void DeviceMemoryReport::OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFla
     res.buffer_usage = usage;
     res.size = size;
     for (const auto& pair : memory_allocations_) {
-        if (pair.second.is_driver && pair.second.object_handle == buffer_handle) {
+        if (pair.second.is_driver && pair.second.object_type == VK_OBJECT_TYPE_BUFFER && pair.second.object_handle == buffer_handle) {
             UpdateAllocationUnboundCounter(pair.first);
         }
     }
@@ -363,6 +365,7 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         auto& allocation = memory_allocations_[key];
         allocation.total_size = pCallbackData->size;
         allocation.is_driver = (pCallbackData->flags & VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT) != 0;
+        allocation.object_type = pCallbackData->objectType;
         allocation.object_handle = pCallbackData->objectHandle;
         UpdateAllocationUnboundCounter(key);
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
