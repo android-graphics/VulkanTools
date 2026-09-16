@@ -423,51 +423,37 @@ void DeviceMemoryReport::DumpCurrentCountersAndAllocations() {
     }
 
     for (const auto& pair : memory_allocations_) {
-        uint64_t mem_handle = pair.first;
-        const auto& alloc = pair.second;
-        if (alloc.total_size == 0) continue;
+        uint64_t memory_handle = pair.first;
+        const auto& allocation = pair.second;
+        if (allocation.total_size == 0) continue;
 
-        std::string mem_type = "unbound_memory";
-        if (alloc.is_driver) {
-            auto res_it = resources_.find(alloc.object_handle);
-            if (res_it != resources_.end()) {
-                mem_type = res_it->second.GetCluster(alloc.mem_flags);
-            }
-        }
+        const char* memory_type = allocation.is_driver ? allocation.cluster_name : "unbound_memory";
+        EmitAllocationTraceEvent({
+            .operation = "CREATE",
+            .source = allocation.is_driver ? "DRIVER" : "DEVICE_MEMORY",
+            .memory_object_id = memory_handle,
+            .size = allocation.total_size,
+            .offset = 0,
+            .object_handle = allocation.object_handle,
+            .memory_type = memory_type,
+        });
 
-        TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                            "operation", "CREATE",
-                            "source", alloc.is_driver ? "DRIVER" : "DEVICE_MEMORY",
-                            "memory_object_id", mem_handle,
-                            "size", static_cast<uint64_t>(alloc.total_size),
-                            "offset", static_cast<uint64_t>(0),
-                            "object_handle", alloc.object_handle,
-                            "memory_type", mem_type);
+        for (const auto& suballocation : allocation.sub_allocations) {
+            auto resource_iterator = resources_.find(suballocation.resource_handle);
+            bool is_image = (resource_iterator != resources_.end()) ? resource_iterator->second.is_image : false;
+            const char* cluster_name = (resource_iterator != resources_.end())
+                                           ? resource_iterator->second.GetCluster(allocation.mem_flags)
+                                           : "unbound_memory";
 
-        for (const auto& sub : alloc.sub_allocations) {
-            auto res_it = resources_.find(sub.resource_handle);
-            bool is_img = (res_it != resources_.end()) ? res_it->second.is_image : false;
-            std::string cluster_name = (res_it != resources_.end()) ? res_it->second.GetCluster(alloc.mem_flags) : "unbound_memory";
-
-            TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                                "operation", "BIND",
-                                "source", is_img ? "IMAGE" : "BUFFER",
-                                "memory_object_id", mem_handle,
-                                "size", static_cast<uint64_t>(sub.size),
-                                "offset", static_cast<uint64_t>(sub.offset),
-                                "object_handle", sub.resource_handle,
-                                "memory_type", cluster_name);
-        }
-
-        if (alloc.applied_unbound_bytes > 0 && !alloc.sub_allocations.empty()) {
-            TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                                "operation", "BIND",
-                                "source", alloc.is_driver ? "DRIVER" : "DEVICE_MEMORY",
-                                "memory_object_id", mem_handle,
-                                "size", static_cast<uint64_t>(alloc.applied_unbound_bytes),
-                                "offset", static_cast<uint64_t>(0),
-                                "object_handle", mem_handle,
-                                "memory_type", "unbound_memory");
+            EmitAllocationTraceEvent({
+                .operation = "BIND",
+                .source = is_image ? "IMAGE" : "BUFFER",
+                .memory_object_id = memory_handle,
+                .size = suballocation.size,
+                .offset = suballocation.offset,
+                .object_handle = suballocation.resource_handle,
+                .memory_type = cluster_name,
+            });
         }
     }
 }
