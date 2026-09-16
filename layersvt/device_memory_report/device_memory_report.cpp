@@ -463,11 +463,13 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
     // For internal driver allocations, a single object (e.g. VkImage) might have multiple distinct memory allocations.
     // We must use memoryObjectId as the key so each allocation is tracked separately and can be individually freed.
     // For device memory allocations, objectHandle is the VkDeviceMemory handle, which we use as the key for compatibility.
-    uint64_t key = (pCallbackData->objectType == VK_OBJECT_TYPE_DEVICE_MEMORY) ? pCallbackData->objectHandle : pCallbackData->memoryObjectId;
-
     bool is_driver = (pCallbackData->flags & VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT) != 0;
-    const char* op_str = nullptr;
-    VkMemoryPropertyFlags mem_flags = 0;
+    uint64_t key = (!is_driver && pCallbackData->objectType == VK_OBJECT_TYPE_DEVICE_MEMORY)
+                       ? pCallbackData->objectHandle
+                       : pCallbackData->memoryObjectId;
+
+    const char* operation_name = nullptr;
+    const char* memory_type = "unbound_memory";
     if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT ||
         pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_IMPORT_EXT) {
         auto& allocation = memory_allocations_[key];
@@ -475,40 +477,28 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         allocation.is_driver = is_driver;
         allocation.object_handle = pCallbackData->objectHandle;
         UpdateAllocationUnboundCounter(key);
-        op_str = "CREATE";
-        mem_flags = allocation.mem_flags;
+        operation_name = "CREATE";
+        memory_type = is_driver ? allocation.cluster_name : "unbound_memory";
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
                pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_UNIMPORT_EXT) {
-        auto alloc_it = memory_allocations_.find(key);
-        if (alloc_it != memory_allocations_.end()) {
-            mem_flags = alloc_it->second.mem_flags;
+        auto allocation_iterator = memory_allocations_.find(key);
+        if (allocation_iterator != memory_allocations_.end()) {
+            memory_type = is_driver ? allocation_iterator->second.cluster_name : "unbound_memory";
         }
         RemoveAllocationTracking(key);
-        op_str = "DESTROY";
+        operation_name = "DESTROY";
     }
 
-    if (op_str != nullptr) {
-        uint64_t memory_object_id = key;
-        VkDeviceSize memory_size = pCallbackData->size;
-        uint64_t object_handle = pCallbackData->objectHandle;
-
-        const char* source_name = is_driver ? "DRIVER" : "DEVICE_MEMORY";
-        const char* mem_type = "unbound_memory";
-        if (is_driver) {
-            auto res_it = resources_.find(object_handle);
-            if (res_it != resources_.end()) {
-                mem_type = res_it->second.GetCluster(mem_flags);
-            }
-        }
-
-        TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                            "operation", op_str,
-                            "source", source_name,
-                            "memory_object_id", memory_object_id,
-                            "size", static_cast<uint64_t>(memory_size),
-                            "offset", static_cast<uint64_t>(0),
-                            "object_handle", object_handle,
-                            "memory_type", mem_type);
+    if (operation_name != nullptr) {
+        EmitAllocationTraceEvent({
+            .operation = operation_name,
+            .source = is_driver ? "DRIVER" : "DEVICE_MEMORY",
+            .memory_object_id = key,
+            .size = pCallbackData->size,
+            .offset = 0,
+            .object_handle = pCallbackData->objectHandle,
+            .memory_type = memory_type,
+        });
     }
 }
 
