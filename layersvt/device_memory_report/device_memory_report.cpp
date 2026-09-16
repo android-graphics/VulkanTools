@@ -209,13 +209,14 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(uint64_t memory_handle) 
 
     uint64_t new_unbound = (allocation.total_size > bound_size) ? (allocation.total_size - bound_size) : 0;
     
-    std::string track_name = "unbound_memory";
+    const char* cluster_name = "unbound_memory";
     auto res_it = resources_.find(allocation.object_handle);
     // If the memory object has an associated resource with a specific usage, use it as the track name.
     if (res_it != resources_.end()) {
-        track_name = res_it->second.GetCluster(allocation.mem_flags);
+        cluster_name = res_it->second.GetCluster(allocation.mem_flags);
     }
-    std::string new_unbound_track = GetUsageTrackName(allocation.is_driver, track_name);
+    allocation.cluster_name = cluster_name;
+    std::string new_unbound_track = GetUsageTrackName(allocation.is_driver, cluster_name);
 
     // If the unbound memory usage track name or the number of unbound bytes has changed,
     // update the global counters by subtracting the old bytes from the old track 

@@ -221,6 +221,7 @@ class DeviceMemoryReport {
         std::vector<SubAllocation> sub_allocations;
         std::string unbound_usage_track;
         uint64_t object_handle = 0;
+        const char* cluster_name = "unbound_memory";
     };
 
     /**
