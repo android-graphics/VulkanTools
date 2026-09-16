@@ -19,14 +19,18 @@
 
 extern "C" {
 
-static PFN_vkVoidFunction devmemreport_known_instance_functions(const char* pName) {
+static PFN_vkVoidFunction devmemreport_known_global_functions(const char* pName) {
     if (strcmp(pName, "vkGetInstanceProcAddr") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkGetInstanceProcAddr);
     if (strcmp(pName, "vkCreateInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkCreateInstance);
+    if (strcmp(pName, "vkEnumerateInstanceExtensionProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateInstanceExtensionProperties);
+    if (strcmp(pName, "vkEnumerateInstanceLayerProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateInstanceLayerProperties);
+    return nullptr;
+}
+
+static PFN_vkVoidFunction devmemreport_known_instance_functions(const char* pName) {
     if (strcmp(pName, "vkDestroyInstance") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkDestroyInstance);
     if (strcmp(pName, "vkEnumeratePhysicalDevices") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumeratePhysicalDevices);
     if (strcmp(pName, "vkEnumeratePhysicalDeviceGroups") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumeratePhysicalDeviceGroups);
-    if (strcmp(pName, "vkEnumerateInstanceExtensionProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateInstanceExtensionProperties);
-    if (strcmp(pName, "vkEnumerateInstanceLayerProperties") == 0) return reinterpret_cast<PFN_vkVoidFunction>(vkEnumerateInstanceLayerProperties);
     return nullptr;
 }
 
@@ -69,7 +73,16 @@ static PFN_vkVoidFunction devmemreport_known_device_functions(const char* pName)
 }
 
 EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(VkInstance instance, const char* pName) {
-    PFN_vkVoidFunction func = devmemreport_known_instance_functions(pName);
+    PFN_vkVoidFunction func = devmemreport_known_global_functions(pName);
+    if (func) {
+        return func;
+    }
+
+    if (instance == nullptr) {
+        return nullptr;
+    }
+
+    func = devmemreport_known_instance_functions(pName);
     if (func) {
         return func;
     }
@@ -78,10 +91,6 @@ EXPORT_FUNCTION VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(V
     func = devmemreport_known_core_device_functions(pName);
     if (func) {
         return func;
-    }
-
-    if (instance == nullptr) {
-        return nullptr;
     }
 
     auto table = instance_dispatch_table(instance);
