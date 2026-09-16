@@ -33,11 +33,10 @@ void InitializeDeviceMemoryReportPerfetto() {
 }
 
 perfetto::CounterTrack GetCounterTrack(std::string_view name) {
-    InitializeDeviceMemoryReportPerfetto();
-
     static std::mutex tracks_mutex;
-    static std::unordered_map<std::string_view, perfetto::CounterTrack> tracks;
+    // Declare track_names first so LIFO static destruction destroys tracks before the strings it views.
     static std::unordered_set<std::string> track_names;
+    static std::unordered_map<std::string_view, perfetto::CounterTrack> tracks;
     std::lock_guard<std::mutex> lock(tracks_mutex);
 
     auto it = tracks.find(name);
@@ -45,8 +44,12 @@ perfetto::CounterTrack GetCounterTrack(std::string_view name) {
         return it->second;
     }
 
-    auto name_it = track_names.insert(std::string(name)).first;
-    perfetto::CounterTrack track = perfetto::CounterTrack(perfetto::DynamicString(name_it->c_str()))
+    // CounterTrack captures ProcessTrack::Current().uuid at construction time; ensure tracing is
+    // initialized before constructing the first track so it isn't parented to the null/global track.
+    InitializeDeviceMemoryReportPerfetto();
+
+    auto name_it = track_names.emplace(name).first;
+    perfetto::CounterTrack track = perfetto::CounterTrack(perfetto::DynamicString(*name_it))
         .set_unit(perfetto::CounterTrack::Unit::UNIT_SIZE_BYTES);
     tracks.emplace(*name_it, track);
     return track;
