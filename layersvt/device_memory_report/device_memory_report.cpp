@@ -548,14 +548,19 @@ void DeviceMemoryReport::OnFreeMemory(VkDevice device, VkDeviceMemory memory) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     if (has_callback_map_[device]) return;
     uint64_t handle = reinterpret_cast<uint64_t>(memory);
+    auto allocation_iterator = memory_allocations_.find(handle);
+    if (allocation_iterator == memory_allocations_.end()) return;
+
+    VkDeviceSize freed_size = allocation_iterator->second.total_size;
     RemoveAllocationTracking(handle);
 
-    TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                        "operation", "DESTROY",
-                        "source", "DEVICE_MEMORY",
-                        "memory_object_id", handle,
-                        "size", static_cast<uint64_t>(0),
-                        "offset", static_cast<uint64_t>(0),
-                        "object_handle", handle,
-                        "memory_type", "unbound_memory");
+    EmitAllocationTraceEvent({
+        .operation = "DESTROY",
+        .source = "DEVICE_MEMORY",
+        .memory_object_id = handle,
+        .size = freed_size,
+        .offset = 0,
+        .object_handle = handle,
+        .memory_type = "unbound_memory",
+    });
 }
