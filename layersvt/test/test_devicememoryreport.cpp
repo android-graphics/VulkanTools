@@ -20,6 +20,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <gtest/gtest.h>
+#include <optional>
 
 static const char* kLayerName = "VK_LAYER_GOOGLE_DeviceMemoryReport";
 
@@ -500,22 +501,24 @@ TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
 
 class DeviceMemoryReportTestPeer {
 public:
-    static size_t GetAllocationCount() {
-        return DeviceMemoryReport::Get().memory_allocations_.size();
+    static std::optional<DeviceMemoryReport::MemoryAllocation> FindAllocation(uint64_t memory_handle) {
+        auto& report = DeviceMemoryReport::Get();
+        std::lock_guard<std::mutex> lock(report.counter_mutex_);
+        auto it = report.memory_allocations_.find(memory_handle);
+        if (it == report.memory_allocations_.end()) {
+            return std::nullopt;
+        }
+        return it->second;
     }
 
-    static const DeviceMemoryReport::MemoryAllocation* FindAllocation(uint64_t memory_handle) {
-        auto it = DeviceMemoryReport::Get().memory_allocations_.find(memory_handle);
-        return (it != DeviceMemoryReport::Get().memory_allocations_.end()) ? &it->second : nullptr;
-    }
-
-    static const DeviceMemoryReport::Resource* FindResource(uint64_t resource_handle) {
-        auto it = DeviceMemoryReport::Get().resources_.find(resource_handle);
-        return (it != DeviceMemoryReport::Get().resources_.end()) ? &it->second : nullptr;
-    }
-
-    static size_t GetResourceCount() {
-        return DeviceMemoryReport::Get().resources_.size();
+    static std::optional<DeviceMemoryReport::Resource> FindResource(uint64_t resource_handle) {
+        auto& report = DeviceMemoryReport::Get();
+        std::lock_guard<std::mutex> lock(report.counter_mutex_);
+        auto it = report.resources_.find(resource_handle);
+        if (it == report.resources_.end()) {
+            return std::nullopt;
+        }
+        return it->second;
     }
 };
 
@@ -524,48 +527,56 @@ TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
 
     InitializeDeviceMemoryReportPerfetto();
 
-    uint64_t mem_handle = 0xE001;
+    uint64_t memory_handle = 0xE001;
     uint64_t buffer_handle = 0xE101;
     uint64_t image_handle = 0xE102;
 
     // Allocate physical memory
-    VkDeviceMemoryReportCallbackDataEXT cb_data = {};
-    cb_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
-    cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
-    cb_data.memoryObjectId = 0x7000;
-    cb_data.size = 16384;
-    cb_data.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
-    cb_data.objectHandle = mem_handle;
-    DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    VkDeviceMemoryReportCallbackDataEXT callback_data = {};
+    callback_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    callback_data.memoryObjectId = 0x7000;
+    callback_data.size = 16384;
+    callback_data.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    callback_data.objectHandle = memory_handle;
+    DeviceMemoryReport::MemoryReportCallback(&callback_data, nullptr);
 
     // Bind a buffer and an image sub-allocation
     DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 4096);
     DeviceMemoryReport::Get().OnRecordResourceSize(buffer_handle, 4096);
-    DeviceMemoryReport::Get().OnBindBufferMemory(buffer_handle, mem_handle, 0);
+    DeviceMemoryReport::Get().OnBindBufferMemory(buffer_handle, memory_handle, 0);
 
     DeviceMemoryReport::Get().OnCreateImage(image_handle, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
     DeviceMemoryReport::Get().OnRecordResourceSize(image_handle, 4096);
-    DeviceMemoryReport::Get().OnBindImageMemory(image_handle, mem_handle, 4096);
+    DeviceMemoryReport::Get().OnBindImageMemory(image_handle, memory_handle, 4096);
 
-    const auto* allocation = DeviceMemoryReportTestPeer::FindAllocation(mem_handle);
-    ASSERT_NE(allocation, nullptr);
+    auto allocation = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
+    ASSERT_TRUE(allocation.has_value());
     EXPECT_EQ(allocation->total_size, 16384u);
     EXPECT_EQ(allocation->sub_allocations.size(), 2u);
     EXPECT_EQ(allocation->applied_unbound_bytes, 8192u);
 
-    // Test dumping the current snapshot of counters, allocations, suballocations, and unbound memory
+    // Test dumping the current snapshot of counters, allocations, and suballocations
     DeviceMemoryReport::Get().DumpCurrentCountersAndAllocations();
 
+    // Verify that dumping state is non-destructive and preserves allocation invariants
+    auto post_dump_allocation = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
+    ASSERT_TRUE(post_dump_allocation.has_value());
+    EXPECT_EQ(post_dump_allocation->total_size, 16384u);
+    EXPECT_EQ(post_dump_allocation->sub_allocations.size(), 2u);
+    EXPECT_EQ(post_dump_allocation->applied_unbound_bytes, 8192u);
+
     // Verify cleanup
-    cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
-    DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    DeviceMemoryReport::MemoryReportCallback(&callback_data, nullptr);
 
     DeviceMemoryReport::Get().OnDestroyObject(buffer_handle);
     DeviceMemoryReport::Get().OnDestroyObject(image_handle);
 
     // Verify post-destruction state
-    EXPECT_EQ(DeviceMemoryReportTestPeer::FindAllocation(mem_handle), nullptr);
-    EXPECT_EQ(DeviceMemoryReportTestPeer::FindResource(buffer_handle), nullptr);
-    EXPECT_EQ(DeviceMemoryReportTestPeer::FindResource(image_handle), nullptr);
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindAllocation(memory_handle).has_value());
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(buffer_handle).has_value());
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(image_handle).has_value());
 }
+
 
