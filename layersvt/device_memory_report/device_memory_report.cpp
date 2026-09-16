@@ -322,16 +322,17 @@ void DeviceMemoryReport::BindResourceMemory(uint64_t resource_handle, uint64_t m
     AddCounterBytes(new_usage_track, res_size);
     UpdateAllocationUnboundCounter(memory_handle);
 
-    bool is_img = res_it->second.is_image;
-    std::string cluster_name = res_it->second.GetCluster(allocation.mem_flags);
-    TRACE_EVENT_INSTANT("VulkanDeviceMemoryReport", "VulkanMemoryAllocation",
-                        "operation", "BIND",
-                        "source", is_img ? "IMAGE" : "BUFFER",
-                        "memory_object_id", memory_handle,
-                        "size", static_cast<uint64_t>(res_size),
-                        "offset", static_cast<uint64_t>(memory_offset),
-                        "object_handle", resource_handle,
-                        "memory_type", cluster_name);
+    bool is_image = res_it->second.is_image;
+    const char* cluster_name = res_it->second.GetCluster(allocation.mem_flags);
+    EmitAllocationTraceEvent({
+        .operation = "BIND",
+        .source = is_image ? "IMAGE" : "BUFFER",
+        .memory_object_id = memory_handle,
+        .size = res_size,
+        .offset = memory_offset,
+        .object_handle = resource_handle,
+        .memory_type = cluster_name,
+    });
 }
 
 void DeviceMemoryReport::OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
