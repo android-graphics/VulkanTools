@@ -463,11 +463,23 @@ TEST_F(DeviceMemoryReportTests, CounterTracksAreScopedToProcessTrack) {
 TEST_F(DeviceMemoryReportTests, GetCounterTrackInitializesTracing) {
     TEST_DESCRIPTION("Test that GetCounterTrack initializes Perfetto itself, so tracks always have process context");
 
-    // No explicit InitializeDeviceMemoryReportPerfetto() call here: GetCounterTrack must do it.
-    perfetto::CounterTrack track = GetCounterTrack("vulkan.mem.app.usage.general_image");
+    // Force fork+execve so the child starts with an uninitialized process_uuid rather than
+    // inheriting static state already initialized by earlier tests in this binary.
+    GTEST_FLAG_SET(death_test_style, "threadsafe");
 
-    EXPECT_NE(perfetto::ProcessTrack::Current().uuid, 0u);
-    EXPECT_EQ(track.parent_uuid, perfetto::ProcessTrack::Current().uuid);
+    EXPECT_EXIT(
+        {
+            if (perfetto::ProcessTrack::Current().uuid != 0u) {
+                exit(1);
+            }
+            perfetto::CounterTrack track = GetCounterTrack("vulkan.mem.app.usage.general_image");
+            const uint64_t process_uuid = perfetto::ProcessTrack::Current().uuid;
+            if (process_uuid == 0u || track.parent_uuid != process_uuid) {
+                exit(2);
+            }
+            exit(0);
+        },
+        ::testing::ExitedWithCode(0), "");
 }
 
 TEST_F(DeviceMemoryReportTests, ProactiveMemoryRequirementsQuery) {
