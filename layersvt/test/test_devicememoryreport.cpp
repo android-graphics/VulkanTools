@@ -439,43 +439,43 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     DeviceMemoryReport::Get().OnRecordResourceSize(shared_handle, 4096);
 
     // Case 1: Driver allocation where objectHandle is the virtual resource handle
-    VkDeviceMemoryReportCallbackDataEXT driver_cb = {};
-    driver_cb.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
-    driver_cb.flags = VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT; // Driver allocation
-    driver_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
-    driver_cb.memoryObjectId = 0x8001;
-    driver_cb.size = 4096;
-    driver_cb.objectType = VK_OBJECT_TYPE_IMAGE;
-    driver_cb.objectHandle = shared_handle;
-    DeviceMemoryReport::MemoryReportCallback(&driver_cb, nullptr);
+    VkDeviceMemoryReportCallbackDataEXT driver_callback_data = {};
+    driver_callback_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    driver_callback_data.flags = VK_DEVICE_MEMORY_REPORT_FLAG_INTERNAL_OBJECT_BIT_EXT; // Driver allocation
+    driver_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    driver_callback_data.memoryObjectId = 0x8001;
+    driver_callback_data.size = 4096;
+    driver_callback_data.objectType = VK_OBJECT_TYPE_IMAGE;
+    driver_callback_data.objectHandle = shared_handle;
+    DeviceMemoryReport::MemoryReportCallback(&driver_callback_data, nullptr);
 
     // Driver allocation with image handle should be attributed to the color_render_target track
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.color_render_target"), 4096u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
 
     // Clean up driver allocation
-    driver_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
-    DeviceMemoryReport::MemoryReportCallback(&driver_cb, nullptr);
+    driver_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    DeviceMemoryReport::MemoryReportCallback(&driver_callback_data, nullptr);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.color_render_target"), 0u);
 
     // Case 2: Application allocation where VkDeviceMemory handle happens to have the same integer value as shared_handle
-    VkDeviceMemoryReportCallbackDataEXT app_cb = {};
-    app_cb.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
-    app_cb.flags = 0; // Application allocation
-    app_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
-    app_cb.memoryObjectId = 0x8002;
-    app_cb.size = 8192;
-    app_cb.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
-    app_cb.objectHandle = shared_handle;
-    DeviceMemoryReport::MemoryReportCallback(&app_cb, nullptr);
+    VkDeviceMemoryReportCallbackDataEXT application_callback_data = {};
+    application_callback_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    application_callback_data.flags = 0; // Application allocation
+    application_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    application_callback_data.memoryObjectId = 0x8002;
+    application_callback_data.size = 8192;
+    application_callback_data.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    application_callback_data.objectHandle = shared_handle;
+    DeviceMemoryReport::MemoryReportCallback(&application_callback_data, nullptr);
 
     // Application allocation should be classified as unbound_memory, NOT color_render_target
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 8192u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.color_render_target"), 0u);
 
     // Clean up application allocation and resource
-    app_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
-    DeviceMemoryReport::MemoryReportCallback(&app_cb, nullptr);
+    application_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    DeviceMemoryReport::MemoryReportCallback(&application_callback_data, nullptr);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
 
     DeviceMemoryReport::Get().OnDestroyObject(shared_handle);
