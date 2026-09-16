@@ -20,12 +20,14 @@
 
 #include <gtest/gtest.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <array>
 #include <cmath>
 #include <cstdarg>
 #include <cstring>
+#include <memory>
 
 namespace layer_test {
 
@@ -75,4 +77,30 @@ class VulkanInstanceBuilder {
     std::vector<const char*> _extension_names;
 };
 
+namespace detail {
+inline void (*&GetActiveLayerDeleter())() {
+    static void (*active_layer_deleter)() = nullptr;
+    return active_layer_deleter;
+}
+}  // namespace detail
+
+/**
+ * Instantiates a pristine layer instance for test fixtures.
+ * Automatically registers the new object as the active singleton (LayerBase::Get()).
+ * Resets any previously active layer instance across template types before constructing.
+ * Pass destroy = true to tear down the active instance and restore LayerBase::Get() to nullptr.
+ */
+template <typename LayerClass>
+inline void ResetLayer(bool destroy = false) {
+    static std::unique_ptr<LayerClass> test_instance;
+    if (detail::GetActiveLayerDeleter() != nullptr) {
+        detail::GetActiveLayerDeleter()();
+        detail::GetActiveLayerDeleter() = nullptr;
+    }
+    test_instance.reset();
+    if (!destroy) {
+        test_instance = std::make_unique<LayerClass>();
+        detail::GetActiveLayerDeleter() = []() { test_instance.reset(); };
+    }
+}
 }  // namespace layer_test
