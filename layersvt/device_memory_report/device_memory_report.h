@@ -173,7 +173,7 @@ class DeviceMemoryReport {
     /**
      * @brief Retrieves the current total memory bytes recorded on a usage track (for testing).
      * @param track The full usage track name (e.g. "vulkan.mem.app.usage.unbound_memory").
-     * @return Number of bytes on the track.
+     * @return Number of bytes currently recorded on the track, or 0 if the track has no counter.
      */
     uint64_t GetUsageCounterBytes(const std::string& track);
 
