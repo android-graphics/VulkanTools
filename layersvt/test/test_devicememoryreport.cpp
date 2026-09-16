@@ -126,6 +126,7 @@ TEST_F(DeviceMemoryReportTests, EmitEventsAndSubCounters) {
     // Free the driver allocation
     cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
 
     // Test direct allocate/free fallbacks
     VkDevice dummy_device = reinterpret_cast<VkDevice>(0x1234);
