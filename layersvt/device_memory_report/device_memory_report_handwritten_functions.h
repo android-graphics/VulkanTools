@@ -348,7 +348,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreat
 // Intercept image destruction to clean up tracked handle state.
 VKAPI_ATTR void VKAPI_CALL vkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator) {
     if (image != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_IMAGE, reinterpret_cast<uint64_t>(image));
+        DeviceMemoryReport::Get().OnDestroyObject(reinterpret_cast<uint64_t>(image));
     }
     PFN_vkDestroyImage fpDestroyImage = (PFN_vkDestroyImage)device_dispatch_table(device)->DestroyImage;
     if (fpDestroyImage != NULL) {
@@ -377,7 +377,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCre
 // Intercept buffer destruction to clean up tracked handle state.
 VKAPI_ATTR void VKAPI_CALL vkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator) {
     if (buffer != VK_NULL_HANDLE) {
-        DeviceMemoryReport::Get().OnDestroyObject(VK_OBJECT_TYPE_BUFFER, reinterpret_cast<uint64_t>(buffer));
+        DeviceMemoryReport::Get().OnDestroyObject(reinterpret_cast<uint64_t>(buffer));
     }
     PFN_vkDestroyBuffer fpDestroyBuffer = (PFN_vkDestroyBuffer)device_dispatch_table(device)->DestroyBuffer;
     if (fpDestroyBuffer != NULL) {

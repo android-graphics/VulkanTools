@@ -337,7 +337,7 @@ void DeviceMemoryReport::OnCreateBuffer(uint64_t buffer_handle, VkBufferUsageFla
     }
 }
 
-void DeviceMemoryReport::OnDestroyObject(VkObjectType object_type, uint64_t object_handle) {
+void DeviceMemoryReport::OnDestroyObject(uint64_t object_handle) {
     std::lock_guard<std::mutex> lock(counter_mutex_);
     RemoveResourceBinding(object_handle);
     resources_.erase(object_handle);
