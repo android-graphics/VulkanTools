@@ -439,7 +439,6 @@ TEST_F(DeviceMemoryReportTests, CounterTracksAreScopedToProcessTrack) {
         "vulkan.mem.app.usage.unbound_memory",
         "vulkan.mem.driver.usage.static_texture",
         "vulkan.mem.driver.usage.unbound_memory",
-        // A name that has never had a pre-registered track.
         "vulkan.mem.app.usage.brand_new_category",
     };
 
