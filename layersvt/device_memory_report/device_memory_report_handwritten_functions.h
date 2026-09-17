@@ -259,7 +259,7 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
 // Intercept memory binding to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
-    assert(table != nullptr && table->BindBufferMemory != nullptr);
+    assert(table->BindBufferMemory != nullptr);
     assert(buffer != VK_NULL_HANDLE);
     assert(memory != VK_NULL_HANDLE);
     if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(buffer)) == 0) {
@@ -279,7 +279,7 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buff
 // Intercept memory binding to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
     auto* table = device_dispatch_table(device);
-    assert(table != nullptr && table->BindImageMemory != nullptr);
+    assert(table->BindImageMemory != nullptr);
     assert(image != VK_NULL_HANDLE);
     assert(memory != VK_NULL_HANDLE);
     if (DeviceMemoryReport::Get().GetRecordedResourceSize(reinterpret_cast<uint64_t>(image)) == 0) {
