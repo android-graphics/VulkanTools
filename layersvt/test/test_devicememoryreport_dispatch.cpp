@@ -254,6 +254,38 @@ TEST_F(DeviceMemoryReportDispatchTests, BindMemoryKeepsAlreadyRecordedSizes) {
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 4096u);
 }
 
+TEST_F(DeviceMemoryReportDispatchTests, BindImageMemory2SkipsDisjointImagePlaneBind) {
+    // When binding an image plane with VkBindImagePlaneMemoryInfo in the pNext chain (even if not first),
+    // vkGetImageMemoryRequirements must not be queried because disjoint images require
+    // vkGetImageMemoryRequirements2 with plane aspect specified.
+    FakeDevice device;
+    VkImage image = MakeHandle<VkImage>(0xB4800);
+    VkDeviceMemory memory = MakeHandle<VkDeviceMemory>(0xB4801);
+
+    ASSERT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
+
+    VkBindImagePlaneMemoryInfo plane_info = {};
+    plane_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+    plane_info.pNext = nullptr;
+    plane_info.planeAspect = VK_IMAGE_ASPECT_PLANE_0_BIT;
+
+    VkBindImageMemoryDeviceGroupInfo device_group_info = {};
+    device_group_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
+    device_group_info.pNext = &plane_info;
+
+    VkBindImageMemoryInfo image_bind = {};
+    image_bind.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+    image_bind.pNext = &device_group_info;
+    image_bind.image = image;
+    image_bind.memory = memory;
+    image_bind.memoryOffset = 0;
+
+    EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &image_bind), VK_SUCCESS);
+
+    EXPECT_EQ(g_image_requirements_queries, 0);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
+}
+
 TEST_F(DeviceMemoryReportDispatchTests, BindMemory2ReportsMissingDispatchEntries) {
     // When the driver below the layer does not provide an extension entry point, the layer must report
     // VK_ERROR_EXTENSION_NOT_PRESENT.
