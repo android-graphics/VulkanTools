@@ -480,6 +480,7 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
 
     const char* operation_name = nullptr;
     const char* memory_type = "unbound_memory";
+    VkDeviceSize event_size = pCallbackData->size;
     if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT ||
         pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_IMPORT_EXT) {
         auto& allocation = memory_allocations_[key];
@@ -496,6 +497,7 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         if (allocation_iterator == memory_allocations_.end()) return;
 
         memory_type = is_driver ? allocation_iterator->second.cluster_name : "unbound_memory";
+        event_size = allocation_iterator->second.total_size;
         RemoveAllocationTracking(key);
         operation_name = "DESTROY";
     }
@@ -505,7 +507,7 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
             .operation = operation_name,
             .source = is_driver ? "DRIVER" : "DEVICE_MEMORY",
             .memory_object_id = key,
-            .size = pCallbackData->size,
+            .size = event_size,
             .offset = 0,
             .object_handle = pCallbackData->objectHandle,
             .memory_type = memory_type,
