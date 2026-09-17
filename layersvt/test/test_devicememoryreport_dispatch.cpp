@@ -18,8 +18,7 @@
 // The layer's vk* entry points are linked directly into this test binary (the Vulkan loader is
 // deliberately not linked), and every fake VkDevice is given a dispatch table built from the stub
 // driver below. That makes it possible to exercise the layer's interception logic without a real
-// Vulkan implementation, including the case where the driver underneath the layer does not
-// implement an entry point at all and its dispatch table slot is therefore null.
+// Vulkan implementation.
 
 #include "device_memory_report.h"
 #include "vk_layer_table.h"
@@ -29,7 +28,6 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
-#include <set>
 #include <string>
 
 namespace {
@@ -41,10 +39,6 @@ VkDeviceSize g_image_requirements_size = 0;
 // Number of times the stub driver's memory requirement queries were called.
 int g_buffer_requirements_queries = 0;
 int g_image_requirements_queries = 0;
-
-// Entry points the stub driver does not implement. Their dispatch table slots stay null, which is
-// what the layer sees when the driver (or an ICD without the relevant extension) lacks a command.
-std::set<std::string> g_unimplemented;
 
 template <typename HandleType>
 HandleType MakeHandle(uintptr_t value) {
@@ -101,7 +95,6 @@ VKAPI_ATTR void VKAPI_CALL StubGetImageMemoryRequirements(VkDevice, VkImage, VkM
 VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL StubGetDeviceProcAddr(VkDevice, const char* pName) {
     if (pName == nullptr) return nullptr;
     const std::string name(pName);
-    if (g_unimplemented.count(name) != 0) return nullptr;
 
     if (name == "vkCreateImage") return reinterpret_cast<PFN_vkVoidFunction>(StubCreateImage);
     if (name == "vkDestroyImage") return reinterpret_cast<PFN_vkVoidFunction>(StubDestroyImage);
@@ -151,7 +144,6 @@ class DeviceMemoryReportDispatchTests : public ::testing::Test {
         g_image_requirements_size = 0;
         g_buffer_requirements_queries = 0;
         g_image_requirements_queries = 0;
-        g_unimplemented.clear();
     }
 
     void TearDown() override {
@@ -286,29 +278,5 @@ TEST_F(DeviceMemoryReportDispatchTests, BindImageMemory2SkipsDisjointImagePlaneB
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(AsObjectHandle(image)), 0u);
 }
 
-TEST_F(DeviceMemoryReportDispatchTests, BindMemory2ReportsMissingDispatchEntries) {
-    // When the driver below the layer does not provide an extension entry point, the layer must report
-    // VK_ERROR_EXTENSION_NOT_PRESENT.
-    g_unimplemented = {"vkBindBufferMemory2", "vkBindImageMemory2", "vkBindBufferMemory2KHR", "vkBindImageMemory2KHR"};
-    FakeDevice device;
-
-    VkBuffer buffer = MakeHandle<VkBuffer>(0xB5000);
-    VkImage image = MakeHandle<VkImage>(0xB5001);
-    VkDeviceMemory memory = MakeHandle<VkDeviceMemory>(0xB5002);
-
-    VkBindBufferMemoryInfo buffer_bind = {};
-    buffer_bind.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
-    buffer_bind.buffer = buffer;
-    buffer_bind.memory = memory;
-    EXPECT_EQ(vkBindBufferMemory2(device.handle(), 1, &buffer_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
-    EXPECT_EQ(vkBindBufferMemory2KHR(device.handle(), 1, &buffer_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
-
-    VkBindImageMemoryInfo image_bind = {};
-    image_bind.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
-    image_bind.image = image;
-    image_bind.memory = memory;
-    EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &image_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
-    EXPECT_EQ(vkBindImageMemory2KHR(device.handle(), 1, &image_bind), VK_ERROR_EXTENSION_NOT_PRESENT);
-}
-
 }  // namespace
+

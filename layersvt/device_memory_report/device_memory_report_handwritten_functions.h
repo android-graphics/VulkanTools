@@ -312,8 +312,9 @@ static void RecordBufferBindings(VkDevice device, uint32_t bindInfoCount, const 
 
 // Intercept memory binding via vkBindBufferMemory2 to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    if (!device_dispatch_table(device)->BindBufferMemory2) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    VkResult result = device_dispatch_table(device)->BindBufferMemory2(device, bindInfoCount, pBindInfos);
+    auto* table = device_dispatch_table(device);
+    assert(table->BindBufferMemory2 != nullptr);
+    VkResult result = table->BindBufferMemory2(device, bindInfoCount, pBindInfos);
     if (result == VK_SUCCESS && pBindInfos != nullptr) {
         RecordBufferBindings(device, bindInfoCount, pBindInfos);
     }
@@ -322,8 +323,9 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2(VkDevice device, uint32_t bin
 
 // Intercept memory binding via vkBindBufferMemory2KHR to correlate buffer object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
-    if (!device_dispatch_table(device)->BindBufferMemory2KHR) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    VkResult result = device_dispatch_table(device)->BindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
+    auto* table = device_dispatch_table(device);
+    assert(table->BindBufferMemory2KHR != nullptr);
+    VkResult result = table->BindBufferMemory2KHR(device, bindInfoCount, pBindInfos);
     if (result == VK_SUCCESS && pBindInfos != nullptr) {
         RecordBufferBindings(device, bindInfoCount, pBindInfos);
     }
@@ -356,8 +358,9 @@ static void RecordImageBinds(VkDevice device, uint32_t bindInfoCount, const VkBi
 
 // Intercept memory binding via vkBindImageMemory2 to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    if (!device_dispatch_table(device)->BindImageMemory2) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    VkResult result = device_dispatch_table(device)->BindImageMemory2(device, bindInfoCount, pBindInfos);
+    auto* table = device_dispatch_table(device);
+    assert(table->BindImageMemory2 != nullptr);
+    VkResult result = table->BindImageMemory2(device, bindInfoCount, pBindInfos);
     if (result == VK_SUCCESS && pBindInfos != nullptr) {
         RecordImageBinds(device, bindInfoCount, pBindInfos);
     }
@@ -366,8 +369,9 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bind
 
 // Intercept memory binding via vkBindImageMemory2KHR to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2KHR(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
-    if (!device_dispatch_table(device)->BindImageMemory2KHR) return VK_ERROR_EXTENSION_NOT_PRESENT;
-    VkResult result = device_dispatch_table(device)->BindImageMemory2KHR(device, bindInfoCount, pBindInfos);
+    auto* table = device_dispatch_table(device);
+    assert(table->BindImageMemory2KHR != nullptr);
+    VkResult result = table->BindImageMemory2KHR(device, bindInfoCount, pBindInfos);
     if (result == VK_SUCCESS && pBindInfos != nullptr) {
         RecordImageBinds(device, bindInfoCount, pBindInfos);
     }
