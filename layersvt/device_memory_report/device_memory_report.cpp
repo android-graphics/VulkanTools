@@ -323,8 +323,7 @@ uint64_t DeviceMemoryReport::GetUsageCounterBytes(const std::string& track) {
 }
 
 void DeviceMemoryReport::Reset() {
-    std::lock_guard<std::mutex> lock1(map_mutex_);
-    std::lock_guard<std::mutex> lock2(counter_mutex_);
+    std::scoped_lock lock(map_mutex_, counter_mutex_);
     vk_instance_map_.clear();
     has_callback_map_.clear();
     device_memory_properties_map_.clear();
