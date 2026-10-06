@@ -45,6 +45,8 @@ else()
     add_compile_options(-Wpointer-arith)
 endif()
 
+add_subdirectory(common)
+
 if(BUILD_APIDUMP)
     find_package(Python3 REQUIRED)
 
@@ -116,7 +118,7 @@ if(BUILD_SCREENSHOT)
         vk_layer_table.cpp
         vk_layer_table.h
         screenshot/screenshot_layer.md
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         screenshot/json/VkLayer_screenshot.json.in
     )
 endif()
@@ -136,7 +138,7 @@ if(BUILD_CPUTIMING)
         ../scripts/generators/cputiming_generator.py
         vk_layer_table.cpp
         vk_layer_table.h
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         cpu_timing/VkLayer_CPUTiming.json.in
     )
 
@@ -167,18 +169,15 @@ if(BUILD_DEBUGMARKER)
     add_library(VkLayer_DebugMarker MODULE)
     set_target_properties(VkLayer_DebugMarker PROPERTIES FOLDER "layers/debugmarker")
     target_sources(VkLayer_DebugMarker PRIVATE
-        debug_marker/debug_marker_handwritten_dispatch.cpp
-        debug_marker/debug_marker_handwritten_functions.h
+        $<TARGET_OBJECTS:layersvt_entrypoints>
         debug_marker/debug_marker_handwritten_functions_vk_ext_debug_marker.h
         debug_marker/debug_marker_handwritten_functions_vk_ext_debug_utils.h
         debug_marker/debug_marker.h
+        debug_marker/debug_marker_instance.cpp
         debug_marker/debug_marker.cpp
         debug_marker/debug_marker_perfetto.h
         debug_marker/debug_marker_perfetto.cpp
         perfetto/perfetto.cc
-        vk_layer_table.cpp
-        vk_layer_table.h
-        layer_keep_alive.cpp
         debug_marker/VkLayer_DebugMarker.json.in
     )
 
@@ -187,6 +186,8 @@ if(BUILD_DEBUGMARKER)
         ${CMAKE_CURRENT_SOURCE_DIR}/debug_marker
         ${CMAKE_CURRENT_BINARY_DIR}
     )
+
+    target_link_libraries(VkLayer_DebugMarker PRIVATE layersvt_common)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|DragonFly|GNU")
         if (BUILD_WSI_XCB_SUPPORT)
@@ -214,7 +215,7 @@ if(BUILD_DEVICEMEMORYREPORT)
         perfetto/perfetto.cc
         vk_layer_table.cpp
         vk_layer_table.h
-        layer_keep_alive.cpp
+        common/layer_keep_alive.cpp
         device_memory_report/VkLayer_DeviceMemoryReport.json.in
     )
 
@@ -263,6 +264,14 @@ foreach(layer ${TOOL_LAYERS})
     endif()
 
     target_link_Libraries(${layer} PRIVATE Vulkan::Headers Vulkan::UtilityHeaders Vulkan::LayerSettings)
+
+    # Bind the layer's exported entry points (vkGetInstanceProcAddr,
+    # vkNegotiateLoaderLayerInterfaceVersion, ...) to the layer's own
+    # definitions, even when it is loaded into a process that also links
+    # libvulkan (e.g. unit tests).
+    if (CMAKE_SYSTEM_NAME MATCHES "Linux|BSD|DragonFly|GNU")
+        target_link_options(${layer} PRIVATE -Wl,-Bsymbolic-functions)
+    endif()
 
     if (ANDROID)
         target_link_Libraries(${layer} PRIVATE log android atomic)

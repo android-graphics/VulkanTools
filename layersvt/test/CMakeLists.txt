@@ -37,6 +37,10 @@ function(LayerTest NAME)
     if (${NAME} STREQUAL "DebugMarker")
         target_sources(${TEST_NAME} PRIVATE ../debug_marker/debug_marker.cpp ../debug_marker/debug_marker_perfetto.cpp ../perfetto/perfetto.cc)
         target_include_directories(${TEST_NAME} PRIVATE .. ../debug_marker)
+        target_link_libraries(${TEST_NAME} layersvt_common)
+        if (NOT MSVC)
+            set_source_files_properties(../perfetto/perfetto.cc PROPERTIES COMPILE_OPTIONS "-Wno-deprecated-declarations")
+        endif()
     elseif (${NAME} STREQUAL "DeviceMemoryReport")
         target_sources(${TEST_NAME} PRIVATE ../device_memory_report/device_memory_report.cpp ../device_memory_report/device_memory_report_perfetto.cpp ../perfetto/perfetto.cc)
         target_include_directories(${TEST_NAME} PRIVATE .. ../device_memory_report)
@@ -86,3 +90,27 @@ if (TARGET VkLayer_DeviceMemoryReport)
     endif()
 endif()
 
+add_executable(test_common_layer
+    common/test_dispatch_downstream.cpp
+    common/test_dispatch_table_manager.cpp
+    common/test_layer_base.cpp
+    common/test_layer_entrypoints.cpp
+    common/test_layer_manifest.cpp
+    layer_test_main.cpp
+    $<TARGET_OBJECTS:layersvt_entrypoints>
+)
+target_link_libraries(test_common_layer PRIVATE
+    layersvt_common
+    GTest::gtest
+    Vulkan::Headers
+    Vulkan::UtilityHeaders
+)
+target_include_directories(test_common_layer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+add_test(NAME test_common_layer COMMAND test_common_layer)
+set_target_properties(test_common_layer PROPERTIES FOLDER "layers/common/Test")
+
+if(WIN32 AND (QT_TARGET_TYPE STREQUAL STATIC_LIBRARY))
+    set_property(TARGET test_common_layer PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
