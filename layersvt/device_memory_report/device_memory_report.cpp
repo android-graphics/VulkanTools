@@ -210,7 +210,7 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(const AllocationKey& key
 
     uint64_t new_unbound = (allocation.total_size > bound_size) ? (allocation.total_size - bound_size) : 0;
     
-    const char* cluster_name = "unbound_memory";
+    const char* cluster_name = allocation.is_driver ? "driver" : "unbound_memory";
     if (allocation.is_driver &&
         (allocation.object_type == VK_OBJECT_TYPE_IMAGE ||
          allocation.object_type == VK_OBJECT_TYPE_BUFFER)) {

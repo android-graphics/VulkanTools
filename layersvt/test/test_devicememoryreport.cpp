@@ -152,12 +152,12 @@ TEST_F(DeviceMemoryReportTests, EmitEventsAndSubCounters) {
     cb_data.objectType = VK_OBJECT_TYPE_BUFFER;
     cb_data.size = 2048;
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 2048u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 2048u);
 
     // Free the driver allocation
     cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
 
     // Test direct allocate/free fallbacks
     VkDevice dummy_device = reinterpret_cast<VkDevice>(0x1234);
@@ -444,7 +444,7 @@ TEST_F(DeviceMemoryReportTests, StaticCounterTrackLookup) {
     EXPECT_EQ(track_storage.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
     EXPECT_NE(track_storage.uuid, 0u);
 
-    perfetto::CounterTrack track_unbound = GetCounterTrack("vulkan.mem.driver.usage.unbound_memory");
+    perfetto::CounterTrack track_unbound = GetCounterTrack("vulkan.mem.driver.usage.driver");
     EXPECT_EQ(track_unbound.Serialize().counter().unit(), perfetto::protos::gen::CounterDescriptor::UNIT_SIZE_BYTES);
     EXPECT_NE(track_unbound.uuid, 0u);
 
@@ -474,7 +474,7 @@ TEST_F(DeviceMemoryReportTests, CounterTracksAreScopedToProcessTrack) {
         "vulkan.mem.app.usage.color_render_target",
         "vulkan.mem.app.usage.unbound_memory",
         "vulkan.mem.driver.usage.static_texture",
-        "vulkan.mem.driver.usage.unbound_memory",
+        "vulkan.mem.driver.usage.driver",
         "vulkan.mem.app.usage.brand_new_category",
     };
 
@@ -541,7 +541,7 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
 
     // Driver allocation with image handle should be attributed to the color_render_target track
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.color_render_target"), 4096u);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
 
     // Clean up driver allocation
     driver_callback_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
@@ -582,13 +582,13 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     buffer_callback_data.objectHandle = buffer_handle;
     DeviceMemoryReport::MemoryReportCallback(&buffer_callback_data, nullptr);
 
-    // Prior to OnCreateBuffer, the driver allocation is counted under unbound_memory
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 4096u);
+    // Prior to OnCreateBuffer, the driver allocation is counted under driver
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 4096u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 0u);
 
     // When the buffer is created, the allocation is re-attributed to the geometry_mesh cluster
     DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 4096u);
     auto reattributed_buf_alloc = DeviceMemoryReportTestPeer::FindDriverAllocation(0x8003);
     ASSERT_TRUE(reattributed_buf_alloc.has_value());
@@ -612,11 +612,11 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     image_callback_data.objectHandle = image_handle;
     DeviceMemoryReport::MemoryReportCallback(&image_callback_data, nullptr);
 
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 16384u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 16384u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.static_texture"), 0u);
 
     DeviceMemoryReport::Get().OnCreateImage(image_handle, VK_IMAGE_USAGE_SAMPLED_BIT);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.static_texture"), 16384u);
     auto reattributed_img_alloc = DeviceMemoryReportTestPeer::FindDriverAllocation(0x8004);
     ASSERT_TRUE(reattributed_img_alloc.has_value());
@@ -637,15 +637,15 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     dup_cb.objectType = VK_OBJECT_TYPE_COMMAND_POOL;
     dup_cb.objectHandle = 0xF004;
     DeviceMemoryReport::MemoryReportCallback(&dup_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 4096u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 4096u);
 
     dup_cb.size = 2048;
     DeviceMemoryReport::MemoryReportCallback(&dup_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 2048u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 2048u);
 
     dup_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&dup_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
 
     // Case 6: Driver-internal allocation with VK_OBJECT_TYPE_UNKNOWN and objectHandle = 0
     VkDeviceMemoryReportCallbackDataEXT unknown_cb = {};
@@ -657,15 +657,16 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     unknown_cb.objectType = VK_OBJECT_TYPE_UNKNOWN;
     unknown_cb.objectHandle = 0;
     DeviceMemoryReport::MemoryReportCallback(&unknown_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 1024u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 1024u);
     auto unknown_alloc = DeviceMemoryReportTestPeer::FindDriverAllocation(0x8006);
     ASSERT_TRUE(unknown_alloc.has_value());
     EXPECT_TRUE(unknown_alloc->is_driver);
     EXPECT_EQ(unknown_alloc->object_type, VK_OBJECT_TYPE_UNKNOWN);
+    EXPECT_STREQ(unknown_alloc->cluster_name, "driver");
 
     unknown_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&unknown_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
 
     // Case 7: Driver VK_OBJECT_TYPE_IMAGE allocation whose objectHandle collides with an existing VkBuffer
     // before OnCreateImage must not inherit the buffer's usage cluster.
@@ -680,12 +681,12 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
     cross_type_cb.objectType = VK_OBJECT_TYPE_IMAGE;
     cross_type_cb.objectHandle = cross_type_handle;
     DeviceMemoryReport::MemoryReportCallback(&cross_type_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 2048u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 2048u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.geometry_mesh"), 0u);
 
     cross_type_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&cross_type_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
     DeviceMemoryReport::Get().OnDestroyObject(cross_type_handle, VK_OBJECT_TYPE_BUFFER);
 }
 
@@ -722,7 +723,7 @@ TEST_F(DeviceMemoryReportTests, DriverMemoryObjectIdCollidingWithAppHandle) {
     driver_cb.objectHandle = 0xF103;
     DeviceMemoryReport::MemoryReportCallback(&driver_cb, nullptr);
 
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 1024u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 1024u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 4096u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 4096u);
     auto app_alloc = DeviceMemoryReportTestPeer::FindAllocation(colliding_value);
@@ -734,11 +735,12 @@ TEST_F(DeviceMemoryReportTests, DriverMemoryObjectIdCollidingWithAppHandle) {
     ASSERT_TRUE(driver_alloc.has_value());
     EXPECT_TRUE(driver_alloc->is_driver);
     EXPECT_EQ(driver_alloc->total_size, 1024u);
+    EXPECT_STREQ(driver_alloc->cluster_name, "driver");
 
     // Freeing the driver allocation leaves the application allocation intact.
     driver_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
     DeviceMemoryReport::MemoryReportCallback(&driver_cb, nullptr);
-    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.unbound_memory"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.driver.usage.driver"), 0u);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 4096u);
     EXPECT_TRUE(DeviceMemoryReportTestPeer::FindAllocation(colliding_value).has_value());
     EXPECT_FALSE(DeviceMemoryReportTestPeer::FindDriverAllocation(colliding_value).has_value());
