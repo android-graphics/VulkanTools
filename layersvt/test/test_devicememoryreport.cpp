@@ -179,7 +179,7 @@ TEST_F(DeviceMemoryReportTests, BufferImageBindingAndCallbackSuppression) {
     uint64_t memory_handle = 0x9000;
     DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 1024);
     DeviceMemoryReport::Get().OnCreateImage(image_handle, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    DeviceMemoryReport::Get().OnRecordResourceSize(image_handle, 2048);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, image_handle, 2048);
     DeviceMemoryReport::Get().OnBindBufferMemory(buffer_handle, memory_handle, 0);
     DeviceMemoryReport::Get().OnBindImageMemory(image_handle, memory_handle, 1024);
 
@@ -240,11 +240,11 @@ TEST_F(DeviceMemoryReportTests, UsageTypeBreakdown) {
     DeviceMemoryReport::Get().OnCreateImage(storage_img, VK_IMAGE_USAGE_STORAGE_BIT);
     DeviceMemoryReport::Get().OnCreateImage(transient_img, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
 
-    DeviceMemoryReport::Get().OnRecordResourceSize(color_img, 65536);
-    DeviceMemoryReport::Get().OnRecordResourceSize(depth_img, 65536);
-    DeviceMemoryReport::Get().OnRecordResourceSize(sampled_img, 65536);
-    DeviceMemoryReport::Get().OnRecordResourceSize(storage_img, 65536);
-    DeviceMemoryReport::Get().OnRecordResourceSize(transient_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, color_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, depth_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, sampled_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, storage_img, 65536);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, transient_img, 65536);
 
     // Register buffers
     DeviceMemoryReport::Get().OnCreateBuffer(vtx_buf, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
@@ -325,7 +325,7 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     // - vulkan.mem.app.usage.color_render_target += 4,000 B
     // - Merged intervals: [0, 4000) -> bound_size = 4,000 B, unbound_memory = 6,000 B
     DeviceMemoryReport::Get().OnCreateImage(image_a, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    DeviceMemoryReport::Get().OnRecordResourceSize(image_a, 4000);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, image_a, 4000);
     DeviceMemoryReport::Get().OnBindImageMemory(image_a, mem_handle, 0);
 
     // Step 3: Bind Resource B (Sampled Texture Image) to range [2000, 6000) (size = 4000 B).
@@ -336,7 +336,7 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     // - Physical slab bound_size = 6,000 B (overlapping physical region is NOT double-counted).
     // - Remaining unbound headroom: unbound_memory = 10,000 - 6,000 = 4,000 B.
     DeviceMemoryReport::Get().OnCreateImage(image_b, VK_IMAGE_USAGE_SAMPLED_BIT);
-    DeviceMemoryReport::Get().OnRecordResourceSize(image_b, 4000);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, image_b, 4000);
     DeviceMemoryReport::Get().OnBindImageMemory(image_b, mem_handle, 2000);
 
     // Step 4: Bind Resource C (Vertex Buffer) to disjoint range [8000, 9500) (size = 1500 B).
@@ -526,7 +526,7 @@ TEST_F(DeviceMemoryReportTests, DriverVsAppUnboundMemoryAttribution) {
 
     // Register a virtual image resource with handle shared_handle
     DeviceMemoryReport::Get().OnCreateImage(shared_handle, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    DeviceMemoryReport::Get().OnRecordResourceSize(shared_handle, 4096);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, shared_handle, 4096);
 
     // Case 1: Driver allocation where objectHandle is the virtual resource handle (flags is always 0 per spec)
     VkDeviceMemoryReportCallbackDataEXT driver_callback_data = {};
@@ -753,6 +753,69 @@ TEST_F(DeviceMemoryReportTests, DriverMemoryObjectIdCollidingWithAppHandle) {
     DeviceMemoryReport::Get().OnDestroyObject(buffer_handle, VK_OBJECT_TYPE_BUFFER);
 }
 
+TEST_F(DeviceMemoryReportTests, BufferAndImageWithCollidingHandlesAreTrackedIndependently) {
+    TEST_DESCRIPTION("Test that a VkBuffer and a VkImage sharing a handle value keep independent metadata and bindings");
+
+    InitializeDeviceMemoryReportPerfetto();
+
+    // Non-dispatchable handles are only unique within their own object type.
+    const uint64_t shared_handle = 0xF201;
+    const uint64_t memory_handle = 0xF202;
+
+    VkDeviceMemoryReportCallbackDataEXT app_cb = {};
+    app_cb.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    app_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    app_cb.memoryObjectId = 0x9201;
+    app_cb.size = 16384;
+    app_cb.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    app_cb.objectHandle = memory_handle;
+    DeviceMemoryReport::MemoryReportCallback(&app_cb, nullptr);
+
+    DeviceMemoryReport::Get().OnCreateBuffer(shared_handle, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
+    DeviceMemoryReport::Get().OnCreateImage(shared_handle, VK_IMAGE_USAGE_SAMPLED_BIT);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, shared_handle, 8192);
+
+    // Recording the image's size must not overwrite the buffer's.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_BUFFER, shared_handle), 4096u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, shared_handle), 8192u);
+    auto buffer_resource = DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_BUFFER, shared_handle);
+    auto image_resource = DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_IMAGE, shared_handle);
+    ASSERT_TRUE(buffer_resource.has_value());
+    ASSERT_TRUE(image_resource.has_value());
+    EXPECT_FALSE(buffer_resource->is_image);
+    EXPECT_TRUE(image_resource->is_image);
+
+    // Binding both into the same block keeps two distinct suballocations.
+    DeviceMemoryReport::Get().OnBindBufferMemory(shared_handle, memory_handle, 0);
+    DeviceMemoryReport::Get().OnBindImageMemory(shared_handle, memory_handle, 4096);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 4096u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.static_texture"), 8192u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 4096u);
+    auto allocation = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
+    ASSERT_TRUE(allocation.has_value());
+    ASSERT_EQ(allocation->sub_allocations.size(), 2u);
+    EXPECT_EQ(allocation->sub_allocations[0].object_type, VK_OBJECT_TYPE_BUFFER);
+    EXPECT_EQ(allocation->sub_allocations[1].object_type, VK_OBJECT_TYPE_IMAGE);
+
+    // Destroying the buffer unbinds only the buffer.
+    DeviceMemoryReport::Get().OnDestroyObject(shared_handle, VK_OBJECT_TYPE_BUFFER);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.static_texture"), 8192u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 8192u);
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_BUFFER, shared_handle).has_value());
+    EXPECT_TRUE(DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_IMAGE, shared_handle).has_value());
+    allocation = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
+    ASSERT_TRUE(allocation.has_value());
+    ASSERT_EQ(allocation->sub_allocations.size(), 1u);
+    EXPECT_EQ(allocation->sub_allocations[0].object_type, VK_OBJECT_TYPE_IMAGE);
+
+    app_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    DeviceMemoryReport::MemoryReportCallback(&app_cb, nullptr);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.static_texture"), 0u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
+    DeviceMemoryReport::Get().OnDestroyObject(shared_handle, VK_OBJECT_TYPE_IMAGE);
+}
+
 TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
     TEST_DESCRIPTION("Test DumpCurrentCountersAndAllocations state dump and instant event emissions when a trace session begins");
 
@@ -774,11 +837,11 @@ TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
 
     // Bind a buffer and an image sub-allocation
     DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 4096);
-    DeviceMemoryReport::Get().OnRecordResourceSize(buffer_handle, 4096);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_BUFFER, buffer_handle, 4096);
     DeviceMemoryReport::Get().OnBindBufferMemory(buffer_handle, memory_handle, 0);
 
     DeviceMemoryReport::Get().OnCreateImage(image_handle, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    DeviceMemoryReport::Get().OnRecordResourceSize(image_handle, 4096);
+    DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, image_handle, 4096);
     DeviceMemoryReport::Get().OnBindImageMemory(image_handle, memory_handle, 4096);
 
     auto allocation = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
@@ -806,8 +869,8 @@ TEST_F(DeviceMemoryReportTests, MemoryReportSnapshotDump) {
 
     // Verify post-destruction state
     EXPECT_FALSE(DeviceMemoryReportTestPeer::FindAllocation(memory_handle).has_value());
-    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(buffer_handle).has_value());
-    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(image_handle).has_value());
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_BUFFER, buffer_handle).has_value());
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_IMAGE, image_handle).has_value());
 }
 
 
