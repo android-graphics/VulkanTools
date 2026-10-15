@@ -336,10 +336,20 @@ class DeviceMemoryReport {
     void BindResourceMemory(VkObjectType object_type, uint64_t resource_handle, uint64_t memory_handle, VkDeviceSize memory_offset);
 
     /**
+     * @brief Returns the cluster an allocation's unbound bytes are attributed to.
+     *
+     * Application allocations are always "unbound_memory". Driver allocations take the cluster of
+     * the image or buffer that owns them once that resource is known, and "driver" otherwise.
+     */
+    const char* ResolveClusterName(const MemoryAllocation& allocation) const;
+
+    /**
      * @brief Updates unbound memory category counter for a physical memory slab.
      * Unbound memory is allocated device memory not currently bound to any active resource (e.g. buffer or image).
+     * @param key The allocation key.
+     * @param cluster_name Pre-resolved cluster name from ResolveClusterName, or nullptr to resolve it.
      */
-    void UpdateAllocationUnboundCounter(const AllocationKey& key);
+    void UpdateAllocationUnboundCounter(const AllocationKey& key, const char* cluster_name = nullptr);
 
     /**
      * @brief Removes a sub-allocation of a resource from a physical memory slab if bound.
@@ -348,6 +358,9 @@ class DeviceMemoryReport {
 
     /**
      * @brief Removes all sub-allocations and tracking for a memory slab being freed.
+     *
+     * Emits a DESTROY event for each binding and then one for the slab itself before subtracting
+     * their counter bytes.
      */
     void RemoveAllocationTracking(const AllocationKey& key);
 
