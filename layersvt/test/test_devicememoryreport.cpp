@@ -1107,3 +1107,39 @@ TEST_F(DeviceMemoryReportTests, DebugObjectNamesLegacyDebugReportTypes) {
     DeviceMemoryReport::Get().SetDebugObjectName(VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT, 0xE404, "marker_pipeline");
     EXPECT_EQ(DeviceMemoryReportTestPeer::GetDebugObjectName(VK_OBJECT_TYPE_PIPELINE, 0xE404), "");
 }
+
+TEST_F(DeviceMemoryReportTests, FreeingPlaceholderAllocationCleansUpBindings) {
+    TEST_DESCRIPTION("Freeing a placeholder allocation (total_size == 0) cleans up any pre-bound resources and erases the entry");
+
+    InitializeDeviceMemoryReportPerfetto();
+
+    const uint64_t buffer_handle = 0xE501;
+    const uint64_t memory_handle = 0xE502;
+
+    DeviceMemoryReport::Get().SetAllocationMemoryProperties(memory_handle, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    DeviceMemoryReport::Get().OnCreateBuffer(buffer_handle, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4096);
+    DeviceMemoryReport::Get().OnBindBufferMemory(buffer_handle, memory_handle, 0);
+
+    auto placeholder = DeviceMemoryReportTestPeer::FindAllocation(memory_handle);
+    ASSERT_TRUE(placeholder.has_value());
+    EXPECT_EQ(placeholder->total_size, 0u);
+    EXPECT_EQ(placeholder->sub_allocations.size(), 1u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 4096u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
+
+    VkDeviceMemoryReportCallbackDataEXT free_cb = {};
+    free_cb.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    free_cb.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT;
+    free_cb.memoryObjectId = 0x9501;
+    free_cb.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    free_cb.objectHandle = memory_handle;
+    DeviceMemoryReport::MemoryReportCallback(&free_cb, nullptr);
+
+    EXPECT_FALSE(DeviceMemoryReportTestPeer::FindAllocation(memory_handle).has_value());
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.geometry_mesh"), 0u);
+    auto buffer_resource = DeviceMemoryReportTestPeer::FindResource(VK_OBJECT_TYPE_BUFFER, buffer_handle);
+    ASSERT_TRUE(buffer_resource.has_value());
+    EXPECT_EQ(buffer_resource->bound_memory, 0u);
+
+    DeviceMemoryReport::Get().OnDestroyObject(buffer_handle, VK_OBJECT_TYPE_BUFFER);
+}

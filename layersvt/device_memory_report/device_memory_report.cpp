@@ -410,16 +410,19 @@ void DeviceMemoryReport::RemoveAllocationTracking(const AllocationKey& key) {
     // Bindings are destroyed before the slab they are bound into, so a consumer replaying the events
     // never sees a binding outlive its memory. All DESTROY events precede the counter updates so a
     // consumer sampling at any of the resulting counter timestamps sees the slab and its bindings gone.
-    EmitAllocationTraceEvent({
-        .operation = "DESTROY",
-        .source = key.is_driver ? "DRIVER" : "DEVICE_MEMORY",
-        .memory_object_id = key.id,
-        .size = allocation.total_size,
-        .offset = 0,
-        .object_type = key.is_driver ? allocation.object_type : VK_OBJECT_TYPE_DEVICE_MEMORY,
-        .object_handle = key.is_driver ? allocation.object_handle : key.id,
-        .memory_type = key.is_driver ? allocation.cluster_name : "unbound_memory",
-    });
+    // An entry with total_size == 0 is a placeholder that never emitted CREATE, so it must not emit DESTROY.
+    if (allocation.total_size > 0) {
+        EmitAllocationTraceEvent({
+            .operation = "DESTROY",
+            .source = key.is_driver ? "DRIVER" : "DEVICE_MEMORY",
+            .memory_object_id = key.id,
+            .size = allocation.total_size,
+            .offset = 0,
+            .object_type = key.is_driver ? allocation.object_type : VK_OBJECT_TYPE_DEVICE_MEMORY,
+            .object_handle = key.is_driver ? allocation.object_handle : key.id,
+            .memory_type = key.is_driver ? allocation.cluster_name : "unbound_memory",
+        });
+    }
 
     for (const auto& suballocation : allocation.sub_allocations) {
         SubtractCounterBytes(suballocation.usage_track, suballocation.size);
