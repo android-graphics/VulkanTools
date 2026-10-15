@@ -365,6 +365,43 @@ TEST_F(DeviceMemoryReportTests, MemoryAliasingAndOverlap) {
     EXPECT_TRUE(true);
 }
 
+TEST_F(DeviceMemoryReportTests, BindingsAreClampedToTheirAllocation) {
+    TEST_DESCRIPTION("Only the part of a binding that lies within its VkDeviceMemory allocation counts as bound");
+
+    InitializeDeviceMemoryReportPerfetto();
+    const std::string unbound_track = "vulkan.mem.app.usage.unbound_memory";
+
+    VkDeviceMemoryReportCallbackDataEXT cb_data = {};
+    cb_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
+    cb_data.type = VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT;
+    cb_data.objectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    cb_data.memoryObjectId = 0x7000;
+    cb_data.objectHandle = 0xE001;
+    cb_data.size = 16000;
+    DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 16000u);
+
+    // [12000, 20000) overhangs the 16,000-byte allocation, so only [12000, 16000) is bound.
+    DeviceMemoryReport::Get().OnCreateBuffer(0xE101, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 8000);
+    DeviceMemoryReport::Get().OnBindBufferMemory(0xE101, 0xE001, 12000);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 12000u);
+
+    // [20000, 21000) lies entirely outside the allocation, so nothing more is bound.
+    DeviceMemoryReport::Get().OnCreateBuffer(0xE102, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 1000);
+    DeviceMemoryReport::Get().OnBindBufferMemory(0xE102, 0xE001, 20000);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 12000u);
+
+    // A binding recorded before its allocation is reported is clamped once the allocation size is known.
+    DeviceMemoryReport::Get().OnCreateBuffer(0xE103, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4000);
+    DeviceMemoryReport::Get().OnBindBufferMemory(0xE103, 0xE002, 8000);
+    cb_data.memoryObjectId = 0x7001;
+    cb_data.objectHandle = 0xE002;
+    cb_data.size = 10000;
+    DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
+    // 12,000 B from the first allocation plus 10,000 - 2,000 B from the second.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 20000u);
+}
+
 TEST_F(DeviceMemoryReportTests, ClusterClassificationFunctions) {
     TEST_DESCRIPTION("Test cluster classification for buffer and image usages with memory properties");
 

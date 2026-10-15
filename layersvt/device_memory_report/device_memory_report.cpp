@@ -182,8 +182,11 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(const AllocationKey& key
     std::vector<std::pair<VkDeviceSize, VkDeviceSize>> intervals;
     intervals.reserve(allocation.sub_allocations.size());
     for (const auto& suballocation : allocation.sub_allocations) {
-        if (suballocation.size > 0) {
-            VkDeviceSize end = (suballocation.offset + suballocation.size < suballocation.offset) ? UINT64_MAX : (suballocation.offset + suballocation.size);
+        // Only the part of a binding that lies within the allocation is bound memory of it; an
+        // out-of-range binding must not hide unbound bytes. Clamping here, not at bind time, means
+        // bindings recorded against a placeholder (total_size == 0) are counted once the size is known.
+        if (suballocation.size > 0 && suballocation.offset < allocation.total_size) {
+            VkDeviceSize end = suballocation.offset + std::min(suballocation.size, allocation.total_size - suballocation.offset);
             intervals.emplace_back(suballocation.offset, end);
         }
     }
@@ -208,7 +211,8 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(const AllocationKey& key
         bound_size += (current_end - current_start);
     }
 
-    uint64_t new_unbound = (allocation.total_size > bound_size) ? (allocation.total_size - bound_size) : 0;
+    // Intervals are clamped to the allocation, so bound_size never exceeds total_size.
+    uint64_t new_unbound = allocation.total_size - bound_size;
     
     const char* cluster_name = allocation.is_driver ? "driver" : "unbound_memory";
     if (allocation.is_driver &&
