@@ -30,6 +30,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 
 namespace {
 
@@ -40,6 +41,13 @@ VkDeviceSize g_image_requirements_size = 0;
 // Number of times the stub driver's memory requirement queries were called.
 int g_buffer_requirements_queries = 0;
 int g_image_requirements_queries = 0;
+
+// Tracks whether the queried buffer/image had already been bound in the stub driver when
+// vkGet*MemoryRequirements was invoked.
+std::unordered_set<VkBuffer> g_bound_buffers;
+std::unordered_set<VkImage> g_bound_images;
+bool g_buffer_bound_at_last_requirements_query = false;
+bool g_image_bound_at_last_requirements_query = false;
 
 // Controls whether the stub driver implements VK_EXT_debug_utils / VK_EXT_debug_marker naming.
 bool g_stub_supports_debug_utils = false;
@@ -66,7 +74,9 @@ VKAPI_ATTR VkResult VKAPI_CALL StubCreateBuffer(VkDevice, const VkBufferCreateIn
     return VK_SUCCESS;
 }
 
-VKAPI_ATTR void VKAPI_CALL StubDestroyBuffer(VkDevice, VkBuffer, const VkAllocationCallbacks*) {}
+VKAPI_ATTR void VKAPI_CALL StubDestroyBuffer(VkDevice, VkBuffer buffer, const VkAllocationCallbacks*) {
+    g_bound_buffers.erase(buffer);
+}
 
 VKAPI_ATTR VkResult VKAPI_CALL StubCreateImage(VkDevice, const VkImageCreateInfo*, const VkAllocationCallbacks*, VkImage* pImage) {
     if (pImage != nullptr) {
@@ -75,7 +85,9 @@ VKAPI_ATTR VkResult VKAPI_CALL StubCreateImage(VkDevice, const VkImageCreateInfo
     return VK_SUCCESS;
 }
 
-VKAPI_ATTR void VKAPI_CALL StubDestroyImage(VkDevice, VkImage, const VkAllocationCallbacks*) {}
+VKAPI_ATTR void VKAPI_CALL StubDestroyImage(VkDevice, VkImage image, const VkAllocationCallbacks*) {
+    g_bound_images.erase(image);
+}
 
 VKAPI_ATTR VkResult VKAPI_CALL StubAllocateMemory(VkDevice, const VkMemoryAllocateInfo*, const VkAllocationCallbacks*, VkDeviceMemory* pMemory) {
     if (pMemory != nullptr) {
@@ -86,23 +98,41 @@ VKAPI_ATTR VkResult VKAPI_CALL StubAllocateMemory(VkDevice, const VkMemoryAlloca
 
 VKAPI_ATTR void VKAPI_CALL StubFreeMemory(VkDevice, VkDeviceMemory, const VkAllocationCallbacks*) {}
 
-VKAPI_ATTR VkResult VKAPI_CALL StubBindBufferMemory(VkDevice, VkBuffer, VkDeviceMemory, VkDeviceSize) { return VK_SUCCESS; }
+VKAPI_ATTR VkResult VKAPI_CALL StubBindBufferMemory(VkDevice, VkBuffer buffer, VkDeviceMemory, VkDeviceSize) {
+    g_bound_buffers.insert(buffer);
+    return VK_SUCCESS;
+}
 
-VKAPI_ATTR VkResult VKAPI_CALL StubBindImageMemory(VkDevice, VkImage, VkDeviceMemory, VkDeviceSize) { return VK_SUCCESS; }
+VKAPI_ATTR VkResult VKAPI_CALL StubBindImageMemory(VkDevice, VkImage image, VkDeviceMemory, VkDeviceSize) {
+    g_bound_images.insert(image);
+    return VK_SUCCESS;
+}
 
-VKAPI_ATTR VkResult VKAPI_CALL StubBindBufferMemory2(VkDevice, uint32_t, const VkBindBufferMemoryInfo*) { return VK_SUCCESS; }
+VKAPI_ATTR VkResult VKAPI_CALL StubBindBufferMemory2(VkDevice, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
+    for (uint32_t i = 0; i < bindInfoCount && pBindInfos != nullptr; ++i) {
+        g_bound_buffers.insert(pBindInfos[i].buffer);
+    }
+    return VK_SUCCESS;
+}
 
-VKAPI_ATTR VkResult VKAPI_CALL StubBindImageMemory2(VkDevice, uint32_t, const VkBindImageMemoryInfo*) { return VK_SUCCESS; }
+VKAPI_ATTR VkResult VKAPI_CALL StubBindImageMemory2(VkDevice, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
+    for (uint32_t i = 0; i < bindInfoCount && pBindInfos != nullptr; ++i) {
+        g_bound_images.insert(pBindInfos[i].image);
+    }
+    return VK_SUCCESS;
+}
 
-VKAPI_ATTR void VKAPI_CALL StubGetBufferMemoryRequirements(VkDevice, VkBuffer, VkMemoryRequirements* pMemoryRequirements) {
+VKAPI_ATTR void VKAPI_CALL StubGetBufferMemoryRequirements(VkDevice, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements) {
     ++g_buffer_requirements_queries;
+    g_buffer_bound_at_last_requirements_query = g_bound_buffers.count(buffer) > 0;
     pMemoryRequirements->size = g_buffer_requirements_size;
     pMemoryRequirements->alignment = 256;
     pMemoryRequirements->memoryTypeBits = 1;
 }
 
-VKAPI_ATTR void VKAPI_CALL StubGetImageMemoryRequirements(VkDevice, VkImage, VkMemoryRequirements* pMemoryRequirements) {
+VKAPI_ATTR void VKAPI_CALL StubGetImageMemoryRequirements(VkDevice, VkImage image, VkMemoryRequirements* pMemoryRequirements) {
     ++g_image_requirements_queries;
+    g_image_bound_at_last_requirements_query = g_bound_images.count(image) > 0;
     pMemoryRequirements->size = g_image_requirements_size;
     pMemoryRequirements->alignment = 256;
     pMemoryRequirements->memoryTypeBits = 1;
@@ -178,6 +208,10 @@ class DeviceMemoryReportDispatchTests : public ::testing::Test {
         g_image_requirements_size = 0;
         g_buffer_requirements_queries = 0;
         g_image_requirements_queries = 0;
+        g_bound_buffers.clear();
+        g_bound_images.clear();
+        g_buffer_bound_at_last_requirements_query = false;
+        g_image_bound_at_last_requirements_query = false;
         g_stub_supports_debug_utils = false;
         g_stub_supports_debug_marker = false;
         g_set_debug_utils_name_calls = 0;
@@ -241,6 +275,7 @@ TEST_F(DeviceMemoryReportDispatchTests, BindBufferMemoryQueriesUnknownResourceSi
     EXPECT_EQ(vkBindBufferMemory(device.handle(), buffer, memory, 0), VK_SUCCESS);
 
     EXPECT_EQ(g_buffer_requirements_queries, 1);
+    EXPECT_TRUE(g_buffer_bound_at_last_requirements_query);
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_BUFFER, AsObjectHandle(buffer)), 4096u);
 }
 
@@ -255,6 +290,7 @@ TEST_F(DeviceMemoryReportDispatchTests, BindImageMemoryQueriesUnknownResourceSiz
     EXPECT_EQ(vkBindImageMemory(device.handle(), image, memory, 0), VK_SUCCESS);
 
     EXPECT_EQ(g_image_requirements_queries, 1);
+    EXPECT_TRUE(g_image_bound_at_last_requirements_query);
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, AsObjectHandle(image)), 65536u);
 }
 
