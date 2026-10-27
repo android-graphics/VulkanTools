@@ -243,7 +243,14 @@ TEST_F(DeviceMemoryReportDispatchTests, ProactiveMemoryRequirementsQuery) {
 
     VkImage image = VK_NULL_HANDLE;
     ASSERT_EQ(vkCreateImage(device.handle(), &image_info, nullptr, &image), VK_SUCCESS);
+    // Image sizes are not queried at creation, but once the image is bound to memory.
+    EXPECT_EQ(g_image_requirements_queries, 0);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, AsObjectHandle(image)), 0u);
+
+    VkDeviceMemory memory = MakeHandle<VkDeviceMemory>(0xA1000);
+    EXPECT_EQ(vkBindImageMemory(device.handle(), image, memory, 0), VK_SUCCESS);
     EXPECT_EQ(g_image_requirements_queries, 1);
+    EXPECT_TRUE(g_image_bound_at_last_requirements_query);
     EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, AsObjectHandle(image)), 16384u);
 
     VkBufferCreateInfo buffer_info = {};
@@ -259,6 +266,75 @@ TEST_F(DeviceMemoryReportDispatchTests, ProactiveMemoryRequirementsQuery) {
 
     vkDestroyImage(device.handle(), image, nullptr);
     vkDestroyBuffer(device.handle(), buffer, nullptr);
+}
+
+TEST_F(DeviceMemoryReportDispatchTests, CreateImageSkipsMemoryRequirementsForAndroidHardwareBufferUntilBound) {
+    // Calling vkGetImageMemoryRequirements on an AHardwareBuffer-backed VkImage before memory is
+    // bound violates VUID-vkGetImageMemoryRequirements-image-04004 and causes drivers to report a
+    // worst-case upper bound (b/578430447). The layer must defer the query until the image is bound.
+    FakeDevice device;
+    g_image_requirements_size = 33554432;
+
+    VkExternalMemoryImageCreateInfo external_info = {};
+    external_info.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+    external_info.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
+
+    VkImageCreateInfo image_info = {};
+    image_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    image_info.pNext = &external_info;
+    image_info.imageType = VK_IMAGE_TYPE_2D;
+    image_info.format = VK_FORMAT_R8G8B8A8_UNORM;
+    image_info.extent = {1080, 2424, 1};
+    image_info.mipLevels = 1;
+    image_info.arrayLayers = 1;
+    image_info.samples = VK_SAMPLE_COUNT_1_BIT;
+    image_info.tiling = VK_IMAGE_TILING_OPTIMAL;
+    image_info.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    image_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    image_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    VkImage image = VK_NULL_HANDLE;
+    ASSERT_EQ(vkCreateImage(device.handle(), &image_info, nullptr, &image), VK_SUCCESS);
+    EXPECT_EQ(g_image_requirements_queries, 0);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, AsObjectHandle(image)), 0u);
+
+    // Once the AHardwareBuffer memory is bound, the post-bind size is queried and clamped to the
+    // imported VkDeviceMemory allocation size.
+    VkMemoryAllocateInfo alloc_info = {};
+    alloc_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    alloc_info.allocationSize = 10592256;
+    VkDeviceMemory memory = VK_NULL_HANDLE;
+    ASSERT_EQ(vkAllocateMemory(device.handle(), &alloc_info, nullptr, &memory), VK_SUCCESS);
+
+    VkBindImageMemoryInfo bind_info = {};
+    bind_info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+    bind_info.image = image;
+    bind_info.memory = memory;
+    bind_info.memoryOffset = 0;
+    EXPECT_EQ(vkBindImageMemory2(device.handle(), 1, &bind_info), VK_SUCCESS);
+    EXPECT_EQ(g_image_requirements_queries, 1);
+    EXPECT_TRUE(g_image_bound_at_last_requirements_query);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.color_render_target"), 10592256u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
+
+    // Also verify the Vulkan 1.0 vkBindImageMemory path queries requirements only after binding.
+    VkImage image_v1 = VK_NULL_HANDLE;
+    ASSERT_EQ(vkCreateImage(device.handle(), &image_info, nullptr, &image_v1), VK_SUCCESS);
+    EXPECT_EQ(g_image_requirements_queries, 1);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, AsObjectHandle(image_v1)), 0u);
+
+    VkDeviceMemory memory_v1 = VK_NULL_HANDLE;
+    ASSERT_EQ(vkAllocateMemory(device.handle(), &alloc_info, nullptr, &memory_v1), VK_SUCCESS);
+    EXPECT_EQ(vkBindImageMemory(device.handle(), image_v1, memory_v1, 0), VK_SUCCESS);
+    EXPECT_EQ(g_image_requirements_queries, 2);
+    EXPECT_TRUE(g_image_bound_at_last_requirements_query);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.color_render_target"), 2u * 10592256u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes("vulkan.mem.app.usage.unbound_memory"), 0u);
+
+    vkDestroyImage(device.handle(), image_v1, nullptr);
+    vkFreeMemory(device.handle(), memory_v1, nullptr);
+    vkDestroyImage(device.handle(), image, nullptr);
+    vkFreeMemory(device.handle(), memory, nullptr);
 }
 
 TEST_F(DeviceMemoryReportDispatchTests, BindBufferMemoryQueriesUnknownResourceSize) {
