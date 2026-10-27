@@ -17,9 +17,19 @@
 #include "device_memory_report_perfetto.h"
 #include "perfetto/perfetto.h"
 #include <algorithm>
+#include <cassert>
 #include <string>
 #include <string_view>
 #include <vector>
+
+namespace {
+
+// Returns the number of bytes of [offset, offset + size) that lie within an allocation of total_size bytes.
+VkDeviceSize ClampToAllocation(VkDeviceSize offset, VkDeviceSize size, VkDeviceSize total_size) {
+    return offset < total_size ? std::min(size, total_size - offset) : 0;
+}
+
+}  // namespace
 
 DeviceMemoryReport& DeviceMemoryReport::Get() {
     static DeviceMemoryReport instance;
@@ -182,12 +192,14 @@ void DeviceMemoryReport::UpdateAllocationUnboundCounter(const AllocationKey& key
     std::vector<std::pair<VkDeviceSize, VkDeviceSize>> intervals;
     intervals.reserve(allocation.sub_allocations.size());
     for (const auto& suballocation : allocation.sub_allocations) {
-        // Only the part of a binding that lies within the allocation is bound memory of it; an
-        // out-of-range binding must not hide unbound bytes. Clamping here, not at bind time, means
-        // bindings recorded against a placeholder (total_size == 0) are counted once the size is known.
-        if (suballocation.size > 0 && suballocation.offset < allocation.total_size) {
-            VkDeviceSize end = suballocation.offset + std::min(suballocation.size, allocation.total_size - suballocation.offset);
-            intervals.emplace_back(suballocation.offset, end);
+        // Sub-allocations are clamped to the allocation when bound and by ClampSubAllocationsToAllocation
+        // once a placeholder's size is known, so a stored binding never extends past total_size.
+        assert(allocation.total_size == 0 || suballocation.offset + suballocation.size <= allocation.total_size);
+        // Clamp anyway in release builds: a binding past the end would otherwise make the unsigned
+        // unbound size below wrap around.
+        const VkDeviceSize bound = ClampToAllocation(suballocation.offset, suballocation.size, allocation.total_size);
+        if (bound > 0) {
+            intervals.emplace_back(suballocation.offset, suballocation.offset + bound);
         }
     }
     if (!intervals.empty()) {
@@ -286,7 +298,7 @@ void EmitDebugObjectName(VkObjectType object_type, uint64_t object_handle, std::
 
 }  // namespace
 
-void DeviceMemoryReport::RemoveResourceBinding(const ObjectKey& resource_key, Resource& resource) {
+void DeviceMemoryReport::RemoveResourceBinding(const ObjectKey& resource_key, Resource& resource, bool update_unbound_counter) {
     if (resource.bound_memory == 0) return;
 
     const uint64_t memory_handle = resource.bound_memory;
@@ -309,7 +321,9 @@ void DeviceMemoryReport::RemoveResourceBinding(const ObjectKey& resource_key, Re
             VkDeviceSize suballocation_offset = it->offset;
             SubtractCounterBytes(it->usage_track, suballocation_size);
             suballocations.erase(it);
-            UpdateAllocationUnboundCounter(AllocationKey::App(memory_handle));
+            if (update_unbound_counter) {
+                UpdateAllocationUnboundCounter(AllocationKey::App(memory_handle));
+            }
 
             EmitAllocationTraceEvent({
                 .operation = "DESTROY",
@@ -334,24 +348,35 @@ void DeviceMemoryReport::BindResourceMemory(VkObjectType object_type, uint64_t r
 
     // If the same resource handle is passed more than once, remove stale bindings first.
     RemoveResourceBinding(resource_key, res_it->second);
+    BindResourceMemoryLocked(resource_key, res_it->second, memory_handle, memory_offset);
+}
 
+void DeviceMemoryReport::BindResourceMemoryLocked(const ObjectKey& resource_key, Resource& resource, uint64_t memory_handle, VkDeviceSize memory_offset) {
+    const auto& [object_type, resource_handle] = resource_key;
     const AllocationKey key = AllocationKey::App(memory_handle);
     auto& allocation = memory_allocations_[key];
-    VkDeviceSize res_size = res_it->second.size;
-    std::string new_usage_track = GetUsageTrackName(allocation.is_driver, res_it->second.GetCluster(allocation.mem_flags));
+    VkDeviceSize res_size = resource.size;
+    // Clamp the bound resource size to the backing VkDeviceMemory allocation when its size is known,
+    // so drivers returning a worst-case requirement (e.g. for imported AHardwareBuffers) or out-of-range
+    // bindings do not inflate usage counters or snapshot BIND records beyond the physical allocation (b/578430447).
+    if (allocation.total_size > 0) {
+        res_size = ClampToAllocation(memory_offset, res_size, allocation.total_size);
+        if (res_size == 0) return;
+    }
+    std::string new_usage_track = GetUsageTrackName(allocation.is_driver, resource.GetCluster(allocation.mem_flags));
 
     // Suballocations represent individual resources (like buffers or images) that are bound 
     // to specific offset regions within a single large memory allocation. 
     // We add a record here to track this specific resource's footprint within the larger memory block.
     allocation.sub_allocations.push_back({ object_type, resource_handle, memory_offset, res_size, new_usage_track });
-    res_it->second.bound_memory = memory_handle;
+    resource.bound_memory = memory_handle;
 
-    // Each distinct virtual resource handle adds its virtual size to its specific category track upon binding.
+    // Each distinct virtual resource handle adds its clamped size to its specific category track upon binding.
     AddCounterBytes(new_usage_track, res_size);
     UpdateAllocationUnboundCounter(key);
 
     bool is_image = (object_type == VK_OBJECT_TYPE_IMAGE);
-    const char* cluster_name = res_it->second.GetCluster(allocation.mem_flags);
+    const char* cluster_name = resource.GetCluster(allocation.mem_flags);
     EmitAllocationTraceEvent({
         .operation = "BIND",
         .source = is_image ? "IMAGE" : "BUFFER",
@@ -362,6 +387,37 @@ void DeviceMemoryReport::BindResourceMemory(VkObjectType object_type, uint64_t r
         .object_handle = resource_handle,
         .memory_type = cluster_name,
     });
+}
+
+void DeviceMemoryReport::ClampSubAllocationsToAllocation(const AllocationKey& key) {
+    auto allocation_it = memory_allocations_.find(key);
+    if (allocation_it == memory_allocations_.end() || allocation_it->second.total_size == 0) return;
+    const MemoryAllocation& allocation = allocation_it->second;
+
+    struct Overhang {
+        ObjectKey resource_key;
+        Resource* resource;
+        VkDeviceSize offset;
+    };
+    std::vector<Overhang> overhangs;
+    for (const auto& suballocation : allocation.sub_allocations) {
+        if (ClampToAllocation(suballocation.offset, suballocation.size, allocation.total_size) == suballocation.size) continue;
+        const ObjectKey resource_key = {suballocation.object_type, suballocation.resource_handle};
+        auto res_it = resources_.find(resource_key);
+        // Resources are unbound before they are erased, so every binding has a tracked resource.
+        assert(res_it != resources_.end());
+        if (res_it != resources_.end()) {
+            overhangs.push_back({resource_key, &res_it->second, suballocation.offset});
+        }
+    }
+    // Unbind every overhanging resource before re-binding any, so the unbound counter is only
+    // recomputed once all remaining bindings lie within the allocation.
+    for (const auto& overhang : overhangs) {
+        RemoveResourceBinding(overhang.resource_key, *overhang.resource, /*update_unbound_counter=*/false);
+    }
+    for (const auto& overhang : overhangs) {
+        BindResourceMemoryLocked(overhang.resource_key, *overhang.resource, key.id, overhang.offset);
+    }
 }
 
 void DeviceMemoryReport::OnBindBufferMemory(uint64_t buffer_handle, uint64_t memory_handle, VkDeviceSize memory_offset) {
@@ -665,7 +721,10 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
         allocation.is_driver = is_driver;
         allocation.object_type = pCallbackData->objectType;
         allocation.object_handle = pCallbackData->objectHandle;
-        UpdateAllocationUnboundCounter(key);
+        if (is_driver) {
+            // Also resolves cluster_name for the CREATE event. App allocations are updated below.
+            UpdateAllocationUnboundCounter(key);
+        }
         operation_name = "CREATE";
         memory_type = is_driver ? allocation.cluster_name : "unbound_memory";
     } else if (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
@@ -692,6 +751,14 @@ void DeviceMemoryReport::OnMemoryReportEvent(const VkDeviceMemoryReportCallbackD
             .object_handle = event_object_handle,
             .memory_type = memory_type,
         });
+    }
+
+    if (!is_driver && (pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_ALLOCATE_EXT ||
+                       pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_IMPORT_EXT)) {
+        // Bindings recorded against a placeholder before its size was known are clamped after CREATE,
+        // so the corrective DESTROY/BIND events follow it in the trace.
+        ClampSubAllocationsToAllocation(key);
+        UpdateAllocationUnboundCounter(key);
     }
 
     const bool is_free = pCallbackData->type == VK_DEVICE_MEMORY_REPORT_EVENT_TYPE_FREE_EXT ||
@@ -732,7 +799,6 @@ void DeviceMemoryReport::OnAllocateMemory(VkDevice device, VkDeviceMemory memory
         allocation.is_driver = false;
         allocation.object_type = VK_OBJECT_TYPE_DEVICE_MEMORY;
         allocation.object_handle = handle;
-        UpdateAllocationUnboundCounter(key);
 
         EmitAllocationTraceEvent({
             .operation = "CREATE",
@@ -744,6 +810,10 @@ void DeviceMemoryReport::OnAllocateMemory(VkDevice device, VkDeviceMemory memory
             .object_handle = handle,
             .memory_type = "unbound_memory",
         });
+
+        // Clamp bindings recorded against a placeholder after CREATE (see OnMemoryReportEvent).
+        ClampSubAllocationsToAllocation(key);
+        UpdateAllocationUnboundCounter(key);
     }
 }
 
