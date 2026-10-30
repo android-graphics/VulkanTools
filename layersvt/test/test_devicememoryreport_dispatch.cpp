@@ -427,11 +427,51 @@ VKAPI_ATTR VkResult VKAPI_CALL StubEnumerateDeviceExtensionPropertiesWithOverlap
     return util_GetExtensionProperties(2, driver_extensions, pPropertyCount, pProperties);
 }
 
+// Controls whether the stub driver reports the deviceMemoryReport feature as supported.
+bool g_stub_supports_memory_report_feature = false;
+
+// What the stub driver's vkCreateDevice saw in the pNext chain, captured during the call.
+int g_create_device_feature_struct_count = 0;
+VkBool32 g_create_device_feature_value = VK_FALSE;
+const void* g_create_device_feature_address = nullptr;
+
+VKAPI_ATTR void VKAPI_CALL StubGetPhysicalDeviceFeatures2(VkPhysicalDevice, VkPhysicalDeviceFeatures2* pFeatures) {
+    for (auto* s = reinterpret_cast<VkBaseOutStructure*>(pFeatures->pNext); s != nullptr; s = s->pNext) {
+        if (s->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT) {
+            reinterpret_cast<VkPhysicalDeviceDeviceMemoryReportFeaturesEXT*>(s)->deviceMemoryReport =
+                g_stub_supports_memory_report_feature ? VK_TRUE : VK_FALSE;
+        }
+    }
+}
+
+// The device created by the stub driver. Like FakeDevice, its first word is its own dispatch key.
+struct StubCreatedDevice {
+    void* dispatch_key = this;
+};
+StubCreatedDevice g_stub_created_device;
+
+VKAPI_ATTR VkResult VKAPI_CALL StubCreateDevice(VkPhysicalDevice, const VkDeviceCreateInfo* pCreateInfo,
+                                                const VkAllocationCallbacks*, VkDevice* pDevice) {
+    for (auto* s = reinterpret_cast<const VkBaseInStructure*>(pCreateInfo->pNext); s != nullptr; s = s->pNext) {
+        if (s->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT) {
+            ++g_create_device_feature_struct_count;
+            g_create_device_feature_value =
+                reinterpret_cast<const VkPhysicalDeviceDeviceMemoryReportFeaturesEXT*>(s)->deviceMemoryReport;
+            g_create_device_feature_address = s;
+        }
+    }
+    *pDevice = reinterpret_cast<VkDevice>(&g_stub_created_device);
+    return VK_SUCCESS;
+}
+
 VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL StubGetInstanceProcAddr(VkInstance, const char* pName) {
     if (pName == nullptr) return nullptr;
-    if (std::string(pName) == "vkEnumerateDeviceExtensionProperties") {
+    const std::string name(pName);
+    if (name == "vkEnumerateDeviceExtensionProperties") {
         return reinterpret_cast<PFN_vkVoidFunction>(StubEnumerateDeviceExtensionPropertiesWithOverlap);
     }
+    if (name == "vkGetPhysicalDeviceFeatures2") return reinterpret_cast<PFN_vkVoidFunction>(StubGetPhysicalDeviceFeatures2);
+    if (name == "vkCreateDevice") return reinterpret_cast<PFN_vkVoidFunction>(StubCreateDevice);
     return nullptr;
 }
 
@@ -492,6 +532,74 @@ TEST_F(DeviceMemoryReportDispatchTests, CreateDebugUtilsMessengerStubInitializes
 
     EXPECT_EQ(pfn_create_messenger(instance.handle(), &create_info, nullptr, &messenger), VK_SUCCESS);
     EXPECT_EQ(messenger, static_cast<VkDebugUtilsMessengerEXT>(VK_NULL_HANDLE));
+}
+
+// Runs the layer's vkCreateDevice against the stub driver, with an optional application pNext chain.
+class CreateDeviceTests : public DeviceMemoryReportDispatchTests {
+   protected:
+    void SetUp() override {
+        DeviceMemoryReportDispatchTests::SetUp();
+        g_stub_supports_memory_report_feature = false;
+        g_create_device_feature_struct_count = 0;
+        g_create_device_feature_value = VK_FALSE;
+        g_create_device_feature_address = nullptr;
+    }
+
+    VkResult CreateDevice(const void* app_chain) {
+        VkLayerDeviceLink link = {};
+        link.pfnNextGetInstanceProcAddr = StubGetInstanceProcAddr;
+        link.pfnNextGetDeviceProcAddr = StubGetDeviceProcAddr;
+        VkLayerDeviceCreateInfo layer_info = {};
+        layer_info.sType = VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO;
+        layer_info.pNext = app_chain;
+        layer_info.function = VK_LAYER_LINK_INFO;
+        layer_info.u.pLayerInfo = &link;
+        VkDeviceCreateInfo create_info = {};
+        create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        create_info.pNext = &layer_info;
+
+        VkDevice device = VK_NULL_HANDLE;
+        VkResult result = vkCreateDevice(instance_.physical_device(), &create_info, nullptr, &device);
+        if (result == VK_SUCCESS) {
+            destroy_device_dispatch_table(get_dispatch_key(device));
+        }
+        return result;
+    }
+
+    FakeInstance instance_;
+};
+
+TEST_F(CreateDeviceTests, EnablesMemoryReportFeatureWhenSupported) {
+    g_stub_supports_memory_report_feature = true;
+
+    ASSERT_EQ(CreateDevice(nullptr), VK_SUCCESS);
+
+    EXPECT_EQ(g_create_device_feature_struct_count, 1);
+    EXPECT_EQ(g_create_device_feature_value, VK_TRUE);
+}
+
+TEST_F(CreateDeviceTests, LeavesMemoryReportFeatureOffWhenUnsupported) {
+    g_stub_supports_memory_report_feature = false;
+
+    ASSERT_EQ(CreateDevice(nullptr), VK_SUCCESS);
+
+    EXPECT_EQ(g_create_device_feature_struct_count, 0);
+}
+
+TEST_F(CreateDeviceTests, ReusesApplicationFeatureStructAndRestoresIt) {
+    // The application chains the feature struct with the feature off. The layer must enable it on that
+    // struct (not chain a duplicate) and put the application's value back after vkCreateDevice.
+    g_stub_supports_memory_report_feature = true;
+    VkPhysicalDeviceDeviceMemoryReportFeaturesEXT app_features = {};
+    app_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
+    app_features.deviceMemoryReport = VK_FALSE;
+
+    ASSERT_EQ(CreateDevice(&app_features), VK_SUCCESS);
+
+    EXPECT_EQ(g_create_device_feature_struct_count, 1);
+    EXPECT_EQ(g_create_device_feature_address, &app_features);
+    EXPECT_EQ(g_create_device_feature_value, VK_TRUE);
+    EXPECT_EQ(app_features.deviceMemoryReport, VK_FALSE);
 }
 
 }  // namespace
