@@ -336,6 +336,19 @@ class DeviceMemoryReport {
     void BindResourceMemory(VkObjectType object_type, uint64_t resource_handle, uint64_t memory_handle, VkDeviceSize memory_offset);
 
     /**
+     * @brief Records a binding of an already-unbound resource; caller must hold counter_mutex_.
+     * The bound size is clamped to the allocation when its size is known, and a binding that lies
+     * entirely outside the allocation is dropped.
+     */
+    void BindResourceMemoryLocked(const ObjectKey& resource_key, Resource& resource, uint64_t memory_handle, VkDeviceSize memory_offset);
+
+    /**
+     * @brief Re-binds sub-allocations recorded against a placeholder (before total_size was known)
+     * that extend past the allocation, so their sizes, counters, and trace events are clamped to it.
+     */
+    void ClampSubAllocationsToAllocation(const AllocationKey& key);
+
+    /**
      * @brief Updates unbound memory category counter for a physical memory slab.
      * Unbound memory is allocated device memory not currently bound to any active resource (e.g. buffer or image).
      */
@@ -343,8 +356,9 @@ class DeviceMemoryReport {
 
     /**
      * @brief Removes a sub-allocation of a resource from a physical memory slab if bound.
+     * @param update_unbound_counter Whether to recompute the slab's unbound counter afterwards.
      */
-    void RemoveResourceBinding(const ObjectKey& resource_key, Resource& resource);
+    void RemoveResourceBinding(const ObjectKey& resource_key, Resource& resource, bool update_unbound_counter = true);
 
     /**
      * @brief Removes all sub-allocations and tracking for a memory slab being freed.

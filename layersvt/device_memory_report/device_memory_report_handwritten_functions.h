@@ -408,46 +408,6 @@ EXPORT_FUNCTION VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionPropert
 }
 
 
-// Intercept memory binding to correlate buffer object handles with device memory allocations.
-VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    auto* table = device_dispatch_table(device);
-    assert(table->BindBufferMemory != nullptr);
-    assert(buffer != VK_NULL_HANDLE);
-    assert(memory != VK_NULL_HANDLE);
-    if (DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_BUFFER, reinterpret_cast<uint64_t>(buffer)) == 0) {
-        if (table->GetBufferMemoryRequirements) {
-            VkMemoryRequirements mem_reqs;
-            table->GetBufferMemoryRequirements(device, buffer, &mem_reqs);
-            DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_BUFFER, reinterpret_cast<uint64_t>(buffer), mem_reqs.size);
-        }
-    }
-    VkResult result = table->BindBufferMemory(device, buffer, memory, memoryOffset);
-    if (result == VK_SUCCESS) {
-        DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(buffer), reinterpret_cast<uint64_t>(memory), memoryOffset);
-    }
-    return result;
-}
-
-// Intercept memory binding to correlate image object handles with device memory allocations.
-VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
-    auto* table = device_dispatch_table(device);
-    assert(table->BindImageMemory != nullptr);
-    assert(image != VK_NULL_HANDLE);
-    assert(memory != VK_NULL_HANDLE);
-    if (DeviceMemoryReport::Get().GetRecordedResourceSize(VK_OBJECT_TYPE_IMAGE, reinterpret_cast<uint64_t>(image)) == 0) {
-        if (table->GetImageMemoryRequirements) {
-            VkMemoryRequirements mem_reqs;
-            table->GetImageMemoryRequirements(device, image, &mem_reqs);
-            DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, reinterpret_cast<uint64_t>(image), mem_reqs.size);
-        }
-    }
-    VkResult result = table->BindImageMemory(device, image, memory, memoryOffset);
-    if (result == VK_SUCCESS) {
-        DeviceMemoryReport::Get().OnBindImageMemory(reinterpret_cast<uint64_t>(image), reinterpret_cast<uint64_t>(memory), memoryOffset);
-    }
-    return result;
-}
-
 static void RecordBufferBindings(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos) {
     auto* table = device_dispatch_table(device);
     for (uint32_t i = 0; i < bindInfoCount; ++i) {
@@ -460,6 +420,19 @@ static void RecordBufferBindings(VkDevice device, uint32_t bindInfoCount, const 
         }
         DeviceMemoryReport::Get().OnBindBufferMemory(reinterpret_cast<uint64_t>(pBindInfos[i].buffer), reinterpret_cast<uint64_t>(pBindInfos[i].memory), pBindInfos[i].memoryOffset);
     }
+}
+
+// Intercept memory binding to correlate buffer object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
+    auto* table = device_dispatch_table(device);
+    assert(table->BindBufferMemory != nullptr);
+    VkResult result = table->BindBufferMemory(device, buffer, memory, memoryOffset);
+    if (result == VK_SUCCESS) {
+        const VkBindBufferMemoryInfo bind_info = {
+            .sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO, .buffer = buffer, .memory = memory, .memoryOffset = memoryOffset};
+        RecordBufferBindings(device, 1, &bind_info);
+    }
+    return result;
 }
 
 // Intercept memory binding via vkBindBufferMemory2 to correlate buffer object handles with device memory allocations.
@@ -508,6 +481,19 @@ static void RecordImageBinds(VkDevice device, uint32_t bindInfoCount, const VkBi
     }
 }
 
+// Intercept memory binding to correlate image object handles with device memory allocations.
+VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset) {
+    auto* table = device_dispatch_table(device);
+    assert(table->BindImageMemory != nullptr);
+    VkResult result = table->BindImageMemory(device, image, memory, memoryOffset);
+    if (result == VK_SUCCESS) {
+        const VkBindImageMemoryInfo bind_info = {
+            .sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO, .image = image, .memory = memory, .memoryOffset = memoryOffset};
+        RecordImageBinds(device, 1, &bind_info);
+    }
+    return result;
+}
+
 // Intercept memory binding via vkBindImageMemory2 to correlate image object handles with device memory allocations.
 VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos) {
     auto* table = device_dispatch_table(device);
@@ -536,15 +522,10 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateImage(VkDevice device, const VkImageCreat
     VkResult result = fpCreateImage(device, pCreateInfo, pAllocator, pImage);
     if (result == VK_SUCCESS && pCreateInfo != nullptr && pImage != nullptr && *pImage != VK_NULL_HANDLE) {
         DeviceMemoryReport::Get().OnCreateImage(reinterpret_cast<uint64_t>(*pImage), pCreateInfo->usage);
-        
-        // Query and record memory requirements right after creation. 
-        // This is needed because Vulkan 1.3 applications might use vkGetDeviceImageMemoryRequirements 
-        // *before* creation, and subsequently skip calling vkGetImageMemoryRequirements, which would leave the tracked size as 0.
-        if (device_dispatch_table(device)->GetImageMemoryRequirements && (pCreateInfo->flags & VK_IMAGE_CREATE_DISJOINT_BIT) == 0) {
-            VkMemoryRequirements mem_reqs;
-            device_dispatch_table(device)->GetImageMemoryRequirements(device, *pImage, &mem_reqs);
-            DeviceMemoryReport::Get().OnRecordResourceSize(VK_OBJECT_TYPE_IMAGE, reinterpret_cast<uint64_t>(*pImage), mem_reqs.size);
-        }
+        // The image size is not queried here: images created with Android hardware buffer external memory
+        // must be bound before vkGetImageMemoryRequirements is called (VUID-vkGetImageMemoryRequirements-image-04004),
+        // and otherwise report a worst-case size (b/578430447). An image whose size the application never
+        // queried (e.g. it used vkGetDeviceImageMemoryRequirements before creation) has it queried once bound.
     }
     return result;
 }
