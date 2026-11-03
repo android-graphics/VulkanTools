@@ -138,6 +138,10 @@ if(ANDROID)
     add_subdirectory(agi_launch_producer)
 endif()
 
+if(ANDROID OR BUILD_TESTS)
+    add_subdirectory(thermal_monitor)
+endif()
+
 if(BUILD_LAYERMGR)
     if(NOT Qt6_FOUND)
         message("WARNING: Vulkan Configurator will be excluded from the build because Qt6 was not found. Please add Qt6 into the PATH environment variable")
