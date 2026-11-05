@@ -38,26 +38,48 @@ struct MemberTraits<Member Class::*> {
 };
 
 /**
+ * Retrieves a Vulkan command pointer from the downstream dispatch table for a handle without
+ * invoking it. The dispatch table type (VkuInstanceDispatchTable or VkuDeviceDispatchTable) is
+ * deduced from MemberPointer; Handle must be VkInstance or VkPhysicalDevice for instance commands,
+ * and VkDevice, VkQueue, VkCommandBuffer, or VkExternalComputeQueueNV for device commands.
+ * Returns the downstream command pointer, or nullptr if the handle is null, unregistered, or its
+ * dispatch table slot is null.
+ *
+ * The lookup uses the dispatch key of the handle. A dispatchable object that the layer creates
+ * itself, such as a VkCommandBuffer, gets the key of its device from the callback returned by
+ * LayerBase::GetDeviceLoaderDataCallback(). Call that callback, when the loader provides one,
+ * before dispatching through such an object.
+ */
+template <auto MemberPointer, typename Handle>
+[[nodiscard]] inline auto GetDownstream(Handle handle) {
+    using Traits = MemberTraits<decltype(MemberPointer)>;
+    using TableType = typename Traits::ClassType;
+    static_assert(std::is_same_v<TableType, VkuInstanceDispatchTable> || std::is_same_v<TableType, VkuDeviceDispatchTable>,
+                  "MemberPointer must be a member of VkuInstanceDispatchTable or VkuDeviceDispatchTable");
+    TableType* table = nullptr;
+    if constexpr (std::is_same_v<TableType, VkuInstanceDispatchTable>) {
+        static_assert(std::is_same_v<Handle, VkInstance> || std::is_same_v<Handle, VkPhysicalDevice>,
+                      "Instance dispatch table commands require a VkInstance or VkPhysicalDevice handle");
+        table = LayerBase::GetInstanceDispatchTable(handle);
+    } else {
+        static_assert(std::is_same_v<Handle, VkDevice> || std::is_same_v<Handle, VkQueue> ||
+                          std::is_same_v<Handle, VkCommandBuffer> || std::is_same_v<Handle, VkExternalComputeQueueNV>,
+                      "Device dispatch table commands require a dispatchable device-level handle");
+        table = LayerBase::GetDeviceDispatchTable(handle);
+    }
+    return table != nullptr ? table->*MemberPointer : typename Traits::MemberType{nullptr};
+}
+
+/**
  * Forwards a required Vulkan command downstream using the dispatch table.
  * Deduces instance vs. device table and asserts the entry point is non-null.
  * Returns the result of calling the downstream Vulkan command.
  */
 template <auto MemberPointer, typename Handle, typename... Args>
 inline auto DispatchDownstream(Handle handle, Args&&... args) {
-    using TableType = typename MemberTraits<decltype(MemberPointer)>::ClassType;
-    static_assert(std::is_same_v<TableType, VkuInstanceDispatchTable> ||
-                  std::is_same_v<TableType, VkuDeviceDispatchTable>,
-                  "MemberPointer must be a member of VkuInstanceDispatchTable or VkuDeviceDispatchTable");
-    TableType* table = nullptr;
-    if constexpr (std::is_same_v<TableType, VkuInstanceDispatchTable>) {
-        table = LayerBase::GetInstanceDispatchTable(handle);
-    } else {
-        table = LayerBase::GetDeviceDispatchTable(handle);
-    }
-
-    assert(table != nullptr && "Dispatch table must exist for valid handle");
-    assert(table->*MemberPointer != nullptr && "Function pointer must exist in dispatch table");
-    return (table->*MemberPointer)(handle, std::forward<Args>(args)...);
+    auto downstream_function = GetDownstream<MemberPointer>(handle);
+    assert(downstream_function != nullptr && "Dispatch table and function pointer must exist for valid handle");
+    return downstream_function(handle, std::forward<Args>(args)...);
 }
 
 /**
@@ -68,19 +90,9 @@ inline auto DispatchDownstream(Handle handle, Args&&... args) {
 template <auto MemberPointer, typename Fallback, typename Handle, typename... Args>
 inline auto DispatchDownstreamOr(Fallback&& fallback, Handle handle, Args&&... args) {
     using TableType = typename MemberTraits<decltype(MemberPointer)>::ClassType;
-    static_assert(std::is_same_v<TableType, VkuInstanceDispatchTable> ||
-                  std::is_same_v<TableType, VkuDeviceDispatchTable>,
-                  "MemberPointer must be a member of VkuInstanceDispatchTable or VkuDeviceDispatchTable");
     using ReturnType = decltype((std::declval<TableType*>()->*MemberPointer)(handle, std::forward<Args>(args)...));
-    TableType* table = nullptr;
-    if constexpr (std::is_same_v<TableType, VkuInstanceDispatchTable>) {
-        table = LayerBase::GetInstanceDispatchTable(handle);
-    } else {
-        table = LayerBase::GetDeviceDispatchTable(handle);
-    }
-
-    if (table && table->*MemberPointer) {
-        return static_cast<ReturnType>((table->*MemberPointer)(handle, std::forward<Args>(args)...));
+    if (auto downstream_function = GetDownstream<MemberPointer>(handle)) {
+        return static_cast<ReturnType>(downstream_function(handle, std::forward<Args>(args)...));
     }
 
     if constexpr (std::is_invocable_v<Fallback>) {
