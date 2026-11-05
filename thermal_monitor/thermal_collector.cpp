@@ -20,12 +20,15 @@
 
 namespace apa::thermal {
 
-ThermalCollector::ThermalCollector(ThermalSource& source, Emitter emit, int forecast_seconds)
-    : source_(source), emit_(std::move(emit)), forecast_seconds_(forecast_seconds), forecast_supported_(forecast_seconds > 0) {}
+ThermalCollector::ThermalCollector(ThermalSource& source, Emitter emitter, int forecast_seconds)
+    : source_(source),
+      emitter_(std::move(emitter)),
+      forecast_seconds_(forecast_seconds),
+      forecast_supported_(forecast_seconds > 0) {}
 
 void ThermalCollector::Sample() {
-    if (const std::optional<int> status = source_.ThermalStatus(); status.has_value()) {
-        emit_(ThermalConstants::kStatusCounter, static_cast<int64_t>(*status));
+    if (const std::optional<ThermalStatus> status = source_.CurrentThermalStatus(); status.has_value()) {
+        emitter_(ThermalConstants::kStatusCounter, static_cast<int64_t>(*status));
     }
     if (forecast_supported_ && (tick_++ % 2) == 1) {
         if (EmitHeadroom(ThermalConstants::kHeadroomForecastCounter, source_.ThermalHeadroom(forecast_seconds_))) {
@@ -56,14 +59,14 @@ const ThermalCollector::ThresholdList& ThermalCollector::GetThresholds() {
     return *thresholds_;
 }
 
-bool ThermalCollector::EmitHeadroom(const char* counter, std::optional<double> headroom) {
+bool ThermalCollector::EmitHeadroom(const char* counter, std::optional<float> headroom) {
     // Headroom is 1.0 at SEVERE throttling, so values this large are bogus; the cap also keeps the
     // scaled value well inside the range of std::llround.
-    constexpr double kMaxHeadroom = 1e6;
-    if (!headroom.has_value() || !std::isfinite(*headroom) || *headroom < 0.0 || *headroom > kMaxHeadroom) {
+    constexpr float kMaxHeadroom = 1e6f;
+    if (!headroom.has_value() || !std::isfinite(*headroom) || *headroom < 0.0f || *headroom > kMaxHeadroom) {
         return false;
     }
-    emit_(counter, std::llround(*headroom * ThermalConstants::kHeadroomScale));
+    emitter_(counter, std::llround(*headroom * ThermalConstants::kHeadroomScale));
     return true;
 }
 

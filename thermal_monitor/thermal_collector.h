@@ -24,6 +24,18 @@
 
 namespace apa::thermal {
 
+// Mirrors AThermalStatus from <android/thermal.h>, which is not available in the host build that
+// unit tests ThermalCollector. main.cpp static_asserts that the values match.
+enum class ThermalStatus : int {
+    kNone = 0,
+    kLight = 1,
+    kModerate = 2,
+    kSevere = 3,
+    kCritical = 4,
+    kEmergency = 5,
+    kShutdown = 6,
+};
+
 // Must match the counter names and scale that the Android Performance Analyzer trace viewer reads.
 namespace ThermalConstants {
 inline constexpr int kDefaultPollIntervalMs = 1000;
@@ -37,21 +49,20 @@ inline constexpr const char* kStatusCounter = "sherlock.thermal.status";
 // Atrace counters are integers, so headroom values are emitted multiplied by this.
 inline constexpr int64_t kHeadroomScale = 1000;
 
-// Counter names for the AThermalStatus / PowerManager.THERMAL_STATUS_* values that can carry a
-// headroom threshold.
-inline constexpr const char* ThresholdCounterName(int status) {
+// Counter names for the thermal statuses that can carry a headroom threshold.
+inline constexpr const char* ThresholdCounterName(ThermalStatus status) {
     switch (status) {
-        case 1:
+        case ThermalStatus::kLight:
             return "sherlock.thermal.headroom.threshold.light";
-        case 2:
+        case ThermalStatus::kModerate:
             return "sherlock.thermal.headroom.threshold.moderate";
-        case 3:
+        case ThermalStatus::kSevere:
             return "sherlock.thermal.headroom.threshold.severe";
-        case 4:
+        case ThermalStatus::kCritical:
             return "sherlock.thermal.headroom.threshold.critical";
-        case 5:
+        case ThermalStatus::kEmergency:
             return "sherlock.thermal.headroom.threshold.emergency";
-        case 6:
+        case ThermalStatus::kShutdown:
             return "sherlock.thermal.headroom.threshold.shutdown";
         default:
             return nullptr;
@@ -65,14 +76,19 @@ class ThermalSource {
    public:
     virtual ~ThermalSource() = default;
 
-    virtual std::optional<int> ThermalStatus() = 0;
+    // AThermal_getCurrentThermalStatus(), or nullopt if the device cannot report it.
+    virtual std::optional<ThermalStatus> CurrentThermalStatus() = 0;
 
-    // AThermal_getThermalHeadroom(forecast_seconds); 0 asks for the current headroom.
-    virtual std::optional<double> ThermalHeadroom(int forecast_seconds) = 0;
+    // AThermal_getThermalHeadroom(forecast_seconds); 0 asks for the current headroom. The returned
+    // headroom is 0.0 with no thermal load and rises with it: 1.0 means the device is (or, for a
+    // forecast, will be) throttled at ThermalStatus::kSevere, and values above 1.0 mean it is
+    // throttled beyond kSevere. Returns nullopt if the API returns NaN, e.g. when the device does
+    // not support headroom or the call was rate-limited.
+    virtual std::optional<float> ThermalHeadroom(int forecast_seconds) = 0;
 
-    // Headroom at which each THERMAL_STATUS_* starts, or empty if the device or OS version cannot
+    // Headroom at which each thermal status starts, or empty if the device or OS version cannot
     // report it.
-    virtual std::map<int, double> ThermalHeadroomThresholds() = 0;
+    virtual std::map<ThermalStatus, float> ThermalHeadroomThresholds() = 0;
 };
 
 // Samples the framework's thermal state and emits it as trace counters.
@@ -85,12 +101,12 @@ class ThermalCollector {
    public:
     using Emitter = std::function<void(const char*, int64_t)>;
 
-    ThermalCollector(ThermalSource& source, Emitter emit, int forecast_seconds = ThermalConstants::kDefaultForecastSeconds);
+    ThermalCollector(ThermalSource& source, Emitter emitter, int forecast_seconds = ThermalConstants::kDefaultForecastSeconds);
 
     void Sample();
 
    private:
-    using ThresholdList = std::vector<std::pair<const char*, double>>;
+    using ThresholdList = std::vector<std::pair<const char*, float>>;
 
     // AThermal_getThermalHeadroom() also returns NaN when it is called too often or the thermal
     // service hiccups, so one failure does not prove that the device cannot forecast.
@@ -101,10 +117,10 @@ class ThermalCollector {
     // emission at startup would not land in the trace.
     const ThresholdList& GetThresholds();
 
-    bool EmitHeadroom(const char* counter, std::optional<double> headroom);
+    bool EmitHeadroom(const char* counter, std::optional<float> headroom);
 
     ThermalSource& source_;
-    Emitter emit_;
+    Emitter emitter_;
     int forecast_seconds_;
     std::optional<ThresholdList> thresholds_;
     int tick_ = 0;

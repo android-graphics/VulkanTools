@@ -34,6 +34,14 @@ namespace {
 
 constexpr const char* kLogTag = "ThermalMonitor";
 
+static_assert(static_cast<int>(ThermalStatus::kNone) == ATHERMAL_STATUS_NONE);
+static_assert(static_cast<int>(ThermalStatus::kLight) == ATHERMAL_STATUS_LIGHT);
+static_assert(static_cast<int>(ThermalStatus::kModerate) == ATHERMAL_STATUS_MODERATE);
+static_assert(static_cast<int>(ThermalStatus::kSevere) == ATHERMAL_STATUS_SEVERE);
+static_assert(static_cast<int>(ThermalStatus::kCritical) == ATHERMAL_STATUS_CRITICAL);
+static_assert(static_cast<int>(ThermalStatus::kEmergency) == ATHERMAL_STATUS_EMERGENCY);
+static_assert(static_cast<int>(ThermalStatus::kShutdown) == ATHERMAL_STATUS_SHUTDOWN);
+
 // Queries the Android framework's thermal state via the NDK AThermal API in libandroid.so.
 // The binary targets API 31 (see scripts/android.py), which covers everything except
 // AThermal_getThermalHeadroomThresholds() (API 35). That symbol is weakly linked
@@ -53,26 +61,26 @@ class NdkThermalSource final : public ThermalSource {
 
     [[nodiscard]] bool IsValid() const { return manager_ != nullptr; }
 
-    std::optional<int> ThermalStatus() override {
+    std::optional<ThermalStatus> CurrentThermalStatus() override {
         const AThermalStatus status = AThermal_getCurrentThermalStatus(manager_);
-        if (status <= ATHERMAL_STATUS_ERROR) {
+        if (status < ATHERMAL_STATUS_NONE || status > ATHERMAL_STATUS_SHUTDOWN) {
             return std::nullopt;
         }
-        return static_cast<int>(status);
+        return static_cast<ThermalStatus>(status);
     }
 
-    std::optional<double> ThermalHeadroom(int forecast_seconds) override {
+    std::optional<float> ThermalHeadroom(int forecast_seconds) override {
         const float headroom = AThermal_getThermalHeadroom(manager_, forecast_seconds);
         if (std::isnan(headroom)) {
             return std::nullopt;
         }
-        return static_cast<double>(headroom);
+        return headroom;
     }
 
-    std::map<int, double> ThermalHeadroomThresholds() override {
-        std::map<int, double> result;
-        // Added in Android 15 (API 35). Older devices only get the SEVERE line, which the viewer
-        // derives from the API definition.
+    std::map<ThermalStatus, float> ThermalHeadroomThresholds() override {
+        std::map<ThermalStatus, float> result;
+        // AThermal_getThermalHeadroomThresholds() was added in Android 15 (API 35). Older versions
+        // cannot report thresholds, so they get an empty map.
         if (__builtin_available(android 35, *)) {
             const AThermalHeadroomThreshold* thresholds = nullptr;
             size_t size = 0;
@@ -80,7 +88,10 @@ class NdkThermalSource final : public ThermalSource {
                 return result;
             }
             for (size_t i = 0; i < size; ++i) {
-                result[static_cast<int>(thresholds[i].thermalStatus)] = static_cast<double>(thresholds[i].headroom);
+                const AThermalStatus status = thresholds[i].thermalStatus;
+                if (status >= ATHERMAL_STATUS_NONE && status <= ATHERMAL_STATUS_SHUTDOWN) {
+                    result[static_cast<ThermalStatus>(status)] = thresholds[i].headroom;
+                }
             }
             // The NDK allocates the array and documents that the client array-deletes it.
             delete[] thresholds;
