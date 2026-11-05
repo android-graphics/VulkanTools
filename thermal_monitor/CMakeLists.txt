@@ -15,6 +15,10 @@
 # The sampling policy has no Android dependencies, so it is also built on the host for the unit tests.
 add_library(thermal_collector STATIC thermal_collector.cpp thermal_collector.h)
 target_include_directories(thermal_collector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+if(NOT ANDROID)
+    # Stands in for the NDK's <android/thermal.h> so that the collector builds off-device.
+    target_include_directories(thermal_collector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/host_stubs)
+endif()
 
 if(WIN32 AND (QT_TARGET_TYPE STREQUAL STATIC_LIBRARY))
     set_property(TARGET thermal_collector PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

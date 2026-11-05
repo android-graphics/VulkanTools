@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <android/thermal.h>
+
 #include <functional>
 #include <map>
 #include <optional>
@@ -22,18 +24,6 @@
 #include <vector>
 
 namespace apa::thermal {
-
-// Mirrors AThermalStatus from <android/thermal.h>, which is not available in the host build that
-// unit tests ThermalCollector. main.cpp static_asserts that the values match.
-enum class ThermalStatus : int {
-    kNone = 0,
-    kLight = 1,
-    kModerate = 2,
-    kSevere = 3,
-    kCritical = 4,
-    kEmergency = 5,
-    kShutdown = 6,
-};
 
 // Must match the track event category and counter names that the Android Performance Analyzer trace
 // viewer reads.
@@ -50,19 +40,19 @@ inline constexpr const char* kHeadroomForecastCounter = "sherlock.thermal.headro
 inline constexpr const char* kStatusCounter = "sherlock.thermal.status";
 
 // Counter names for the thermal statuses that can carry a headroom threshold.
-inline constexpr const char* ThresholdCounterName(ThermalStatus status) {
+inline constexpr const char* ThresholdCounterName(AThermalStatus status) {
     switch (status) {
-        case ThermalStatus::kLight:
+        case ATHERMAL_STATUS_LIGHT:
             return "sherlock.thermal.headroom.threshold.light";
-        case ThermalStatus::kModerate:
+        case ATHERMAL_STATUS_MODERATE:
             return "sherlock.thermal.headroom.threshold.moderate";
-        case ThermalStatus::kSevere:
+        case ATHERMAL_STATUS_SEVERE:
             return "sherlock.thermal.headroom.threshold.severe";
-        case ThermalStatus::kCritical:
+        case ATHERMAL_STATUS_CRITICAL:
             return "sherlock.thermal.headroom.threshold.critical";
-        case ThermalStatus::kEmergency:
+        case ATHERMAL_STATUS_EMERGENCY:
             return "sherlock.thermal.headroom.threshold.emergency";
-        case ThermalStatus::kShutdown:
+        case ATHERMAL_STATUS_SHUTDOWN:
             return "sherlock.thermal.headroom.threshold.shutdown";
         default:
             return nullptr;
@@ -77,18 +67,18 @@ class ThermalSource {
     virtual ~ThermalSource() = default;
 
     // AThermal_getCurrentThermalStatus(), or nullopt if the device cannot report it.
-    virtual std::optional<ThermalStatus> CurrentThermalStatus() = 0;
+    virtual std::optional<AThermalStatus> CurrentThermalStatus() = 0;
 
     // AThermal_getThermalHeadroom(forecast_seconds); 0 asks for the current headroom. The returned
     // headroom is 0.0 with no thermal load and rises with it: 1.0 means the device is (or, for a
-    // forecast, will be) throttled at ThermalStatus::kSevere, and values above 1.0 mean it is
-    // throttled beyond kSevere. Returns nullopt if the API returns NaN, e.g. when the device does
+    // forecast, will be) throttled at ATHERMAL_STATUS_SEVERE, and values above 1.0 mean it
+    // is throttled beyond that. Returns nullopt if the API returns NaN, e.g. when the device does
     // not support headroom or the call was rate-limited.
     virtual std::optional<float> ThermalHeadroom(int forecast_seconds) = 0;
 
     // Headroom at which each thermal status starts, or empty if the device or OS version cannot
     // report it.
-    virtual std::map<ThermalStatus, float> ThermalHeadroomThresholds() = 0;
+    virtual std::map<AThermalStatus, float> ThermalHeadroomThresholds() = 0;
 };
 
 // Samples the framework's thermal state and emits it as trace counters.

@@ -31,18 +31,18 @@ using CounterSample = std::pair<std::string, double>;
 
 class FakeThermalSource final : public ThermalSource {
    public:
-    FakeThermalSource(std::optional<ThermalStatus> status, std::optional<float> headroom,
-                      std::optional<float> forecast = std::nullopt, std::map<ThermalStatus, float> thresholds = {})
+    FakeThermalSource(std::optional<AThermalStatus> status, std::optional<float> headroom,
+                      std::optional<float> forecast = std::nullopt, std::map<AThermalStatus, float> thresholds = {})
         : status_(status), headroom_(headroom), forecast_(forecast), thresholds_(std::move(thresholds)) {}
 
-    std::optional<ThermalStatus> CurrentThermalStatus() override { return status_; }
+    std::optional<AThermalStatus> CurrentThermalStatus() override { return status_; }
 
     std::optional<float> ThermalHeadroom(int forecast_seconds) override {
         headroom_queries_.push_back(forecast_seconds);
         return forecast_seconds == 0 ? headroom_ : forecast_;
     }
 
-    std::map<ThermalStatus, float> ThermalHeadroomThresholds() override {
+    std::map<AThermalStatus, float> ThermalHeadroomThresholds() override {
         ++thresholds_read_count_;
         return thresholds_;
     }
@@ -52,10 +52,10 @@ class FakeThermalSource final : public ThermalSource {
     const std::vector<int>& HeadroomQueries() const { return headroom_queries_; }
 
    private:
-    std::optional<ThermalStatus> status_;
+    std::optional<AThermalStatus> status_;
     std::optional<float> headroom_;
     std::optional<float> forecast_;
-    std::map<ThermalStatus, float> thresholds_;
+    std::map<AThermalStatus, float> thresholds_;
     int thresholds_read_count_ = 0;
     std::vector<int> headroom_queries_;
 };
@@ -69,7 +69,7 @@ class ThermalCollectorTest : public ::testing::Test {
 };
 
 TEST_F(ThermalCollectorTest, InterleavesCurrentAndForecastHeadroomOnAlternatingTicks) {
-    FakeThermalSource source(/*status=*/ThermalStatus::kModerate, /*headroom=*/0.93f, /*forecast=*/1.04f);
+    FakeThermalSource source(/*status=*/ATHERMAL_STATUS_MODERATE, /*headroom=*/0.93f, /*forecast=*/1.04f);
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/10);
 
     collector.Sample();
@@ -86,7 +86,7 @@ TEST_F(ThermalCollectorTest, InterleavesCurrentAndForecastHeadroomOnAlternatingT
 }
 
 TEST_F(ThermalCollectorTest, DisablesForecastWhenHorizonIsZero) {
-    FakeThermalSource source(/*status=*/ThermalStatus::kLight, /*headroom=*/0.8f, /*forecast=*/0.9f);
+    FakeThermalSource source(/*status=*/ATHERMAL_STATUS_LIGHT, /*headroom=*/0.8f, /*forecast=*/0.9f);
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
 
     collector.Sample();
@@ -103,7 +103,7 @@ TEST_F(ThermalCollectorTest, DisablesForecastWhenHorizonIsZero) {
 }
 
 TEST_F(ThermalCollectorTest, SkipsFailedForecastTickWithoutRetryingCurrentHeadroom) {
-    FakeThermalSource source(/*status=*/ThermalStatus::kLight, /*headroom=*/0.8f, /*forecast=*/std::nullopt);
+    FakeThermalSource source(/*status=*/ATHERMAL_STATUS_LIGHT, /*headroom=*/0.8f, /*forecast=*/std::nullopt);
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/10);
 
     collector.Sample();
@@ -135,14 +135,14 @@ TEST_F(ThermalCollectorTest, KeepsForecastAfterTransientFailures) {
     // Each fake failure is followed by a success, so the failure count never reaches the limit.
     class FlakyForecastSource final : public ThermalSource {
        public:
-        std::optional<ThermalStatus> CurrentThermalStatus() override { return std::nullopt; }
+        std::optional<AThermalStatus> CurrentThermalStatus() override { return std::nullopt; }
         std::optional<float> ThermalHeadroom(int forecast_seconds) override {
             if (forecast_seconds == 0) {
                 return 0.8f;
             }
             return (forecast_calls_++ % 2) == 0 ? std::nullopt : std::optional<float>(0.9f);
         }
-        std::map<ThermalStatus, float> ThermalHeadroomThresholds() override { return {}; }
+        std::map<AThermalStatus, float> ThermalHeadroomThresholds() override { return {}; }
 
        private:
         int forecast_calls_ = 0;
@@ -166,7 +166,7 @@ TEST_F(ThermalCollectorTest, KeepsForecastAfterTransientFailures) {
 TEST_F(ThermalCollectorTest, EmitsTheShortestDecimalOfTheFloatHeadroom) {
     // Converting 0.8f straight to a double would give 0.800000011920929.
     FakeThermalSource source(/*status=*/std::nullopt, /*headroom=*/0.8f, /*forecast=*/std::nullopt,
-                             /*thresholds=*/{{ThermalStatus::kModerate, 0.93333334f}});
+                             /*thresholds=*/{{ATHERMAL_STATUS_MODERATE, 0.93333334f}});
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
 
     collector.Sample();
@@ -182,7 +182,7 @@ TEST_F(ThermalCollectorTest, EmitsTheShortestDecimalOfTheFloatHeadroom) {
 TEST_F(ThermalCollectorTest, EmitsHeadroomWithoutRounding) {
     // The Galaxy S25 puts LIGHT at 0.867 and MODERATE at 0.933, so any rounding has to keep at
     // least three decimal places. Perfetto counters are doubles, so there is none.
-    FakeThermalSource source(/*status=*/ThermalStatus::kNone, /*headroom=*/0.8674f);
+    FakeThermalSource source(/*status=*/ATHERMAL_STATUS_NONE, /*headroom=*/0.8674f);
     ThermalCollector(source, emitter_).Sample();
 
     ASSERT_EQ(emitted_.size(), 2u);
@@ -191,10 +191,10 @@ TEST_F(ThermalCollectorTest, EmitsHeadroomWithoutRounding) {
 
 TEST_F(ThermalCollectorTest, OmitsHeadroomEntirelyOnDeviceThatDoesNotReportIt) {
     FakeThermalSource source(
-        /*status=*/ThermalStatus::kLight,
+        /*status=*/ATHERMAL_STATUS_LIGHT,
         /*headroom=*/std::nullopt,
         /*forecast=*/std::nullopt,
-        /*thresholds=*/{{ThermalStatus::kLight, 0.7f}});
+        /*thresholds=*/{{ATHERMAL_STATUS_LIGHT, 0.7f}});
     ThermalCollector collector(source, emitter_);
 
     collector.Sample();
@@ -209,17 +209,17 @@ TEST_F(ThermalCollectorTest, OmitsHeadroomEntirelyOnDeviceThatDoesNotReportIt) {
 
 TEST_F(ThermalCollectorTest, IgnoresNonFiniteOrNegativeHeadroom) {
     FakeThermalSource nan_source(
-        /*status=*/ThermalStatus::kLight,
+        /*status=*/ATHERMAL_STATUS_LIGHT,
         /*headroom=*/std::numeric_limits<float>::quiet_NaN(),
         /*forecast=*/std::nullopt,
-        /*thresholds=*/{{ThermalStatus::kLight, 0.7f}});
+        /*thresholds=*/{{ATHERMAL_STATUS_LIGHT, 0.7f}});
     ThermalCollector(nan_source, emitter_).Sample();
 
     FakeThermalSource negative_source(
-        /*status=*/ThermalStatus::kLight,
+        /*status=*/ATHERMAL_STATUS_LIGHT,
         /*headroom=*/-1.0f,
         /*forecast=*/-1.0f,
-        /*thresholds=*/{{ThermalStatus::kLight, 0.7f}});
+        /*thresholds=*/{{ATHERMAL_STATUS_LIGHT, 0.7f}});
     ThermalCollector negative_collector(negative_source, emitter_, /*forecast_seconds=*/10);
     negative_collector.Sample();
     negative_collector.Sample();
@@ -248,10 +248,10 @@ TEST_F(ThermalCollectorTest, OmitsStatusOnDeviceThatDoesNotReportIt) {
 
 TEST_F(ThermalCollectorTest, SamplesDoNotIncludeThresholds) {
     FakeThermalSource source(
-        /*status=*/ThermalStatus::kNone,
+        /*status=*/ATHERMAL_STATUS_NONE,
         /*headroom=*/0.8f,
         /*forecast=*/std::nullopt,
-        /*thresholds=*/{{ThermalStatus::kLight, 0.867f}});
+        /*thresholds=*/{{ATHERMAL_STATUS_LIGHT, 0.867f}});
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
 
     collector.Sample();
@@ -266,15 +266,15 @@ TEST_F(ThermalCollectorTest, SamplesDoNotIncludeThresholds) {
 TEST_F(ThermalCollectorTest, ReadsThresholdsOnceAndEmitsTheValidOnes) {
     // The Galaxy S25 reports SEVERE as NaN even though LIGHT and MODERATE are populated.
     FakeThermalSource source(
-        /*status=*/ThermalStatus::kNone,
+        /*status=*/ATHERMAL_STATUS_NONE,
         /*headroom=*/0.8f,
         /*forecast=*/0.9f,
         /*thresholds=*/
         {
-            {ThermalStatus::kNone, 0.0f},
-            {ThermalStatus::kLight, 0.867f},
-            {ThermalStatus::kModerate, 0.933f},
-            {ThermalStatus::kSevere, std::numeric_limits<float>::quiet_NaN()},
+            {ATHERMAL_STATUS_NONE, 0.0f},
+            {ATHERMAL_STATUS_LIGHT, 0.867f},
+            {ATHERMAL_STATUS_MODERATE, 0.933f},
+            {ATHERMAL_STATUS_SEVERE, std::numeric_limits<float>::quiet_NaN()},
         });
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/10);
 

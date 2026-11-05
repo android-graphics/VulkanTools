@@ -49,7 +49,7 @@ ThermalCollector::ThermalCollector(ThermalSource& source, Emitter emitter, int f
       forecast_supported_(forecast_seconds > 0) {}
 
 void ThermalCollector::Sample() {
-    if (const std::optional<ThermalStatus> status = source_.CurrentThermalStatus(); status.has_value()) {
+    if (const std::optional<AThermalStatus> status = source_.CurrentThermalStatus(); status.has_value()) {
         emitter_(ThermalConstants::kStatusCounter, static_cast<double>(*status));
     }
     if (forecast_supported_ && (tick_++ % 2) == 1) {
