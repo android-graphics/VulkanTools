@@ -370,6 +370,7 @@ TEST_F(DeviceMemoryReportTests, BindingsAreClampedToTheirAllocation) {
 
     InitializeDeviceMemoryReportPerfetto();
     const std::string unbound_track = "vulkan.mem.app.usage.unbound_memory";
+    const std::string mesh_track = "vulkan.mem.app.usage.geometry_mesh";
 
     VkDeviceMemoryReportCallbackDataEXT cb_data = {};
     cb_data.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
@@ -385,21 +386,38 @@ TEST_F(DeviceMemoryReportTests, BindingsAreClampedToTheirAllocation) {
     DeviceMemoryReport::Get().OnCreateBuffer(0xE101, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 8000);
     DeviceMemoryReport::Get().OnBindBufferMemory(0xE101, 0xE001, 12000);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 12000u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(mesh_track), 4000u);
+    auto first_alloc = DeviceMemoryReportTestPeer::FindAllocation(0xE001);
+    ASSERT_TRUE(first_alloc.has_value());
+    ASSERT_EQ(first_alloc->sub_allocations.size(), 1u);
+    EXPECT_EQ(first_alloc->sub_allocations[0].size, 4000u);
 
     // [20000, 21000) lies entirely outside the allocation, so nothing more is bound.
     DeviceMemoryReport::Get().OnCreateBuffer(0xE102, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 1000);
     DeviceMemoryReport::Get().OnBindBufferMemory(0xE102, 0xE001, 20000);
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 12000u);
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(mesh_track), 4000u);
+    first_alloc = DeviceMemoryReportTestPeer::FindAllocation(0xE001);
+    ASSERT_TRUE(first_alloc.has_value());
+    EXPECT_EQ(first_alloc->sub_allocations.size(), 1u);
 
     // A binding recorded before its allocation is reported is clamped once the allocation size is known.
     DeviceMemoryReport::Get().OnCreateBuffer(0xE103, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 4000);
     DeviceMemoryReport::Get().OnBindBufferMemory(0xE103, 0xE002, 8000);
+    DeviceMemoryReport::Get().OnCreateBuffer(0xE104, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 1000);
+    DeviceMemoryReport::Get().OnBindBufferMemory(0xE104, 0xE002, 12000);
     cb_data.memoryObjectId = 0x7001;
     cb_data.objectHandle = 0xE002;
     cb_data.size = 10000;
     DeviceMemoryReport::MemoryReportCallback(&cb_data, nullptr);
     // 12,000 B from the first allocation plus 10,000 - 2,000 B from the second.
     EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(unbound_track), 20000u);
+    // 4,000 B from the first allocation plus 2,000 B from the clamped [8000, 10000) binding; [12000, 13000) is dropped.
+    EXPECT_EQ(DeviceMemoryReport::Get().GetUsageCounterBytes(mesh_track), 6000u);
+    auto second_alloc = DeviceMemoryReportTestPeer::FindAllocation(0xE002);
+    ASSERT_TRUE(second_alloc.has_value());
+    ASSERT_EQ(second_alloc->sub_allocations.size(), 1u);
+    EXPECT_EQ(second_alloc->sub_allocations[0].size, 2000u);
 }
 
 TEST_F(DeviceMemoryReportTests, ClusterClassificationFunctions) {
