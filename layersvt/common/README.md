@@ -47,7 +47,7 @@ The `layersvt_common` library provides a modern, thread-safe C++ foundation for 
 ### Key Components
 
 * **`LayerBase`** ([`layer_base.h`](layer_base.h), [`layer_base.cpp`](layer_base.cpp)):
-  Base class employing the **Template Method** design pattern. It implements static intercept entry points (`vkGetInstanceProcAddr`, `vkGetDeviceProcAddr`, `vkCreateInstance`, `vkDestroyInstance`, `vkCreateDevice`, `vkDestroyDevice`, `vkEnumerateInstanceExtensionProperties`, `vkEnumerateDeviceExtensionProperties`, `vkGetPhysicalDeviceToolProperties`), executes virtual lifecycle and extension/tooling hooks (`ProcessDeviceExtensions`, `ProcessInstanceExtensions`, `ProcessToolProperties`), and delegates custom functions to derived layer overrides.
+  Base class employing the **Template Method** design pattern. It provides overridable `protected virtual` built-in command implementations (`GetInstanceProcAddr`, `GetDeviceProcAddr`, `CreateInstance`, `DestroyInstance`, `CreateDevice`, `DestroyDevice`, `EnumerateInstanceLayerProperties`, `EnumerateInstanceExtensionProperties`, `EnumerateDeviceLayerProperties`, `EnumerateDeviceExtensionProperties`, `GetPhysicalDeviceToolProperties`), executes virtual lifecycle and extension/tooling hooks (`ProcessDeviceExtensions`, `ProcessInstanceExtensions`, `ProcessToolProperties`), and delegates custom functions to derived layer overrides.
 * **`LayerManifest`** ([`layer_manifest.h`](layer_manifest.h), [`layer_manifest.cpp`](layer_manifest.cpp)):
   Passive declarative data struct describing layer metadata, supported Vulkan versions, advertised instance/device extensions, and tooling properties (`VK_EXT_tooling_info` / `VK_VERSION_1_3`). Downstream Vulkan querying, buffer sizing, and capability merging are managed by `LayerBase`.
 * **`DispatchTableManager`** ([`dispatch_table_manager.h`](dispatch_table_manager.h), [`dispatch_table_manager.cpp`](dispatch_table_manager.cpp)):
@@ -87,6 +87,9 @@ class MyCustomLayer : public LayerBase {
   // commands and for device commands queried via vkGetInstanceProcAddr.
   PFN_vkVoidFunction GetLayerInstanceCommand(VkInstance instance, const char* command_name) override;
   PFN_vkVoidFunction GetLayerDeviceCommand(VkDevice device, const char* command_name) override;
+
+  // Built-in commands (CreateInstance, DestroyDevice, Enumerate*, etc.) can also be wrapped
+  // by overriding their virtual methods on LayerBase.
 
   // Lifecycle hooks (override as needed)
   void PreCreateInstance(VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator) override;
@@ -321,7 +324,7 @@ target_link_libraries(test_MyCustomLayer_layer layersvt_common)
    * `DispatchDownstreamOrSuccess` — optional commands returning `VkResult`; returns `VK_SUCCESS` if the entry point is unavailable.
    * `DispatchDownstreamOr` — optional commands needing a custom fallback value (or a callable producing it).
 3. **Null Handle Destruction is Safe**:
-   `LayerBase::DestroyInstance` and `LayerBase::DestroyDevice` immediately return on `VK_NULL_HANDLE` per Vulkan specification (Section 2.7), bypassing downstream dispatch and virtual hooks. Virtual `PreDestroy*` hooks are guaranteed to receive only valid non-null handles.
+   The base `LayerBase::DestroyInstance` and `LayerBase::DestroyDevice` return at once on `VK_NULL_HANDLE` per Vulkan specification (Section 2.7), and skip downstream dispatch and the `PreDestroy*` hooks. Virtual `PreDestroy*` hooks receive only non-null handles. An override of `DestroyInstance` or `DestroyDevice` itself can receive `VK_NULL_HANDLE`.
 4. **Tool Properties Downstream Initialization**:
    When querying downstream tooling properties in custom commands, always initialize `tool.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT` and `tool.pNext = nullptr` on each array element before passing buffers to downstream functions to satisfy Vulkan VUIDs.
 5. **Thread Safety**:

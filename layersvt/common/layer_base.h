@@ -25,6 +25,7 @@
 namespace layersvt {
 
 struct LayerManifest;
+struct LayerEntrypoints;
 class LayerBaseTestPeer;
 
 /**
@@ -38,8 +39,10 @@ class LayerBaseTestPeer;
  * - Thread Safety: Internal registries (DispatchTableManager) are thread-safe.
  *   Overridden hooks called concurrently by Vulkan applications must maintain their
  *   own thread safety for layer-specific state.
- * - Command Routing: Custom commands return function pointers via GetLayerInstanceCommand
- *   and GetLayerDeviceCommand; unhandled commands route to downstream dispatch tables.
+ * - Command Routing: Built-in lifecycle, proc-addr, and enumeration commands route to
+ *   virtual methods on LayerBase via static C ABI thunks; custom commands return function
+ *   pointers via GetLayerInstanceCommand and GetLayerDeviceCommand; unhandled commands
+ *   route to downstream dispatch tables.
  * - Property Enumeration: Serves layer extensions and tool properties automatically
  *   from GetLayerManifest(), merging layer properties with downstream capabilities.
  * - Lifecycle Hooks: PreCreate* / PostCreate* / PreDestroy* hooks bracket instance and
@@ -113,6 +116,31 @@ class LayerBase {
      * Returns true if tool properties queries should be intercepted, or false to dispatch downstream.
      */
     [[nodiscard]] virtual bool HasToolProperties() const;
+
+    // Override to wrap a built-in command. Arguments arrive unchecked from the loader: handles can be VK_NULL_HANDLE and
+    // pointers can be null. An override of Create*/Destroy* must call the LayerBase implementation, which registers and
+    // releases the dispatch tables and runs the Pre*/Post* hooks.
+
+    virtual PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* command_name);
+    virtual PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* command_name);
+
+    virtual VkResult CreateInstance(const VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator,
+                                    VkInstance* instance);
+    virtual void DestroyInstance(VkInstance instance, const VkAllocationCallbacks* allocator);
+
+    virtual VkResult CreateDevice(VkPhysicalDevice physical_device, const VkDeviceCreateInfo* create_info,
+                                  const VkAllocationCallbacks* allocator, VkDevice* device);
+    virtual void DestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator);
+
+    virtual VkResult EnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties);
+    virtual VkResult EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
+                                                          VkExtensionProperties* properties);
+    virtual VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
+                                                    VkLayerProperties* properties);
+    virtual VkResult EnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device, const char* layer_name,
+                                                        uint32_t* property_count, VkExtensionProperties* properties);
+    virtual VkResult GetPhysicalDeviceToolProperties(VkPhysicalDevice physical_device, uint32_t* tool_count,
+                                                     VkPhysicalDeviceToolPropertiesEXT* tool_properties);
 
     // Layer-specific command intercepts
 
@@ -202,62 +230,41 @@ class LayerBase {
 
     static inline LayerBase* layer_ = nullptr;
 
-    // Exported Vulkan layer entry points (implemented in layer_entrypoints.cpp)
-#if defined(_WIN32)
-    friend VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL ::vkGetInstanceProcAddr(VkInstance instance, const char* command_name);
-    friend VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL ::vkGetDeviceProcAddr(VkDevice device, const char* command_name);
-    friend VKAPI_ATTR VkResult VKAPI_CALL ::vkEnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL ::vkEnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
-                                                                                  VkExtensionProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL ::vkEnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
-                                                                              VkLayerProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL ::vkEnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device, const char* layer_name,
-                                                                                  uint32_t* property_count,
-                                                                                  VkExtensionProperties* properties);
-#else
-    friend VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL (::vkGetInstanceProcAddr)(VkInstance instance, const char* command_name);
-    friend VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL (::vkGetDeviceProcAddr)(VkDevice device, const char* command_name);
-    friend VKAPI_ATTR VkResult VKAPI_CALL (::vkEnumerateInstanceLayerProperties)(uint32_t* property_count, VkLayerProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL (::vkEnumerateInstanceExtensionProperties)(const char* layer_name, uint32_t* property_count,
-                                                                                  VkExtensionProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL (::vkEnumerateDeviceLayerProperties)(VkPhysicalDevice physical_device, uint32_t* property_count,
-                                                                              VkLayerProperties* properties);
-    friend VKAPI_ATTR VkResult VKAPI_CALL (::vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice physical_device, const char* layer_name,
-                                                                                  uint32_t* property_count,
-                                                                                  VkExtensionProperties* properties);
-#endif
-
+    friend struct LayerEntrypoints;
     friend class LayerBaseTestPeer;
 
     template <auto MemberPointer, typename Handle>
     friend auto GetDownstream(Handle handle);
 
-    // Vulkan intercept commands (static C-compatible functions)
+    // Static C ABI dispatch thunks forwarding to the active singleton's virtual methods
+    static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DispatchGetInstanceProcAddr(VkInstance instance, const char* command_name);
+    static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DispatchGetDeviceProcAddr(VkDevice device, const char* command_name);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchCreateInstance(const VkInstanceCreateInfo* create_info,
+                                                                 const VkAllocationCallbacks* allocator, VkInstance* instance);
+    static VKAPI_ATTR void VKAPI_CALL DispatchDestroyInstance(VkInstance instance, const VkAllocationCallbacks* allocator);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchCreateDevice(VkPhysicalDevice physical_device,
+                                                               const VkDeviceCreateInfo* create_info,
+                                                               const VkAllocationCallbacks* allocator, VkDevice* device);
+    static VKAPI_ATTR void VKAPI_CALL DispatchDestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchEnumerateInstanceLayerProperties(uint32_t* property_count,
+                                                                                   VkLayerProperties* properties);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchEnumerateInstanceExtensionProperties(const char* layer_name,
+                                                                                       uint32_t* property_count,
+                                                                                       VkExtensionProperties* properties);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchEnumerateDeviceLayerProperties(VkPhysicalDevice physical_device,
+                                                                                 uint32_t* property_count,
+                                                                                 VkLayerProperties* properties);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchEnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device,
+                                                                                     const char* layer_name,
+                                                                                     uint32_t* property_count,
+                                                                                     VkExtensionProperties* properties);
+    static VKAPI_ATTR VkResult VKAPI_CALL DispatchGetPhysicalDeviceToolProperties(
+        VkPhysicalDevice physical_device, uint32_t* tool_count, VkPhysicalDeviceToolPropertiesEXT* tool_properties);
 
-    static PFN_vkVoidFunction VKAPI_CALL GetInstanceProcAddr(VkInstance instance, const char* command_name);
-    static PFN_vkVoidFunction VKAPI_CALL GetDeviceProcAddr(VkDevice device, const char* command_name);
-
-    static VkResult VKAPI_CALL CreateInstance(const VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator,
-                                              VkInstance* instance);
-    static void VKAPI_CALL DestroyInstance(VkInstance instance, const VkAllocationCallbacks* allocator);
-
-    static VkResult VKAPI_CALL CreateDevice(VkPhysicalDevice physical_device, const VkDeviceCreateInfo* create_info,
-                                            const VkAllocationCallbacks* allocator, VkDevice* device);
-    static void VKAPI_CALL DestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator);
-
-    static VkResult VKAPI_CALL EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
-                                                                    VkExtensionProperties* properties);
-    static VkResult VKAPI_CALL EnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties);
-    static VkResult VKAPI_CALL EnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
-                                                              VkLayerProperties* properties);
-    static VkResult VKAPI_CALL EnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device, const char* layer_name,
-                                                                  uint32_t* property_count, VkExtensionProperties* properties);
-    static VkResult EnumerateDeviceExtensionPropertiesWithDownstream(
+    VkResult EnumerateDeviceExtensionPropertiesWithDownstream(
         VkPhysicalDevice physical_device, const char* layer_name, uint32_t* property_count,
         VkExtensionProperties* properties, PFN_vkEnumerateDeviceExtensionProperties downstream_function);
-    static VkResult VKAPI_CALL GetPhysicalDeviceToolProperties(VkPhysicalDevice physical_device, uint32_t* tool_count,
-                                                               VkPhysicalDeviceToolPropertiesEXT* tool_properties);
-    static VkResult GetPhysicalDeviceToolPropertiesWithDownstream(
+    VkResult GetPhysicalDeviceToolPropertiesWithDownstream(
         VkPhysicalDevice physical_device, uint32_t* tool_count, VkPhysicalDeviceToolPropertiesEXT* tool_properties,
         PFN_vkGetPhysicalDeviceToolPropertiesEXT downstream_function);
 

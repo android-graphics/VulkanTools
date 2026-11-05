@@ -17,6 +17,7 @@
 
 #include "common/layer_base.h"
 #include <vulkan/vulkan.h>
+#include <cassert>
 #include <cstdint>
 
 namespace layersvt {
@@ -32,33 +33,34 @@ class LayerBaseTestPeer {
 
     static VkResult CreateDevice(VkPhysicalDevice physical_device, const VkDeviceCreateInfo* create_info,
                                  const VkAllocationCallbacks* allocator, VkDevice* device) {
-        return LayerBase::CreateDevice(physical_device, create_info, allocator, device);
+        return LayerBase::DispatchCreateDevice(physical_device, create_info, allocator, device);
     }
 
     static void DestroyDevice(VkDevice device, const VkAllocationCallbacks* allocator) {
-        LayerBase::DestroyDevice(device, allocator);
+        LayerBase::DispatchDestroyDevice(device, allocator);
     }
 
     static VkResult EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
                                                          VkExtensionProperties* properties) {
-        return LayerBase::EnumerateInstanceExtensionProperties(layer_name, property_count, properties);
+        return LayerBase::DispatchEnumerateInstanceExtensionProperties(layer_name, property_count, properties);
     }
     static VkResult EnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties) {
-        return LayerBase::EnumerateInstanceLayerProperties(property_count, properties);
+        return LayerBase::DispatchEnumerateInstanceLayerProperties(property_count, properties);
     }
     static VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
                                                    VkLayerProperties* properties) {
-        return LayerBase::EnumerateDeviceLayerProperties(physical_device, property_count, properties);
+        return LayerBase::DispatchEnumerateDeviceLayerProperties(physical_device, property_count, properties);
     }
     static VkResult EnumerateDeviceExtensionProperties(
         VkPhysicalDevice physical_device, const char* layer_name, uint32_t* property_count,
         VkExtensionProperties* properties,
         PFN_vkEnumerateDeviceExtensionProperties downstream_function = nullptr) {
         if (downstream_function != nullptr) {
-            return LayerBase::EnumerateDeviceExtensionPropertiesWithDownstream(
+            assert(LayerBase::Get() != nullptr);
+            return LayerBase::Get()->EnumerateDeviceExtensionPropertiesWithDownstream(
                 physical_device, layer_name, property_count, properties, downstream_function);
         }
-        return LayerBase::EnumerateDeviceExtensionProperties(
+        return LayerBase::DispatchEnumerateDeviceExtensionProperties(
             physical_device, layer_name, property_count, properties);
     }
     static VkResult GetPhysicalDeviceToolProperties(
@@ -66,10 +68,11 @@ class LayerBaseTestPeer {
         VkPhysicalDeviceToolPropertiesEXT* tool_properties,
         PFN_vkGetPhysicalDeviceToolPropertiesEXT downstream_function = nullptr) {
         if (downstream_function != nullptr) {
-            return LayerBase::GetPhysicalDeviceToolPropertiesWithDownstream(
+            assert(LayerBase::Get() != nullptr);
+            return LayerBase::Get()->GetPhysicalDeviceToolPropertiesWithDownstream(
                 physical_device, tool_count, tool_properties, downstream_function);
         }
-        return LayerBase::GetPhysicalDeviceToolProperties(
+        return LayerBase::DispatchGetPhysicalDeviceToolProperties(
             physical_device, tool_count, tool_properties);
     }
     static const LayerManifest* GetLayerManifest(const LayerBase& layer) { return layer.GetLayerManifest(); }
@@ -88,19 +91,19 @@ class LayerBaseTestPeer {
     static VkuDeviceDispatchTable* GetDeviceDispatchTable(const void* object) { return LayerBase::GetDeviceDispatchTable(object); }
 
     static PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* command_name) {
-        return LayerBase::GetInstanceProcAddr(instance, command_name);
+        return LayerBase::DispatchGetInstanceProcAddr(instance, command_name);
     }
     static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* command_name) {
-        return LayerBase::GetDeviceProcAddr(device, command_name);
+        return LayerBase::DispatchGetDeviceProcAddr(device, command_name);
     }
 
     static VkResult CreateInstance(const VkInstanceCreateInfo* create_info, const VkAllocationCallbacks* allocator,
                                    VkInstance* instance) {
-        return LayerBase::CreateInstance(create_info, allocator, instance);
+        return LayerBase::DispatchCreateInstance(create_info, allocator, instance);
     }
 
     static void DestroyInstance(VkInstance instance, const VkAllocationCallbacks* allocator) {
-        LayerBase::DestroyInstance(instance, allocator);
+        LayerBase::DispatchDestroyInstance(instance, allocator);
     }
 };
 
