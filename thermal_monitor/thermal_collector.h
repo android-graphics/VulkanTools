@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <cstdint>
 #include <functional>
 #include <map>
 #include <optional>
@@ -36,8 +35,11 @@ enum class ThermalStatus : int {
     kShutdown = 6,
 };
 
-// Must match the counter names and scale that the Android Performance Analyzer trace viewer reads.
+// Must match the track event category and counter names that the Android Performance Analyzer trace
+// viewer reads.
 namespace ThermalConstants {
+// Perfetto track event category that the counters are written to.
+inline constexpr const char* kTrackEventCategory = "SherlockThermal";
 inline constexpr int kDefaultPollIntervalMs = 1000;
 // Polling faster than this would only collect NaNs from the ~1 Hz rate-limited headroom API.
 inline constexpr int kMinPollIntervalMs = kDefaultPollIntervalMs;
@@ -46,8 +48,6 @@ inline constexpr int kMaxForecastSeconds = 60;
 inline constexpr const char* kHeadroomCounter = "sherlock.thermal.headroom";
 inline constexpr const char* kHeadroomForecastCounter = "sherlock.thermal.headroom.forecast";
 inline constexpr const char* kStatusCounter = "sherlock.thermal.status";
-// Atrace counters are integers, so headroom values are emitted multiplied by this.
-inline constexpr int64_t kHeadroomScale = 1000;
 
 // Counter names for the thermal statuses that can carry a headroom threshold.
 inline constexpr const char* ThresholdCounterName(ThermalStatus status) {
@@ -92,18 +92,28 @@ class ThermalSource {
 };
 
 // Samples the framework's thermal state and emits it as trace counters.
+//
 // AThermal_getThermalHeadroom() is rate-limited to ~1 Hz across all forecast_seconds values, which
 // is why ThermalConstants::kDefaultPollIntervalMs is one second and why, when forecast_seconds is
 // positive, current and forecast headroom are sampled on alternating ticks rather than on the same
 // tick. A forecast tick that fails emits no headroom at all rather than retrying the current
 // headroom, which the rate limit would reject.
+//
+// The headroom thresholds are static for a device, so they are read once, at construction, and
+// emitted separately by EmitThresholds() once per tracing session.
 class ThermalCollector {
    public:
-    using Emitter = std::function<void(const char*, int64_t)>;
+    using Emitter = std::function<void(const char* counter, double value)>;
 
     ThermalCollector(ThermalSource& source, Emitter emitter, int forecast_seconds = ThermalConstants::kDefaultForecastSeconds);
 
+    // Emits the current status and either the current or the forecast headroom. Call it once per
+    // poll interval.
     void Sample();
+
+    // Emits the device's headroom thresholds. Only reads state that is fixed at construction, so it
+    // can be called from another thread than Sample(), as long as the emitter is thread-safe.
+    void EmitThresholds() const;
 
    private:
     using ThresholdList = std::vector<std::pair<const char*, float>>;
@@ -112,17 +122,14 @@ class ThermalCollector {
     // service hiccups, so one failure does not prove that the device cannot forecast.
     static constexpr int kMaxForecastFailures = 3;
 
-    // The thresholds are static for a device, so they are read from source_ once, but re-emitted
-    // with every headroom sample because the monitor starts before tracing does and a one-off
-    // emission at startup would not land in the trace.
-    const ThresholdList& GetThresholds();
+    static ThresholdList ReadThresholds(ThermalSource& source);
 
-    bool EmitHeadroom(const char* counter, std::optional<float> headroom);
+    bool EmitHeadroom(const char* counter, std::optional<float> headroom) const;
 
     ThermalSource& source_;
-    Emitter emitter_;
+    const Emitter emitter_;
+    const ThresholdList thresholds_;
     int forecast_seconds_;
-    std::optional<ThresholdList> thresholds_;
     int tick_ = 0;
     int forecast_failures_ = 0;
     bool forecast_supported_;

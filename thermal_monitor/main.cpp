@@ -17,7 +17,6 @@
 
 #include <android/log.h>
 #include <android/thermal.h>
-#include <android/trace.h>
 #include <poll.h>
 
 #include <algorithm>
@@ -29,8 +28,18 @@
 #include <optional>
 #include <string_view>
 
+#include "perfetto/perfetto.h"
+
+// TRACE_COUNTER needs the category as a literal, so this repeats
+// ThermalConstants::kTrackEventCategory (checked below).
+PERFETTO_DEFINE_CATEGORIES(perfetto::Category("SherlockThermal").SetDescription("Framework thermal status and headroom"));
+
+PERFETTO_TRACK_EVENT_STATIC_STORAGE();
+
 namespace apa::thermal {
 namespace {
+
+static_assert(std::string_view(ThermalConstants::kTrackEventCategory) == "SherlockThermal");
 
 constexpr const char* kLogTag = "ThermalMonitor";
 
@@ -102,6 +111,31 @@ class NdkThermalSource final : public ThermalSource {
    private:
     AThermalManager* manager_ = nullptr;
 };
+
+// Emits the headroom thresholds at the start of every tracing session that enables the category.
+// The thresholds never change, so emitting them once per session is enough, and the monitor can be
+// started before tracing is.
+class ThresholdSessionObserver final : public perfetto::TrackEventSessionObserver {
+   public:
+    explicit ThresholdSessionObserver(const ThermalCollector& collector) : collector_(collector) {
+        perfetto::TrackEvent::AddSessionObserver(this);
+    }
+
+    ~ThresholdSessionObserver() override { perfetto::TrackEvent::RemoveSessionObserver(this); }
+
+    ThresholdSessionObserver(const ThresholdSessionObserver&) = delete;
+    ThresholdSessionObserver& operator=(const ThresholdSessionObserver&) = delete;
+
+    void OnStart(const perfetto::DataSourceBase::StartArgs&) override { collector_.EmitThresholds(); }
+
+   private:
+    const ThermalCollector& collector_;
+};
+
+void EmitCounter(const char* name, double value) {
+    // The names are ThermalConstants string literals, so they outlive the track.
+    TRACE_COUNTER("SherlockThermal", perfetto::CounterTrack(perfetto::StaticString{name}), value);
+}
 
 volatile std::sig_atomic_t g_stop_requested = 0;
 
@@ -175,8 +209,17 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    ThermalCollector collector(
-        source, [](const char* name, int64_t value) { ATrace_setCounter(name, value); }, options.forecast_seconds);
+    perfetto::TracingInitArgs args;
+    args.backends = perfetto::kSystemBackend;
+    perfetto::Tracing::Initialize(args);
+    perfetto::TrackEvent::Register();
+
+    ThermalCollector collector(source, EmitCounter, options.forecast_seconds);
+    ThresholdSessionObserver observer(collector);
+    // OnStart() only reports sessions that start after the observer is added.
+    if (TRACE_EVENT_CATEGORY_ENABLED("SherlockThermal")) {
+        collector.EmitThresholds();
+    }
 
     while (!g_stop_requested) {
         collector.Sample();
@@ -186,5 +229,7 @@ int main(int argc, char** argv) {
         poll(nullptr, 0, options.poll_interval_ms);
     }
 
+    // Commits the last samples to the tracing service before the process exits.
+    perfetto::TrackEvent::Flush();
     return 0;
 }

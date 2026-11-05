@@ -21,8 +21,16 @@ if(WIN32 AND (QT_TARGET_TYPE STREQUAL STATIC_LIBRARY))
 endif()
 
 if(ANDROID)
+    # The Perfetto SDK that the layers use. Built as its own library so that the availability checks
+    # below only apply to main.cpp.
+    set(PERFETTO_SDK_DIR ${PROJECT_SOURCE_DIR}/layersvt/perfetto)
+    add_library(thermal_monitor_perfetto STATIC ${PERFETTO_SDK_DIR}/perfetto.cc)
+    target_include_directories(thermal_monitor_perfetto PUBLIC ${PROJECT_SOURCE_DIR}/layersvt)
+    target_compile_options(thermal_monitor_perfetto PRIVATE -Wno-deprecated-declarations)
+    target_link_libraries(thermal_monitor_perfetto PUBLIC log)
+
     add_executable(thermal_monitor main.cpp)
-    target_link_libraries(thermal_monitor PRIVATE thermal_collector android log)
+    target_link_libraries(thermal_monitor PRIVATE thermal_collector thermal_monitor_perfetto android log)
     # AThermal_getThermalHeadroomThresholds() is API 35, above ANDROID_PLATFORM, so it is weakly
     # linked and guarded by __builtin_available.
     target_compile_definitions(thermal_monitor PRIVATE __ANDROID_UNAVAILABLE_SYMBOLS_ARE_WEAK__)

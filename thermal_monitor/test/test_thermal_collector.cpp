@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 
-#include <cstdint>
 #include <limits>
 #include <map>
 #include <optional>
@@ -28,7 +27,7 @@
 namespace apa::thermal {
 namespace {
 
-using CounterSample = std::pair<std::string, int64_t>;
+using CounterSample = std::pair<std::string, double>;
 
 class FakeThermalSource final : public ThermalSource {
    public:
@@ -66,7 +65,7 @@ class FakeThermalSource final : public ThermalSource {
 class ThermalCollectorTest : public ::testing::Test {
    protected:
     std::vector<CounterSample> emitted_;
-    ThermalCollector::Emitter emitter_ = [this](const char* name, int64_t value) { emitted_.emplace_back(name, value); };
+    ThermalCollector::Emitter emitter_ = [this](const char* name, double value) { emitted_.emplace_back(name, value); };
 };
 
 TEST_F(ThermalCollectorTest, InterleavesCurrentAndForecastHeadroomOnAlternatingTicks) {
@@ -79,9 +78,9 @@ TEST_F(ThermalCollectorTest, InterleavesCurrentAndForecastHeadroomOnAlternatingT
 
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 10, 0}));
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 930},
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomForecastCounter, 1040},
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 930},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomForecastCounter, 1.04},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -96,9 +95,9 @@ TEST_F(ThermalCollectorTest, DisablesForecastWhenHorizonIsZero) {
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 0}));
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 800},
+        {ThermalConstants::kHeadroomCounter, 0.8},
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 800},
+        {ThermalConstants::kHeadroomCounter, 0.8},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -114,7 +113,7 @@ TEST_F(ThermalCollectorTest, SkipsFailedForecastTickWithoutRetryingCurrentHeadro
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 10}));
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 800},
+        {ThermalConstants::kHeadroomCounter, 0.8},
         {ThermalConstants::kStatusCounter, 1},
     };
     EXPECT_EQ(emitted_, expected);
@@ -155,23 +154,39 @@ TEST_F(ThermalCollectorTest, KeepsForecastAfterTransientFailures) {
     }
 
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kHeadroomCounter, 800},         {ThermalConstants::kHeadroomCounter, 800},
-        {ThermalConstants::kHeadroomForecastCounter, 900}, {ThermalConstants::kHeadroomCounter, 800},
-        {ThermalConstants::kHeadroomCounter, 800},         {ThermalConstants::kHeadroomForecastCounter, 900},
-        {ThermalConstants::kHeadroomCounter, 800},         {ThermalConstants::kHeadroomCounter, 800},
-        {ThermalConstants::kHeadroomForecastCounter, 900},
+        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomForecastCounter, 0.9}, {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomForecastCounter, 0.9},
+        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomForecastCounter, 0.9},
     };
     EXPECT_EQ(emitted_, expected);
 }
 
-TEST_F(ThermalCollectorTest, KeepsThreeDecimalPlacesOfHeadroom) {
-    // The Galaxy S25 puts LIGHT at 0.867 and MODERATE at 0.933, so rounding to hundredths would
-    // merge distinguishable states.
+TEST_F(ThermalCollectorTest, EmitsTheShortestDecimalOfTheFloatHeadroom) {
+    // Converting 0.8f straight to a double would give 0.800000011920929.
+    FakeThermalSource source(/*status=*/std::nullopt, /*headroom=*/0.8f, /*forecast=*/std::nullopt,
+                             /*thresholds=*/{{ThermalStatus::kModerate, 0.93333334f}});
+    ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
+
+    collector.Sample();
+    collector.EmitThresholds();
+
+    const std::vector<CounterSample> expected = {
+        {ThermalConstants::kHeadroomCounter, 0.8},
+        {"sherlock.thermal.headroom.threshold.moderate", 0.93333334},
+    };
+    EXPECT_EQ(emitted_, expected);
+}
+
+TEST_F(ThermalCollectorTest, EmitsHeadroomWithoutRounding) {
+    // The Galaxy S25 puts LIGHT at 0.867 and MODERATE at 0.933, so any rounding has to keep at
+    // least three decimal places. Perfetto counters are doubles, so there is none.
     FakeThermalSource source(/*status=*/ThermalStatus::kNone, /*headroom=*/0.8674f);
     ThermalCollector(source, emitter_).Sample();
 
     ASSERT_EQ(emitted_.size(), 2u);
-    EXPECT_EQ(emitted_[1], CounterSample(ThermalConstants::kHeadroomCounter, 867));
+    EXPECT_EQ(emitted_[1], CounterSample(ThermalConstants::kHeadroomCounter, 0.8674));
 }
 
 TEST_F(ThermalCollectorTest, OmitsHeadroomEntirelyOnDeviceThatDoesNotReportIt) {
@@ -185,7 +200,7 @@ TEST_F(ThermalCollectorTest, OmitsHeadroomEntirelyOnDeviceThatDoesNotReportIt) {
     collector.Sample();
 
     // A status track and no headroom track, rather than a headroom track full of a sentinel the
-    // host would have to strip. Thresholds are also suppressed when headroom is absent.
+    // host would have to strip.
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 1},
     };
@@ -226,12 +241,29 @@ TEST_F(ThermalCollectorTest, OmitsStatusOnDeviceThatDoesNotReportIt) {
     collector.Sample();
 
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kHeadroomCounter, 500},
+        {ThermalConstants::kHeadroomCounter, 0.5},
     };
     EXPECT_EQ(emitted_, expected);
 }
 
-TEST_F(ThermalCollectorTest, ReadsThresholdsOnceAndReEmitsWithCurrentHeadroomOnly) {
+TEST_F(ThermalCollectorTest, SamplesDoNotIncludeThresholds) {
+    FakeThermalSource source(
+        /*status=*/ThermalStatus::kNone,
+        /*headroom=*/0.8f,
+        /*forecast=*/std::nullopt,
+        /*thresholds=*/{{ThermalStatus::kLight, 0.867f}});
+    ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
+
+    collector.Sample();
+
+    const std::vector<CounterSample> expected = {
+        {ThermalConstants::kStatusCounter, 0},
+        {ThermalConstants::kHeadroomCounter, 0.8},
+    };
+    EXPECT_EQ(emitted_, expected);
+}
+
+TEST_F(ThermalCollectorTest, ReadsThresholdsOnceAndEmitsTheValidOnes) {
     // The Galaxy S25 reports SEVERE as NaN even though LIGHT and MODERATE are populated.
     FakeThermalSource source(
         /*status=*/ThermalStatus::kNone,
@@ -246,22 +278,16 @@ TEST_F(ThermalCollectorTest, ReadsThresholdsOnceAndReEmitsWithCurrentHeadroomOnl
         });
     ThermalCollector collector(source, emitter_, /*forecast_seconds=*/10);
 
-    collector.Sample();
-    collector.Sample();
-    collector.Sample();
+    // Once per tracing session.
+    collector.EmitThresholds();
+    collector.EmitThresholds();
 
     EXPECT_EQ(source.ThresholdsReadCount(), 1);
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kStatusCounter, 0},
-        {ThermalConstants::kHeadroomCounter, 800},
-        {"sherlock.thermal.headroom.threshold.light", 867},
-        {"sherlock.thermal.headroom.threshold.moderate", 933},
-        {ThermalConstants::kStatusCounter, 0},
-        {ThermalConstants::kHeadroomForecastCounter, 900},
-        {ThermalConstants::kStatusCounter, 0},
-        {ThermalConstants::kHeadroomCounter, 800},
-        {"sherlock.thermal.headroom.threshold.light", 867},
-        {"sherlock.thermal.headroom.threshold.moderate", 933},
+        {"sherlock.thermal.headroom.threshold.light", 0.867},
+        {"sherlock.thermal.headroom.threshold.moderate", 0.933},
+        {"sherlock.thermal.headroom.threshold.light", 0.867},
+        {"sherlock.thermal.headroom.threshold.moderate", 0.933},
     };
     EXPECT_EQ(emitted_, expected);
 }
