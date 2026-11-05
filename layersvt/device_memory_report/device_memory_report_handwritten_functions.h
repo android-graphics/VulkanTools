@@ -122,6 +122,25 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyInstance(VkInstance instance, const VkAlloca
     destroy_instance_dispatch_table(key);
 }
 
+// Returns whether the physical device supports the deviceMemoryReport feature. Memory report callbacks
+// are only required to be delivered when the feature is enabled, and some drivers (e.g. Mali on Pixel 9a)
+// deliver none without it, which leaves Unbound Memory and driver allocations untracked.
+static bool IsMemoryReportFeatureSupported(VkPhysicalDevice physical_device) {
+    auto* table = instance_dispatch_table(physical_device);
+    auto get_features2 =
+        table->GetPhysicalDeviceFeatures2 != nullptr ? table->GetPhysicalDeviceFeatures2 : table->GetPhysicalDeviceFeatures2KHR;
+    if (get_features2 == nullptr) {
+        return false;
+    }
+    VkPhysicalDeviceDeviceMemoryReportFeaturesEXT query = {};
+    query.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
+    VkPhysicalDeviceFeatures2 features2 = {};
+    features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+    features2.pNext = &query;
+    get_features2(physical_device, &features2);
+    return query.deviceMemoryReport == VK_TRUE;
+}
+
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
                                               const VkAllocationCallbacks* pAllocator, VkDevice* pDevice) {
     InitializeDeviceMemoryReportPerfetto();
@@ -185,6 +204,9 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
     }
 
     VkDeviceDeviceMemoryReportCreateInfoEXT memory_report_create_info = {};
+    VkPhysicalDeviceDeviceMemoryReportFeaturesEXT memory_report_features = {};
+    VkPhysicalDeviceDeviceMemoryReportFeaturesEXT* app_features = nullptr;
+    bool restore_app_feature = false;
     if (supports_memory_report) {
         bool already_enabled = false;
         for (const char* name : enabled_extensions) {
@@ -202,12 +224,39 @@ VKAPI_ATTR VkResult VKAPI_CALL vkCreateDevice(VkPhysicalDevice physicalDevice, c
         memory_report_create_info.pUserData = nullptr;
         memory_report_create_info.pNext = modified_create_info.pNext;
         modified_create_info.pNext = &memory_report_create_info;
+
+        // Enable the deviceMemoryReport feature when supported. If the application already chains the
+        // feature struct, set the flag on that struct rather than chaining a duplicate (duplicate structs
+        // in a pNext chain are invalid).
+        if (IsMemoryReportFeatureSupported(physicalDevice)) {
+            for (auto* s = reinterpret_cast<const VkBaseInStructure*>(pCreateInfo->pNext); s != nullptr; s = s->pNext) {
+                if (s->sType == VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT) {
+                    app_features =
+                        reinterpret_cast<VkPhysicalDeviceDeviceMemoryReportFeaturesEXT*>(const_cast<VkBaseInStructure*>(s));
+                    break;
+                }
+            }
+            if (app_features == nullptr) {
+                memory_report_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
+                memory_report_features.deviceMemoryReport = VK_TRUE;
+                memory_report_features.pNext = const_cast<void*>(modified_create_info.pNext);
+                modified_create_info.pNext = &memory_report_features;
+            } else if (app_features->deviceMemoryReport != VK_TRUE) {
+                // Flip the application's flag for this call only; it is restored after vkCreateDevice so
+                // the application's create info is unchanged on return.
+                app_features->deviceMemoryReport = VK_TRUE;
+                restore_app_feature = true;
+            }
+        }
     }
 
     modified_create_info.enabledExtensionCount = static_cast<uint32_t>(enabled_extensions.size());
     modified_create_info.ppEnabledExtensionNames = enabled_extensions.empty() ? nullptr : enabled_extensions.data();
 
     VkResult result = fpCreateDevice(physicalDevice, &modified_create_info, pAllocator, pDevice);
+    if (restore_app_feature) {
+        app_features->deviceMemoryReport = VK_FALSE;
+    }
     if (result == VK_SUCCESS) {
         initDeviceTable(*pDevice, fpGetDeviceProcAddr);
         DeviceMemoryReport::Get().SetHasMemoryReportCallback(*pDevice, supports_memory_report);
