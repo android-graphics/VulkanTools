@@ -23,6 +23,7 @@
 #include <charconv>
 #include <cmath>
 #include <csignal>
+#include <cstdlib>
 #include <cstring>
 #include <map>
 #include <optional>
@@ -30,16 +31,13 @@
 
 #include "perfetto/perfetto.h"
 
-// TRACE_COUNTER needs the category as a literal, so this repeats
-// ThermalConstants::kTrackEventCategory (checked below).
-PERFETTO_DEFINE_CATEGORIES(perfetto::Category("SherlockThermal").SetDescription("Framework thermal status and headroom"));
+PERFETTO_DEFINE_CATEGORIES(
+    perfetto::Category(apa::thermal::ThermalConstants::kTrackEventCategory).SetDescription("Framework thermal status and headroom"));
 
 PERFETTO_TRACK_EVENT_STATIC_STORAGE();
 
 namespace apa::thermal {
 namespace {
-
-static_assert(std::string_view(ThermalConstants::kTrackEventCategory) == "SherlockThermal");
 
 constexpr const char* kLogTag = "ThermalMonitor";
 
@@ -126,7 +124,7 @@ class ThresholdSessionObserver final : public perfetto::TrackEventSessionObserve
 
 void EmitCounter(const char* name, double value) {
     // The names are ThermalConstants string literals, so they outlive the track.
-    TRACE_COUNTER("SherlockThermal", perfetto::CounterTrack(perfetto::StaticString{name}), value);
+    TRACE_COUNTER(ThermalConstants::kTrackEventCategory, perfetto::CounterTrack(perfetto::StaticString{name}), value);
 }
 
 volatile std::sig_atomic_t g_stop_requested = 0;
@@ -149,20 +147,21 @@ struct Options {
     int forecast_seconds = ThermalConstants::kDefaultForecastSeconds;
 };
 
-// Reads the value that follows argv[*i] into *out, warning instead of silently keeping the default
-// when it is missing or malformed.
+// Reads the value that follows argv[*i] into *out, logging an error and exiting when it is missing
+// or malformed.
 void ParseIntOption(int argc, char** argv, int* i, int* out) {
     const char* flag = argv[*i];
     if (*i + 1 >= argc) {
-        __android_log_print(ANDROID_LOG_WARN, kLogTag, "Missing value for %s", flag);
-        return;
+        __android_log_print(ANDROID_LOG_ERROR, kLogTag, "Missing value for %s", flag);
+        std::exit(1);
     }
     const char* value = argv[++*i];
     if (const std::optional<int> parsed = ParseInt(value); parsed.has_value()) {
         *out = *parsed;
-    } else {
-        __android_log_print(ANDROID_LOG_WARN, kLogTag, "Ignoring invalid value '%s' for %s", value, flag);
+        return;
     }
+    __android_log_print(ANDROID_LOG_ERROR, kLogTag, "Invalid value '%s' for %s", value, flag);
+    std::exit(1);
 }
 
 Options ParseOptions(int argc, char** argv) {
@@ -173,7 +172,8 @@ Options ParseOptions(int argc, char** argv) {
         } else if (std::strcmp(argv[i], "--forecast-seconds") == 0) {
             ParseIntOption(argc, argv, &i, &options.forecast_seconds);
         } else {
-            __android_log_print(ANDROID_LOG_WARN, kLogTag, "Ignoring unknown argument '%s'", argv[i]);
+            __android_log_print(ANDROID_LOG_ERROR, kLogTag, "Unknown argument '%s'", argv[i]);
+            std::exit(1);
         }
     }
     options.poll_interval_ms = std::max(options.poll_interval_ms, ThermalConstants::kMinPollIntervalMs);
@@ -209,9 +209,7 @@ int main(int argc, char** argv) {
     ThermalCollector collector(source, EmitCounter, options.forecast_seconds);
     ThresholdSessionObserver observer(collector);
     // OnStart() only reports sessions that start after the observer is added.
-    if (TRACE_EVENT_CATEGORY_ENABLED("SherlockThermal")) {
-        collector.EmitThresholds();
-    }
+    collector.EmitThresholds();
 
     while (!g_stop_requested) {
         collector.Sample();

@@ -29,7 +29,7 @@ namespace apa::thermal {
 // viewer reads.
 namespace ThermalConstants {
 // Perfetto track event category that the counters are written to.
-inline constexpr const char* kTrackEventCategory = "SherlockThermal";
+inline constexpr const char* kTrackEventCategory = "Thermals";
 inline constexpr int kDefaultPollIntervalMs = 1000;
 // Polling faster than this would only collect NaNs from the ~1 Hz rate-limited headroom API.
 inline constexpr int kMinPollIntervalMs = kDefaultPollIntervalMs;

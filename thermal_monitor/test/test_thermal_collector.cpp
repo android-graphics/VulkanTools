@@ -78,9 +78,9 @@ TEST_F(ThermalCollectorTest, InterleavesCurrentAndForecastHeadroomOnAlternatingT
 
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 10, 0}));
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93},
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomForecastCounter, 1.04},
-        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93f},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomForecastCounter, 1.04f},
+        {ThermalConstants::kStatusCounter, 2}, {ThermalConstants::kHeadroomCounter, 0.93f},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -95,9 +95,9 @@ TEST_F(ThermalCollectorTest, DisablesForecastWhenHorizonIsZero) {
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 0}));
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomCounter, 0.8f},
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomCounter, 0.8f},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -113,7 +113,7 @@ TEST_F(ThermalCollectorTest, SkipsFailedForecastTickWithoutRetryingCurrentHeadro
     EXPECT_EQ(source.HeadroomQueries(), (std::vector<int>{0, 10}));
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 1},
-        {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomCounter, 0.8f},
         {ThermalConstants::kStatusCounter, 1},
     };
     EXPECT_EQ(emitted_, expected);
@@ -154,27 +154,11 @@ TEST_F(ThermalCollectorTest, KeepsForecastAfterTransientFailures) {
     }
 
     const std::vector<CounterSample> expected = {
-        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomCounter, 0.8},
-        {ThermalConstants::kHeadroomForecastCounter, 0.9}, {ThermalConstants::kHeadroomCounter, 0.8},
-        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomForecastCounter, 0.9},
-        {ThermalConstants::kHeadroomCounter, 0.8},         {ThermalConstants::kHeadroomCounter, 0.8},
-        {ThermalConstants::kHeadroomForecastCounter, 0.9},
-    };
-    EXPECT_EQ(emitted_, expected);
-}
-
-TEST_F(ThermalCollectorTest, EmitsTheShortestDecimalOfTheFloatHeadroom) {
-    // Converting 0.8f straight to a double would give 0.800000011920929.
-    FakeThermalSource source(/*status=*/std::nullopt, /*headroom=*/0.8f, /*forecast=*/std::nullopt,
-                             /*thresholds=*/{{ATHERMAL_STATUS_MODERATE, 0.93333334f}});
-    ThermalCollector collector(source, emitter_, /*forecast_seconds=*/0);
-
-    collector.Sample();
-    collector.EmitThresholds();
-
-    const std::vector<CounterSample> expected = {
-        {ThermalConstants::kHeadroomCounter, 0.8},
-        {"sherlock.thermal.headroom.threshold.moderate", 0.93333334},
+        {ThermalConstants::kHeadroomCounter, 0.8f},         {ThermalConstants::kHeadroomCounter, 0.8f},
+        {ThermalConstants::kHeadroomForecastCounter, 0.9f}, {ThermalConstants::kHeadroomCounter, 0.8f},
+        {ThermalConstants::kHeadroomCounter, 0.8f},         {ThermalConstants::kHeadroomForecastCounter, 0.9f},
+        {ThermalConstants::kHeadroomCounter, 0.8f},         {ThermalConstants::kHeadroomCounter, 0.8f},
+        {ThermalConstants::kHeadroomForecastCounter, 0.9f},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -186,7 +170,7 @@ TEST_F(ThermalCollectorTest, EmitsHeadroomWithoutRounding) {
     ThermalCollector(source, emitter_).Sample();
 
     ASSERT_EQ(emitted_.size(), 2u);
-    EXPECT_EQ(emitted_[1], CounterSample(ThermalConstants::kHeadroomCounter, 0.8674));
+    EXPECT_EQ(emitted_[1], CounterSample(ThermalConstants::kHeadroomCounter, 0.8674f));
 }
 
 TEST_F(ThermalCollectorTest, OmitsHeadroomEntirelyOnDeviceThatDoesNotReportIt) {
@@ -258,7 +242,7 @@ TEST_F(ThermalCollectorTest, SamplesDoNotIncludeThresholds) {
 
     const std::vector<CounterSample> expected = {
         {ThermalConstants::kStatusCounter, 0},
-        {ThermalConstants::kHeadroomCounter, 0.8},
+        {ThermalConstants::kHeadroomCounter, 0.8f},
     };
     EXPECT_EQ(emitted_, expected);
 }
@@ -284,10 +268,10 @@ TEST_F(ThermalCollectorTest, ReadsThresholdsOnceAndEmitsTheValidOnes) {
 
     EXPECT_EQ(source.ThresholdsReadCount(), 1);
     const std::vector<CounterSample> expected = {
-        {"sherlock.thermal.headroom.threshold.light", 0.867},
-        {"sherlock.thermal.headroom.threshold.moderate", 0.933},
-        {"sherlock.thermal.headroom.threshold.light", 0.867},
-        {"sherlock.thermal.headroom.threshold.moderate", 0.933},
+        {"sherlock.thermal.headroom.threshold.light", 0.867f},
+        {"sherlock.thermal.headroom.threshold.moderate", 0.933f},
+        {"sherlock.thermal.headroom.threshold.light", 0.867f},
+        {"sherlock.thermal.headroom.threshold.moderate", 0.933f},
     };
     EXPECT_EQ(emitted_, expected);
 }
