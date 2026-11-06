@@ -19,10 +19,10 @@
 #include <cassert>
 #include <mutex>
 
+#include <compare>
 #include <map>
 #include <optional>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include "common/layer_base.h"
@@ -119,23 +119,20 @@ class DebugMarker : public layersvt::LayerBase {
     PFN_vkVoidFunction GetLayerDeviceCommand(VkDevice device, const char* name) override;
 
    private:
-    struct DebugObjectName {
+    struct DebugObjectKey {
         uint64_t vk_device;
         int32_t object_type;
         uint64_t handle;
-        std::string name;
 
-        DebugObjectName() = default;
-        DebugObjectName(uint64_t dev, int32_t type, uint64_t h, const std::string& n)
-            : vk_device(dev), object_type(type), handle(h), name(n) {}
+        auto operator<=>(const DebugObjectKey&) const = default;
     };
 
     mutable std::mutex mutex_;
     /**
-     * @brief Maps (vk_device, object_type, object_handle) to its debug name information.
+     * @brief Maps (vk_device, object_type, object_handle) to its debug name.
      * Non-dispatchable handles are not guaranteed to be unique across object types or devices.
      */
-    std::map<std::tuple<uint64_t, int32_t, uint64_t>, DebugObjectName> debug_object_names_;
+    std::map<DebugObjectKey, std::string> debug_object_names_;
 
     struct EmulatedMessenger {
         VkInstance instance;
