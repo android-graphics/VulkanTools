@@ -123,8 +123,11 @@ class ThresholdSessionObserver final : public perfetto::TrackEventSessionObserve
 };
 
 void EmitCounter(const char* name, double value) {
-    // The names are ThermalConstants string literals, so they outlive the track.
-    TRACE_COUNTER(ThermalConstants::kTrackEventCategory, perfetto::CounterTrack(perfetto::StaticString{name}), value);
+    // Thermal state belongs to the device, not to this process, so the counters go on global tracks
+    // (the default parent would be this process's track). The names are ThermalConstants string
+    // literals, so they outlive the track.
+    TRACE_COUNTER(ThermalConstants::kTrackEventCategory, perfetto::CounterTrack(perfetto::StaticString{name}, perfetto::Track()),
+                  value);
 }
 
 volatile std::sig_atomic_t g_stop_requested = 0;
