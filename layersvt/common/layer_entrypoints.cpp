@@ -29,6 +29,34 @@
 #endif
 #endif
 
+namespace layersvt {
+
+struct LayerEntrypoints {
+    static PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char* command_name) {
+        return LayerBase::DispatchGetInstanceProcAddr(instance, command_name);
+    }
+    static PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char* command_name) {
+        return LayerBase::DispatchGetDeviceProcAddr(device, command_name);
+    }
+    static VkResult EnumerateInstanceLayerProperties(uint32_t* property_count, VkLayerProperties* properties) {
+        return LayerBase::DispatchEnumerateInstanceLayerProperties(property_count, properties);
+    }
+    static VkResult EnumerateInstanceExtensionProperties(const char* layer_name, uint32_t* property_count,
+                                                         VkExtensionProperties* properties) {
+        return LayerBase::DispatchEnumerateInstanceExtensionProperties(layer_name, property_count, properties);
+    }
+    static VkResult EnumerateDeviceLayerProperties(VkPhysicalDevice physical_device, uint32_t* property_count,
+                                                   VkLayerProperties* properties) {
+        return LayerBase::DispatchEnumerateDeviceLayerProperties(physical_device, property_count, properties);
+    }
+    static VkResult EnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device, const char* layer_name,
+                                                       uint32_t* property_count, VkExtensionProperties* properties) {
+        return LayerBase::DispatchEnumerateDeviceExtensionProperties(physical_device, layer_name, property_count, properties);
+    }
+};
+
+}  // namespace layersvt
+
 extern "C" {
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkNegotiateLoaderLayerInterfaceVersion(
@@ -52,38 +80,38 @@ VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkNegotiateLoaderLayerInterfaceVe
     return VK_ERROR_INITIALIZATION_FAILED;
 }
 
+// The exported entry points forward through LayerEntrypoints to the LayerBase::Dispatch* thunks,
+// which call the virtual methods of the active LayerBase instance.
+
 VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetInstanceProcAddr(
     VkInstance instance, const char* command_name) {
-    return layersvt::LayerBase::GetInstanceProcAddr(instance, command_name);
+    return layersvt::LayerEntrypoints::GetInstanceProcAddr(instance, command_name);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL vkGetDeviceProcAddr(
     VkDevice device, const char* command_name) {
-    return layersvt::LayerBase::GetDeviceProcAddr(device, command_name);
+    return layersvt::LayerEntrypoints::GetDeviceProcAddr(device, command_name);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceLayerProperties(
     uint32_t* property_count, VkLayerProperties* properties) {
-    return layersvt::LayerBase::EnumerateInstanceLayerProperties(property_count, properties);
+    return layersvt::LayerEntrypoints::EnumerateInstanceLayerProperties(property_count, properties);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateInstanceExtensionProperties(
     const char* layer_name, uint32_t* property_count, VkExtensionProperties* properties) {
-    return layersvt::LayerBase::EnumerateInstanceExtensionProperties(
-        layer_name, property_count, properties);
+    return layersvt::LayerEntrypoints::EnumerateInstanceExtensionProperties(layer_name, property_count, properties);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceLayerProperties(
     VkPhysicalDevice physical_device, uint32_t* property_count, VkLayerProperties* properties) {
-    return layersvt::LayerBase::EnumerateDeviceLayerProperties(
-        physical_device, property_count, properties);
+    return layersvt::LayerEntrypoints::EnumerateDeviceLayerProperties(physical_device, property_count, properties);
 }
 
 VK_LAYER_EXPORT VKAPI_ATTR VkResult VKAPI_CALL vkEnumerateDeviceExtensionProperties(
     VkPhysicalDevice physical_device, const char* layer_name, uint32_t* property_count,
     VkExtensionProperties* properties) {
-    return layersvt::LayerBase::EnumerateDeviceExtensionProperties(
-        physical_device, layer_name, property_count, properties);
+    return layersvt::LayerEntrypoints::EnumerateDeviceExtensionProperties(physical_device, layer_name, property_count, properties);
 }
 
 }  // extern "C"
