@@ -540,6 +540,49 @@ TEST(LayerBaseTest, GetPhysicalDeviceToolPropertiesDispatch) {
     result = LayerBaseTestPeer::GetPhysicalDeviceToolProperties(VK_NULL_HANDLE, &count, tools.data());
     EXPECT_EQ(result, VK_SUCCESS);
     EXPECT_STREQ(tools[0].name, "VK_LAYER_TEST_Common");
+
+    // Test EXT-to-core fallback with a registered instance table where EXT is null and core 1.3 is set
+    void* mock_instance_vtable = reinterpret_cast<void*>(static_cast<uintptr_t>(0xC111));
+    auto mock_instance = reinterpret_cast<VkInstance>(&mock_instance_vtable);
+    void* mock_physical_device_object = mock_instance_vtable;
+    auto mock_physical_device = reinterpret_cast<VkPhysicalDevice>(&mock_physical_device_object);
+
+    auto& dispatch_table_manager = LayerBaseTestPeer::GetDispatchTableManager(layer);
+    dispatch_table_manager.InitInstanceTable(mock_instance,
+                                             [](VkInstance, const char*) -> PFN_vkVoidFunction { return nullptr; });
+    auto* instance_table = dispatch_table_manager.GetInstanceDispatchTable(mock_instance);
+    ASSERT_NE(instance_table, nullptr);
+    instance_table->GetPhysicalDeviceToolPropertiesEXT = nullptr;
+
+    static int core_calls = 0;
+    core_calls = 0;
+    instance_table->GetPhysicalDeviceToolProperties =
+        [](VkPhysicalDevice, uint32_t* tool_count, VkPhysicalDeviceToolProperties* properties) -> VkResult {
+        ++core_calls;
+        if (!properties) {
+            *tool_count = 1;
+            return VK_SUCCESS;
+        }
+        EXPECT_EQ(properties[0].sType, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES);
+        EXPECT_EQ(properties[0].pNext, nullptr);
+        std::strncpy(properties[0].name, "CoreDriverTool", VK_MAX_EXTENSION_NAME_SIZE);
+        *tool_count = 1;
+        return VK_SUCCESS;
+    };
+
+    count = 0;
+    result = LayerBaseTestPeer::GetPhysicalDeviceToolProperties(mock_physical_device, &count, nullptr);
+    EXPECT_EQ(result, VK_SUCCESS);
+    ASSERT_EQ(count, 2u);
+    EXPECT_EQ(core_calls, 2);
+
+    tools.assign(count, VkPhysicalDeviceToolPropertiesEXT{});
+    result = LayerBaseTestPeer::GetPhysicalDeviceToolProperties(mock_physical_device, &count, tools.data());
+    EXPECT_EQ(result, VK_SUCCESS);
+    ASSERT_EQ(count, 2u);
+    EXPECT_EQ(core_calls, 4);
+    EXPECT_STREQ(tools[0].name, "CoreDriverTool");
+    EXPECT_STREQ(tools[1].name, "VK_LAYER_TEST_Common");
 }
 
 TEST(LayerBaseEnumerationTest, EmptyExtensionsWithBuffer) {

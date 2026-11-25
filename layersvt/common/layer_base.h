@@ -229,11 +229,8 @@ class LayerBase {
 
     friend class LayerBaseTestPeer;
 
-    template <auto MemberPointer, typename Handle, typename... Args>
-    friend auto DispatchDownstream(Handle handle, Args&&... args);
-
-    template <auto MemberPointer, typename Fallback, typename Handle, typename... Args>
-    friend auto DispatchDownstreamOr(Fallback&& fallback, Handle handle, Args&&... args);
+    template <auto MemberPointer, typename Handle>
+    friend auto GetDownstream(Handle handle);
 
     // Vulkan intercept commands (static C-compatible functions)
 

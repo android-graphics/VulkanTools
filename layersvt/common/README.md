@@ -53,7 +53,7 @@ The `layersvt_common` library provides a modern, thread-safe C++ foundation for 
 * **`DispatchTableManager`** ([`dispatch_table_manager.h`](dispatch_table_manager.h), [`dispatch_table_manager.cpp`](dispatch_table_manager.cpp)):
   Thread-safe registry for `VkuInstanceDispatchTable` and `VkuDeviceDispatchTable` keyed by dispatchable handle. Resolves a `VkPhysicalDevice` to its parent `VkInstance` and instance dispatch table through the shared dispatch key (loader ABI), so no per-physical-device tracking is needed. Tracks and forwards `VK_LOADER_DATA_CALLBACK` to initialize dispatchable handles created internally by layers.
 * **`dispatch_downstream.h`** ([`dispatch_downstream.h`](dispatch_downstream.h)):
-  Header-only template metaprogramming helpers (`DispatchDownstream`, `DispatchDownstreamIfAvailable`, `DispatchDownstreamOr`, `DispatchDownstreamOrSuccess`) that deduce table types at compile time and forward commands downstream.
+  Header-only template metaprogramming helpers (`GetDownstream`, `DispatchDownstream`, `DispatchDownstreamIfAvailable`, `DispatchDownstreamOr`, `DispatchDownstreamOrSuccess`) that deduce table types at compile time to inspect or forward commands downstream.
 * **`layersvt_entrypoints`** ([`layer_entrypoints.cpp`](layer_entrypoints.cpp)):
   CMake `OBJECT` library that exports standard C symbols (`vkGetInstanceProcAddr`, `vkGetDeviceProcAddr`, `vkNegotiateLoaderLayerInterfaceVersion`, and the four Android loader enumeration entry points) without macro duplication.
 
@@ -315,6 +315,7 @@ target_link_libraries(test_MyCustomLayer_layer layersvt_common)
    Use `DispatchDownstream<&VkuDeviceDispatchTable::CmdDraw>(...)` to invoke the next layer or driver. It automatically deduces instance vs. device dispatch tables from the member pointer at compile time and asserts that tables and function pointers are non-null.
 
    **Choosing a dispatch helper**:
+   * `GetDownstream` — retrieves the typed downstream function pointer without invoking it (`nullptr` when the handle is null, unregistered, or its slot is null).
    * `DispatchDownstream` — commands guaranteed to exist downstream (asserts on a missing table or entry point).
    * `DispatchDownstreamIfAvailable` — optional commands returning `void` (e.g. debug marker / debug utils label commands of layer-implemented extensions); does nothing if the entry point is unavailable.
    * `DispatchDownstreamOrSuccess` — optional commands returning `VkResult`; returns `VK_SUCCESS` if the entry point is unavailable.

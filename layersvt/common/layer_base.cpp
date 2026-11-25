@@ -270,14 +270,9 @@ VkResult LayerBase::EnumerateDeviceLayerProperties(VkPhysicalDevice physical_dev
 
 VkResult LayerBase::EnumerateDeviceExtensionProperties(VkPhysicalDevice physical_device, const char* layer_name,
                                                        uint32_t* property_count, VkExtensionProperties* properties) {
-    PFN_vkEnumerateDeviceExtensionProperties downstream = nullptr;
-    if (physical_device != VK_NULL_HANDLE) {
-        auto* table = GetInstanceDispatchTable(physical_device);
-        if (table != nullptr) {
-            downstream = table->EnumerateDeviceExtensionProperties;
-        }
-    }
-    return EnumerateDeviceExtensionPropertiesWithDownstream(physical_device, layer_name, property_count, properties, downstream);
+    return EnumerateDeviceExtensionPropertiesWithDownstream(
+        physical_device, layer_name, property_count, properties,
+        GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(physical_device));
 }
 
 VkResult LayerBase::EnumerateDeviceExtensionPropertiesWithDownstream(
@@ -347,15 +342,10 @@ VkResult LayerBase::EnumerateDeviceExtensionPropertiesWithDownstream(
 
 VkResult LayerBase::GetPhysicalDeviceToolProperties(VkPhysicalDevice physical_device, uint32_t* tool_count,
                                                     VkPhysicalDeviceToolPropertiesEXT* tool_properties) {
-    PFN_vkGetPhysicalDeviceToolPropertiesEXT downstream = nullptr;
-    if (physical_device != VK_NULL_HANDLE) {
-        auto* table = GetInstanceDispatchTable(physical_device);
-        if (table != nullptr) {
-            downstream = table->GetPhysicalDeviceToolPropertiesEXT;
-            if (!downstream) {
-                downstream = table->GetPhysicalDeviceToolProperties;
-            }
-        }
+    PFN_vkGetPhysicalDeviceToolPropertiesEXT downstream =
+        GetDownstream<&VkuInstanceDispatchTable::GetPhysicalDeviceToolPropertiesEXT>(physical_device);
+    if (!downstream) {
+        downstream = GetDownstream<&VkuInstanceDispatchTable::GetPhysicalDeviceToolProperties>(physical_device);
     }
     return GetPhysicalDeviceToolPropertiesWithDownstream(physical_device, tool_count, tool_properties, downstream);
 }

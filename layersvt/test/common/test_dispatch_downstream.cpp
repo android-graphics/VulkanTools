@@ -144,3 +144,75 @@ TEST(DispatchDownstreamTest, DispatchDownstreamIfAvailable) {
     EXPECT_EQ(called_device, mock_device);
     EXPECT_EQ(called_allocator, &allocator);
 }
+
+TEST(DispatchDownstreamTest, GetDownstream) {
+    LayerBase layer;
+    auto& dispatch_table_manager = LayerBaseTestPeer::GetDispatchTableManager(layer);
+
+    void* mock_instance_vtable = reinterpret_cast<void*>(static_cast<uintptr_t>(0xA111));
+    auto mock_instance = reinterpret_cast<VkInstance>(&mock_instance_vtable);
+    void* mock_physical_device_object = mock_instance_vtable;
+    auto mock_physical_device = reinterpret_cast<VkPhysicalDevice>(&mock_physical_device_object);
+
+    void* mock_device_vtable = reinterpret_cast<void*>(static_cast<uintptr_t>(0xB222));
+    auto mock_device = reinterpret_cast<VkDevice>(&mock_device_vtable);
+    void* mock_queue_object = mock_device_vtable;
+    auto mock_queue = reinterpret_cast<VkQueue>(&mock_queue_object);
+    void* mock_command_buffer_object = mock_device_vtable;
+    auto mock_command_buffer = reinterpret_cast<VkCommandBuffer>(&mock_command_buffer_object);
+
+    // Typed null handles return nullptr for both instance and device commands.
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumeratePhysicalDevices>(VkInstance{VK_NULL_HANDLE}), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(VkPhysicalDevice{VK_NULL_HANDLE}),
+              nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::DeviceWaitIdle>(VkDevice{VK_NULL_HANDLE}), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::QueueWaitIdle>(VkQueue{VK_NULL_HANDLE}), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::EndCommandBuffer>(VkCommandBuffer{VK_NULL_HANDLE}), nullptr);
+
+    // Unregistered handles return nullptr.
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumeratePhysicalDevices>(mock_instance), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(mock_physical_device), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::DeviceWaitIdle>(mock_device), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::QueueWaitIdle>(mock_queue), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::EndCommandBuffer>(mock_command_buffer), nullptr);
+
+    // Registered handles with null entry points return nullptr.
+    dispatch_table_manager.InitInstanceTable(mock_instance, [](VkInstance, const char*) -> PFN_vkVoidFunction { return nullptr; });
+    dispatch_table_manager.InitDeviceTable(mock_device, [](VkDevice, const char*) -> PFN_vkVoidFunction { return nullptr; });
+
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumeratePhysicalDevices>(mock_instance), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(mock_physical_device), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::DeviceWaitIdle>(mock_device), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::QueueWaitIdle>(mock_queue), nullptr);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::EndCommandBuffer>(mock_command_buffer), nullptr);
+
+    // Registered handles with populated entry points return the expected function pointers.
+    const PFN_vkEnumeratePhysicalDevices enumerate_physical_devices = [](VkInstance, uint32_t*, VkPhysicalDevice*) -> VkResult {
+        return VK_SUCCESS;
+    };
+    const PFN_vkEnumerateDeviceExtensionProperties enumerate_device_extensions =
+        [](VkPhysicalDevice, const char*, uint32_t*, VkExtensionProperties*) -> VkResult { return VK_SUCCESS; };
+    const PFN_vkDeviceWaitIdle device_wait_idle = [](VkDevice) -> VkResult { return VK_SUCCESS; };
+    const PFN_vkQueueWaitIdle queue_wait_idle = [](VkQueue) -> VkResult { return VK_SUCCESS; };
+    const PFN_vkEndCommandBuffer end_command_buffer = [](VkCommandBuffer) -> VkResult { return VK_SUCCESS; };
+
+    auto* instance_table = dispatch_table_manager.GetInstanceDispatchTable(mock_instance);
+    auto* device_table = dispatch_table_manager.GetDeviceDispatchTable(mock_device);
+    ASSERT_NE(instance_table, nullptr);
+    ASSERT_NE(device_table, nullptr);
+    instance_table->EnumeratePhysicalDevices = enumerate_physical_devices;
+    instance_table->EnumerateDeviceExtensionProperties = enumerate_device_extensions;
+    device_table->DeviceWaitIdle = device_wait_idle;
+    device_table->QueueWaitIdle = queue_wait_idle;
+    device_table->EndCommandBuffer = end_command_buffer;
+
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumeratePhysicalDevices>(mock_instance), enumerate_physical_devices);
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(mock_instance),
+              enumerate_device_extensions);
+    EXPECT_EQ(GetDownstream<&VkuInstanceDispatchTable::EnumerateDeviceExtensionProperties>(mock_physical_device),
+              enumerate_device_extensions);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::DeviceWaitIdle>(mock_device), device_wait_idle);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::QueueWaitIdle>(mock_device), queue_wait_idle);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::QueueWaitIdle>(mock_queue), queue_wait_idle);
+    EXPECT_EQ(GetDownstream<&VkuDeviceDispatchTable::EndCommandBuffer>(mock_command_buffer), end_command_buffer);
+}
